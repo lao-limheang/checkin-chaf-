@@ -50,14 +50,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;transition:background 
 #live-clock{font-variant-numeric:tabular-nums}
 #map{height:350px;border-radius:1rem;z-index:1}
 .leaflet-container{border-radius:1rem}
-
-/* Language toggle */
-.lang-btn{transition:all .2s}
-.lang-btn.active{background:#2563eb;color:white}
-
-/* Scan page - already-done state */
-.scan-done-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.7);z-index:100;align-items:center;justify-content:center;}
-.scan-done-overlay.show{display:flex}
+.radius-circle{stroke:#2563eb;stroke-width:2;fill:#2563eb;fill-opacity:.1}
 </style>
 </head>
 <body class="text-slate-900 min-h-screen flex flex-col">
@@ -66,7 +59,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;transition:background 
 <!-- LOADING -->
 <div id="loading-screen" class="fixed inset-0 bg-brand-50 flex flex-col items-center justify-center z-50">
   <i class="fa-solid fa-mug-hot fa-bounce text-brand-600 text-6xl mb-4"></i>
-  <h2 class="text-xl font-bold text-brand-800" data-i18n="loading">កំពុងផ្ទុក...</h2>
+  <h2 class="text-xl font-bold text-brand-800">កំពុងផ្ទុក...</h2>
   <p class="text-sm text-slate-500 mt-2">Connecting to Firebase...</p>
 </div>
 
@@ -87,11 +80,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;transition:background 
       <div id="live-clock" class="text-xs text-brand-200 mt-0.5 font-medium"></div>
     </div>
     <div class="flex items-center gap-2">
-      <!-- Language Toggle -->
-      <div class="flex items-center bg-white/10 rounded-full p-0.5 border border-white/20">
-        <button onclick="setLang('km')" id="lang-km" class="lang-btn active text-xs px-2.5 py-1 rounded-full font-bold transition-all">ខ្មែរ</button>
-        <button onclick="setLang('en')" id="lang-en" class="lang-btn text-xs px-2.5 py-1 rounded-full font-bold transition-all text-white/80">EN</button>
-      </div>
       <button onclick="toggleDarkMode()" id="dark-toggle" class="text-white/80 hover:text-white bg-white/10 w-9 h-9 rounded-full flex items-center justify-center border border-white/10 transition-all" title="Dark Mode">
         <i class="fa-solid fa-moon text-sm"></i>
       </button>
@@ -103,65 +91,68 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;transition:background 
 
   <!-- TABS -->
   <div class="flex border-b border-gray-200 overflow-x-auto hide-scroll shadow-sm bg-white">
-    <button onclick="switchTab('dashboard')" id="tab-dashboard" class="flex-1 min-w-[80px] py-3 text-center tab-active text-xs hover:bg-brand-50 transition-colors"><i class="fa-solid fa-chart-pie mb-1 block text-base"></i><span data-i18n="tab_dashboard">Dashboard</span></button>
-    <button onclick="switchTab('logs')" id="tab-logs" class="flex-1 min-w-[80px] py-3 text-center tab-inactive text-xs hover:bg-brand-50 transition-colors"><i class="fa-solid fa-list-check mb-1 block text-base"></i><span data-i18n="tab_logs">វត្តមាន</span></button>
-    <button onclick="switchTab('staff')" id="tab-staff" class="flex-1 min-w-[80px] py-3 text-center tab-inactive text-xs hover:bg-brand-50 transition-colors"><i class="fa-solid fa-users mb-1 block text-base"></i><span data-i18n="tab_staff">បុគ្គលិក</span></button>
-    <button onclick="switchTab('payroll')" id="tab-payroll" class="flex-1 min-w-[80px] py-3 text-center tab-inactive text-xs hover:bg-brand-50 transition-colors"><i class="fa-solid fa-file-invoice-dollar mb-1 block text-base"></i><span data-i18n="tab_payroll">ប្រាក់ខែ</span></button>
-    <button onclick="switchTab('location')" id="tab-location" class="flex-1 min-w-[80px] py-3 text-center tab-inactive text-xs hover:bg-brand-50 transition-colors"><i class="fa-solid fa-map-pin mb-1 block text-base"></i><span data-i18n="tab_location">ទីតាំង</span></button>
-    <button onclick="switchTab('alerts')" id="tab-alerts" class="flex-1 min-w-[80px] py-3 text-center tab-inactive text-xs hover:bg-brand-50 transition-colors"><i class="fa-solid fa-bell mb-1 block text-base"></i><span data-i18n="tab_alerts">Alert</span></button>
+    <button onclick="switchTab('dashboard')" id="tab-dashboard" class="flex-1 min-w-[80px] py-3 text-center tab-active text-xs hover:bg-brand-50 transition-colors"><i class="fa-solid fa-chart-pie mb-1 block text-base"></i>Dashboard</button>
+    <button onclick="switchTab('logs')" id="tab-logs" class="flex-1 min-w-[80px] py-3 text-center tab-inactive text-xs hover:bg-brand-50 transition-colors"><i class="fa-solid fa-list-check mb-1 block text-base"></i>វត្តមាន</button>
+    <button onclick="switchTab('staff')" id="tab-staff" class="flex-1 min-w-[80px] py-3 text-center tab-inactive text-xs hover:bg-brand-50 transition-colors"><i class="fa-solid fa-users mb-1 block text-base"></i>បុគ្គលិក</button>
+    <button onclick="switchTab('payroll')" id="tab-payroll" class="flex-1 min-w-[80px] py-3 text-center tab-inactive text-xs hover:bg-brand-50 transition-colors"><i class="fa-solid fa-file-invoice-dollar mb-1 block text-base"></i>ប្រាក់ខែ</button>
+    <button onclick="switchTab('location')" id="tab-location" class="flex-1 min-w-[80px] py-3 text-center tab-inactive text-xs hover:bg-brand-50 transition-colors"><i class="fa-solid fa-map-pin mb-1 block text-base"></i>ទីតាំង</button>
+    <button onclick="switchTab('alerts')" id="tab-alerts" class="flex-1 min-w-[80px] py-3 text-center tab-inactive text-xs hover:bg-brand-50 transition-colors"><i class="fa-solid fa-bell mb-1 block text-base"></i>Alert</button>
     <button onclick="switchTab('bot')" id="tab-bot" class="flex-1 min-w-[80px] py-3 text-center tab-inactive text-xs hover:bg-brand-50 transition-colors"><i class="fa-solid fa-robot mb-1 block text-base"></i>Bot</button>
   </div>
 
   <main class="p-4 max-w-6xl mx-auto w-full">
 
-    <!-- DASHBOARD -->
+    <!-- ══════════════ DASHBOARD ══════════════ -->
     <div id="section-dashboard" class="space-y-5">
       <div class="flex flex-wrap justify-between items-center gap-3">
-        <h2 class="text-2xl font-black text-slate-800" data-i18n="overview">ទិដ្ឋភាពរួម</h2>
+        <h2 class="text-2xl font-black text-slate-800">ទិដ្ឋភាពរួម</h2>
         <div class="flex gap-2 flex-wrap">
           <button onclick="openManualCheckinModal()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow hover:bg-emerald-700 transition-all">
-            <i class="fa-solid fa-user-check mr-1"></i><span data-i18n="manual_checkin">Manual Check-In/Out</span>
+            <i class="fa-solid fa-user-check mr-1"></i>Manual Check-In/Out
           </button>
           <button onclick="window.broadcastDailySummary()" class="bg-[#0088cc] text-white px-4 py-2 rounded-xl text-sm font-bold shadow hover:bg-[#006699] transition-all">
-            <i class="fa-solid fa-paper-plane mr-1"></i><span data-i18n="send_summary">ផ្ញើសង្ខេប</span>
+            <i class="fa-solid fa-paper-plane mr-1"></i>ផ្ញើសង្ខេប
           </button>
         </div>
       </div>
 
+      <!-- STATS - 5 cards -->
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 border-l-4 border-l-blue-500">
-          <div class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1" data-i18n="stat_total">បុគ្គលិកសរុប</div>
+          <div class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">បុគ្គលិកសរុប</div>
           <div id="stat-total-staff" class="text-3xl font-black text-slate-800">0</div>
         </div>
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 border-l-4 border-l-emerald-500">
-          <div class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1" data-i18n="stat_present">មកធ្វើការថ្ងៃនេះ</div>
+          <div class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">មកធ្វើការថ្ងៃនេះ</div>
           <div id="stat-present" class="text-3xl font-black text-emerald-600">0</div>
         </div>
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 border-l-4 border-l-amber-500">
-          <div class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1" data-i18n="stat_absent">អវត្តមាន</div>
+          <div class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">អវត្តមាន</div>
           <div id="stat-absent" class="text-3xl font-black text-amber-500">0</div>
         </div>
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 border-l-4 border-l-rose-500">
-          <div class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1" data-i18n="stat_late">មកយឺត</div>
+          <div class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">មកយឺត</div>
           <div id="stat-late" class="text-3xl font-black text-rose-600">0</div>
         </div>
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 border-l-4 border-l-purple-500">
-          <div class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1" data-i18n="stat_early">ចេញមុន</div>
+          <div class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">ចេញមុន</div>
           <div id="stat-early-out" class="text-3xl font-black text-purple-600">0</div>
         </div>
       </div>
 
+      <!-- BEST STAFF OF MONTH -->
       <div class="bg-gradient-to-br from-yellow-50 to-amber-50 border border-yellow-200 p-5 rounded-2xl shadow-sm">
         <div class="flex items-center justify-between mb-3">
-          <h3 class="font-black text-slate-800 flex items-center gap-2"><i class="fa-solid fa-trophy text-yellow-500 text-xl"></i><span data-i18n="best_staff">បុគ្គលិកល្អបំផុតប្រចាំខែ</span></h3>
+          <h3 class="font-black text-slate-800 flex items-center gap-2"><i class="fa-solid fa-trophy text-yellow-500 text-xl"></i>បុគ្គលិកល្អបំផុតប្រចាំខែ</h3>
           <button onclick="window.broadcastBestStaff()" class="bg-[#0088cc] text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow hover:bg-[#006699]"><i class="fa-solid fa-paper-plane mr-1"></i>Telegram</button>
         </div>
-        <div id="best-staff-display" class="text-slate-500 text-sm" data-i18n="calculating">កំពុងគណនា...</div>
+        <div id="best-staff-display" class="text-slate-500 text-sm">កំពុងគណនា...</div>
       </div>
 
+      <!-- PERFORMANCE TABLE -->
       <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
         <div class="flex flex-wrap justify-between items-center mb-4 gap-3">
-          <h3 class="font-bold text-slate-800"><i class="fa-solid fa-star-half-stroke mr-2 text-yellow-500"></i><span data-i18n="performance">ការវាយតម្លៃបុគ្គលិក</span></h3>
+          <h3 class="font-bold text-slate-800"><i class="fa-solid fa-star-half-stroke mr-2 text-yellow-500"></i>ការវាយតម្លៃបុគ្គលិក</h3>
           <div class="flex gap-2">
             <button onclick="window.broadcastPerformanceToTelegram('week')" class="bg-brand-50 text-brand-700 border border-brand-200 px-3 py-1.5 rounded-xl text-xs font-bold"><i class="fa-solid fa-paper-plane mr-1"></i>Week</button>
             <button onclick="window.broadcastPerformanceToTelegram('month')" class="bg-brand-50 text-brand-700 border border-brand-200 px-3 py-1.5 rounded-xl text-xs font-bold"><i class="fa-solid fa-paper-plane mr-1"></i>Month</button>
@@ -171,11 +162,11 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;transition:background 
           <table class="w-full text-sm text-left">
             <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
               <tr>
-                <th class="p-3" data-i18n="th_staff">បុគ្គលិក</th>
-                <th class="p-3" data-i18n="th_week">សប្តាហ៍នេះ</th>
-                <th class="p-3" data-i18n="th_month">ខែនេះ</th>
-                <th class="p-3" data-i18n="th_early_out">ចេញមុន</th>
-                <th class="p-3" data-i18n="th_eval">វាយតម្លៃ</th>
+                <th class="p-3">បុគ្គលិក</th>
+                <th class="p-3">សប្តាហ៍នេះ</th>
+                <th class="p-3">ខែនេះ</th>
+                <th class="p-3">ចេញមុន</th>
+                <th class="p-3">វាយតម្លៃ</th>
               </tr>
             </thead>
             <tbody id="performance-table-body" class="divide-y divide-slate-100"></tbody>
@@ -183,20 +174,21 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;transition:background 
         </div>
       </div>
 
+      <!-- LIVE FEED -->
       <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
         <div class="bg-slate-50 px-5 py-3 border-b border-slate-100 font-bold text-slate-800 flex justify-between items-center">
-          <span><i class="fa-solid fa-bolt mr-2 text-amber-500"></i><span data-i18n="live_feed">សកម្មភាពបច្ចុប្បន្ន</span></span>
-          <button onclick="switchTab('logs')" class="text-xs text-brand-600 bg-brand-50 px-3 py-1 rounded-full font-semibold hover:underline" data-i18n="view_all">មើលទាំងអស់</button>
+          <span><i class="fa-solid fa-bolt mr-2 text-amber-500"></i>សកម្មភាពបច្ចុប្បន្ន</span>
+          <button onclick="switchTab('logs')" class="text-xs text-brand-600 bg-brand-50 px-3 py-1 rounded-full font-semibold hover:underline">មើលទាំងអស់</button>
         </div>
         <div id="dashboard-feed" class="p-5 space-y-3"></div>
       </div>
     </div>
 
-    <!-- LOGS -->
+    <!-- ══════════════ LOGS ══════════════ -->
     <div id="section-logs" class="hidden space-y-4">
       <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
         <div class="flex flex-wrap justify-between items-center mb-4 gap-3 border-b border-slate-100 pb-4">
-          <h2 class="font-bold text-slate-800 text-lg"><i class="fa-solid fa-clock-rotate-left mr-2 text-brand-500"></i><span data-i18n="attendance_log">កំណត់ត្រាវត្តមាន</span></h2>
+          <h2 class="font-bold text-slate-800 text-lg"><i class="fa-solid fa-clock-rotate-left mr-2 text-brand-500"></i>កំណត់ត្រាវត្តមាន</h2>
           <div class="flex flex-wrap gap-2 items-center">
             <div class="flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
               <i class="fa-solid fa-search text-slate-400 mr-2 text-xs"></i>
@@ -205,15 +197,15 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;transition:background 
             <input type="date" id="logs-date-filter" class="text-xs font-bold bg-slate-50 text-slate-700 border border-slate-200 px-3 py-2 rounded-xl outline-none cursor-pointer" onchange="window.renderLogs()">
             <button onclick="clearLogsFilter()" class="text-xs font-bold text-slate-500 hover:text-rose-600 bg-slate-100 px-2 py-2 rounded-xl border border-slate-200"><i class="fa-solid fa-xmark mr-1"></i>Clear</button>
             <select id="logs-sort-filter" onchange="window.renderLogs()" class="text-xs font-bold bg-slate-50 text-slate-700 border border-slate-200 px-3 py-2 rounded-xl outline-none cursor-pointer">
-              <option value="time-desc" data-i18n="newest">ថ្មីជាងគេ</option>
-              <option value="time-asc" data-i18n="oldest">ចាស់ជាងគេ</option>
-              <option value="name-asc">Name A-Z</option>
+              <option value="time-desc">ថ្មីជាងគេ</option>
+              <option value="time-asc">ចាស់ជាងគេ</option>
+              <option value="name-asc">ឈ្មោះ A-Z</option>
             </select>
             <button onclick="exportLogsCSV()" class="bg-slate-700 text-white px-3 py-2 rounded-xl text-xs font-bold shadow"><i class="fa-solid fa-file-csv mr-1"></i>CSV</button>
             <label class="flex items-center gap-2 text-sm cursor-pointer text-slate-700 font-semibold">
               <input type="checkbox" id="selectAllLogs" onclick="window.toggleSelectAllLogs(this)" class="w-4 h-4 rounded">Select All
             </label>
-            <button onclick="window.deleteSelectedLogs()" class="text-rose-600 text-sm font-bold disabled:opacity-40 flex items-center" id="btn-delete-selected" disabled><i class="fa-solid fa-trash mr-1"></i><span data-i18n="delete">លុប</span></button>
+            <button onclick="window.deleteSelectedLogs()" class="text-rose-600 text-sm font-bold disabled:opacity-40 flex items-center" id="btn-delete-selected" disabled><i class="fa-solid fa-trash mr-1"></i>លុប</button>
           </div>
         </div>
         <div id="logs-count" class="text-xs text-slate-500 mb-3"></div>
@@ -221,34 +213,34 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;transition:background 
       </div>
     </div>
 
-    <!-- STAFF -->
+    <!-- ══════════════ STAFF ══════════════ -->
     <div id="section-staff" class="hidden space-y-5">
       <div class="flex flex-wrap justify-between items-center bg-white p-5 rounded-2xl shadow-sm border border-slate-100 gap-3">
-        <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-users mr-2 text-brand-500"></i><span data-i18n="manage_staff">គ្រប់គ្រងបុគ្គលិក</span></h2>
+        <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-users mr-2 text-brand-500"></i>គ្រប់គ្រងបុគ្គលិក</h2>
         <div class="flex items-center gap-3 flex-wrap">
           <div class="flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
             <i class="fa-solid fa-search text-slate-400 mr-2 text-xs"></i>
             <input type="text" id="staff-search" placeholder="ស្វែងរក..." class="text-sm bg-transparent border-none outline-none w-28" oninput="window.renderStaff()">
           </div>
           <button onclick="openStaffModal()" class="bg-brand-600 text-white px-5 py-2.5 rounded-xl font-bold shadow hover:bg-brand-700 transition-all">
-            <i class="fa-solid fa-user-plus mr-2"></i><span data-i18n="add">បន្ថែម</span>
+            <i class="fa-solid fa-user-plus mr-2"></i>បន្ថែម
           </button>
         </div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="staff-container"></div>
     </div>
 
-    <!-- PAYROLL -->
+    <!-- ══════════════ PAYROLL ══════════════ -->
     <div id="section-payroll" class="hidden space-y-5">
       <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-        <h2 class="font-bold text-slate-800 text-lg mb-4"><i class="fa-solid fa-chart-column mr-2 text-brand-500"></i><span data-i18n="salary_chart">ក្រាហ្វប្រាក់ខែ</span></h2>
+        <h2 class="font-bold text-slate-800 text-lg mb-4"><i class="fa-solid fa-chart-column mr-2 text-brand-500"></i>ក្រាហ្វប្រាក់ខែ</h2>
         <div class="relative h-64 w-full"><canvas id="payrollChart"></canvas></div>
       </div>
       <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
         <div class="flex flex-wrap justify-between items-center mb-4 border-b border-slate-100 pb-4 gap-3">
           <div>
-            <h2 class="font-bold text-slate-800 text-lg"><i class="fa-solid fa-money-check-dollar mr-2 text-emerald-500"></i><span data-i18n="monthly_salary">ប្រាក់ខែប្រចាំខែ</span></h2>
-            <p class="text-xs text-slate-500 mt-1" data-i18n="calc_note">គណនាពី Check-in និង Day-off</p>
+            <h2 class="font-bold text-slate-800 text-lg"><i class="fa-solid fa-money-check-dollar mr-2 text-emerald-500"></i>ប្រាក់ខែប្រចាំខែ</h2>
+            <p class="text-xs text-slate-500 mt-1">គណនាពី Check-in និង Day-off</p>
           </div>
           <div class="flex gap-2">
             <button onclick="exportPayrollCSV()" class="bg-slate-700 text-white px-3 py-2 rounded-xl text-xs font-bold shadow"><i class="fa-solid fa-file-csv mr-1"></i>CSV</button>
@@ -259,7 +251,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;transition:background 
           <table class="w-full text-left text-sm">
             <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
               <tr>
-                <th class="p-3" data-i18n="name">ឈ្មោះ</th><th class="p-3" data-i18n="salary">ប្រាក់ខែ</th><th class="p-3" data-i18n="work_days">ថ្ងៃមកធ្វើ</th><th class="p-3">Day-Off</th><th class="p-3 text-right" data-i18n="earned">ប្រាក់ដែលត្រូវទទួល</th>
+                <th class="p-3">ឈ្មោះ</th><th class="p-3">ប្រាក់ខែ</th><th class="p-3">ថ្ងៃមកធ្វើ</th><th class="p-3">Day-Off</th><th class="p-3 text-right">ប្រាក់ដែលត្រូវទទួល</th>
               </tr>
             </thead>
             <tbody id="payroll-table-body" class="divide-y divide-slate-100"></tbody>
@@ -267,61 +259,62 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;transition:background 
         </div>
       </div>
 
+      <!-- DAY OFF ROSTER -->
       <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
         <div class="flex flex-wrap justify-between items-center mb-4 border-b border-slate-100 pb-4 gap-3">
           <div>
             <div class="flex items-center gap-3 flex-wrap">
-              <h2 class="font-bold text-slate-800 text-lg"><i class="fa-solid fa-calendar-day mr-2 text-purple-500"></i><span data-i18n="day_off">ថ្ងៃឈប់សម្រាក</span></h2>
+              <h2 class="font-bold text-slate-800 text-lg"><i class="fa-solid fa-calendar-day mr-2 text-purple-500"></i>ថ្ងៃឈប់សម្រាក</h2>
               <input type="month" id="dayoff-month-filter" class="text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200 px-3 py-1 rounded-full outline-none cursor-pointer" onchange="window.renderDayoffs()">
-              <button onclick="window.clearDayoffFilter()" class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-1.5 rounded-full border border-slate-200"><i class="fa-solid fa-clock-rotate-left mr-1"></i><span data-i18n="all">ទាំងអស់</span></button>
+              <button onclick="window.clearDayoffFilter()" class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-1.5 rounded-full border border-slate-200"><i class="fa-solid fa-clock-rotate-left mr-1"></i>ទាំងអស់</button>
               <select id="dayoff-sort-filter" onchange="window.renderDayoffs()" class="text-xs font-bold bg-slate-50 text-slate-700 border border-slate-200 px-3 py-1 rounded-full outline-none cursor-pointer">
-                <option value="date-desc" data-i18n="newest">ថ្មីជាងគេ</option>
-                <option value="date-asc" data-i18n="oldest">ចាស់ជាងគេ</option>
-                <option value="name-asc">Name A-Z</option>
+                <option value="date-desc">ថ្មីជាងគេ</option>
+                <option value="date-asc">ចាស់ជាងគេ</option>
+                <option value="name-asc">ឈ្មោះ A-Z</option>
               </select>
             </div>
-            <p class="text-xs text-slate-500 mt-2" data-i18n="sat_sun_note">ថ្ងៃ Sat/Sun មិនអាចជ្រើស</p>
+            <p class="text-xs text-slate-500 mt-2">ថ្ងៃ Sat/Sun មិនអាចជ្រើស</p>
           </div>
           <div class="flex flex-wrap gap-2">
             <button onclick="toggleDayoffView()" class="bg-slate-100 text-slate-700 px-4 py-2 rounded-xl text-sm font-bold border border-slate-200 hover:bg-slate-200"><i id="view-toggle-icon" class="fa-solid fa-calendar mr-1"></i><span id="view-toggle-text">Calendar</span></button>
             <button onclick="broadcastRosterToTelegram()" class="bg-[#0088cc] text-white px-4 py-2 rounded-xl text-sm font-bold shadow hover:bg-[#006699]"><i class="fa-solid fa-paper-plane mr-1"></i>Telegram</button>
             <button onclick="openAutoDayoffModal()" class="bg-purple-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow hover:bg-purple-700"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i>Auto</button>
-            <button onclick="openDayoffModal()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow hover:bg-emerald-700"><i class="fa-solid fa-plus mr-1"></i><span data-i18n="add">បន្ថែម</span></button>
+            <button onclick="openDayoffModal()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow hover:bg-emerald-700"><i class="fa-solid fa-plus mr-1"></i>បន្ថែម</button>
           </div>
         </div>
         <div id="dayoff-actions-bar" class="flex gap-4 items-center bg-slate-50 px-4 py-2 rounded-xl border border-slate-200 mb-3">
           <label class="flex items-center gap-2 text-sm cursor-pointer font-semibold select-none">
-            <input type="checkbox" id="selectAllDayoffs" onclick="window.toggleSelectAllDayoffs(this)" class="w-4 h-4 rounded"><span data-i18n="all">ទាំងអស់</span>
+            <input type="checkbox" id="selectAllDayoffs" onclick="window.toggleSelectAllDayoffs(this)" class="w-4 h-4 rounded">ទាំងអស់
           </label>
           <div class="w-px h-6 bg-slate-300"></div>
-          <button onclick="window.deleteSelectedDayoffs()" class="text-rose-600 text-sm font-bold disabled:opacity-40 flex items-center" id="btn-delete-selected-dayoffs" disabled><i class="fa-solid fa-trash mr-1"></i><span data-i18n="delete_selected">លុបដែលជ្រើស</span></button>
+          <button onclick="window.deleteSelectedDayoffs()" class="text-rose-600 text-sm font-bold disabled:opacity-40 flex items-center" id="btn-delete-selected-dayoffs" disabled><i class="fa-solid fa-trash mr-1"></i>លុបដែលជ្រើស</button>
         </div>
         <div id="dayoff-container" class="space-y-3"></div>
         <div id="dayoff-calendar-view" class="hidden mt-4"></div>
       </div>
     </div>
 
-    <!-- LOCATION -->
+    <!-- ══════════════ LOCATION ══════════════ -->
     <div id="section-location" class="hidden space-y-5">
       <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
         <div class="flex flex-wrap justify-between items-center mb-4 gap-3">
           <div>
-            <h2 class="font-bold text-slate-800 text-lg"><i class="fa-solid fa-map-pin mr-2 text-rose-500"></i><span data-i18n="company_location">ការកំណត់ទីតាំងក្រុមហ៊ុន</span></h2>
-            <p class="text-xs text-slate-500 mt-1" data-i18n="click_map">ចុចលើ Map ដើម្បីកំណត់ទីតាំង • Check-In ត្រូវការ GPS</p>
+            <h2 class="font-bold text-slate-800 text-lg"><i class="fa-solid fa-map-pin mr-2 text-rose-500"></i>ការកំណត់ទីតាំងក្រុមហ៊ុន</h2>
+            <p class="text-xs text-slate-500 mt-1">ចុចលើ Map ដើម្បីកំណត់ទីតាំង • Check-In ត្រូវការ GPS</p>
           </div>
           <button onclick="useMyLocationAsCompany()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow hover:bg-emerald-700">
-            <i class="fa-solid fa-location-crosshairs mr-1"></i><span data-i18n="use_my_location">ប្រើទីតាំងខ្ញុំ</span>
+            <i class="fa-solid fa-location-crosshairs mr-1"></i>ប្រើទីតាំងខ្ញុំ
           </button>
         </div>
         <div id="map" class="mb-4"></div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
             <div class="text-xs font-bold text-slate-500 uppercase mb-1">Latitude</div>
-            <div id="company-lat-display" class="text-lg font-black text-slate-800" data-i18n="not_set">មិនទាន់កំណត់</div>
+            <div id="company-lat-display" class="text-lg font-black text-slate-800">មិនទាន់កំណត់</div>
           </div>
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
             <div class="text-xs font-bold text-slate-500 uppercase mb-1">Longitude</div>
-            <div id="company-lng-display" class="text-lg font-black text-slate-800" data-i18n="not_set">មិនទាន់កំណត់</div>
+            <div id="company-lng-display" class="text-lg font-black text-slate-800">មិនទាន់កំណត់</div>
           </div>
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
             <div class="text-xs font-bold text-slate-500 uppercase mb-1">Radius (m)</div>
@@ -333,19 +326,21 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;transition:background 
         </div>
         <div class="flex gap-3 mt-4">
           <button onclick="saveCompanyLocation()" class="flex-1 py-3 bg-brand-600 text-white rounded-xl font-bold shadow hover:bg-brand-700 transition-all">
-            <i class="fa-solid fa-save mr-2"></i><span data-i18n="save_location">រក្សាទុកទីតាំង</span>
+            <i class="fa-solid fa-save mr-2"></i>រក្សាទុកទីតាំង
           </button>
         </div>
       </div>
     </div>
 
-    <!-- ALERTS -->
+    <!-- ══════════════ ALERTS ══════════════ -->
     <div id="section-alerts" class="hidden space-y-5">
       <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-        <h2 class="font-bold text-slate-800 text-lg mb-2"><i class="fa-solid fa-bell mr-2 text-amber-500"></i><span data-i18n="alert_settings">កំណត់ Alert Telegram</span></h2>
-        <p class="text-xs text-slate-500 mb-5" data-i18n="alert_desc">កំណត់ Message Template សម្រាប់ Event នីមួយៗ។ ប្រើ <code class="bg-slate-100 px-1 rounded">{variable}</code> ដូចខាងក្រោម</p>
+        <h2 class="font-bold text-slate-800 text-lg mb-2"><i class="fa-solid fa-bell mr-2 text-amber-500"></i>កំណត់ Alert Telegram</h2>
+        <p class="text-xs text-slate-500 mb-5">កំណត់ Message Template សម្រាប់ Event នីមួយៗ។ ប្រើ <code class="bg-slate-100 px-1 rounded">{variable}</code> ដូចខាងក្រោម</p>
+
+        <!-- Variable Reference -->
         <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl mb-5">
-          <div class="font-bold text-blue-800 text-sm mb-2"><i class="fa-solid fa-circle-info mr-1"></i>Variables</div>
+          <div class="font-bold text-blue-800 text-sm mb-2"><i class="fa-solid fa-circle-info mr-1"></i>Variables ដែលអាចប្រើ</div>
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs text-blue-900">
             <span class="bg-white px-2 py-1 rounded border border-blue-200 font-mono">{name}</span>
             <span class="bg-white px-2 py-1 rounded border border-blue-200 font-mono">{time}</span>
@@ -358,48 +353,51 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;transition:background 
             <span class="bg-white px-2 py-1 rounded border border-blue-200 font-mono">{reason}</span>
           </div>
         </div>
+
         <div class="space-y-5" id="alert-templates-container"></div>
         <button onclick="saveAlertTemplates()" class="mt-5 w-full py-3 bg-brand-600 text-white rounded-xl font-bold shadow hover:bg-brand-700 transition-all">
-          <i class="fa-solid fa-save mr-2"></i><span data-i18n="save_all">រក្សាទុក Templates ទាំងអស់</span>
+          <i class="fa-solid fa-save mr-2"></i>រក្សាទុក Templates ទាំងអស់
         </button>
       </div>
+
+      <!-- Early Checkout Settings -->
       <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-        <h2 class="font-bold text-slate-800 text-lg mb-4"><i class="fa-solid fa-clock mr-2 text-purple-500"></i><span data-i18n="early_checkout_setting">ការកំណត់ Early Check-Out</span></h2>
-        <div class="flex items-center gap-4 flex-wrap">
-          <label class="text-sm font-bold text-slate-700 flex-1" data-i18n="early_checkout_label">ចេញមុនម៉ោង Shift End ប៉ុន្មាននាទីគឺចាត់ទុកថា "ចេញមុន"?</label>
+        <h2 class="font-bold text-slate-800 text-lg mb-4"><i class="fa-solid fa-clock mr-2 text-purple-500"></i>ការកំណត់ Early Check-Out</h2>
+        <div class="flex items-center gap-4">
+          <label class="text-sm font-bold text-slate-700">ចេញមុនម៉ោង Shift End ប៉ុន្មាននាទីគឺចាត់ទុកថា "ចេញមុន"?</label>
           <div class="flex items-center gap-2">
             <input type="number" id="early-checkout-mins" min="5" max="60" value="15" class="w-20 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-center font-bold text-lg outline-none focus:ring-2 focus:ring-brand-500">
-            <span class="font-bold text-slate-600" data-i18n="minutes">នាទី</span>
+            <span class="font-bold text-slate-600">នាទី</span>
           </div>
-          <button onclick="saveEarlyCheckoutSetting()" class="bg-purple-600 text-white px-4 py-2 rounded-xl font-bold shadow hover:bg-purple-700" data-i18n="save">រក្សាទុក</button>
+          <button onclick="saveEarlyCheckoutSetting()" class="bg-purple-600 text-white px-4 py-2 rounded-xl font-bold shadow hover:bg-purple-700">រក្សាទុក</button>
         </div>
       </div>
     </div>
 
-    <!-- BOT -->
+    <!-- ══════════════ BOT ══════════════ -->
     <div id="section-bot" class="hidden space-y-5">
       <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-2xl text-sm text-amber-900 shadow-sm">
-        <p class="font-bold text-base mb-1"><i class="fa-solid fa-triangle-exclamation mr-2 text-amber-500"></i><span data-i18n="bot_note_title">ចំណាំ Auto-Reply</span></p>
-        <p data-i18n="bot_note">Bot ឆ្លើយតបតែពេល Page នេះបើក។ ដើម្បីបន្ថែម commands menu: <strong>@BotFather</strong> → <code>/setcommands</code></p>
+        <p class="font-bold text-base mb-1"><i class="fa-solid fa-triangle-exclamation mr-2 text-amber-500"></i>ចំណាំ Auto-Reply</p>
+        <p>Bot ឆ្លើយតបតែពេល Page នេះបើក។ ដើម្បីបន្ថែម commands menu: <strong>@BotFather</strong> → <code>/setcommands</code></p>
       </div>
       <div class="flex flex-col md:flex-row gap-5">
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 md:w-1/3">
-          <h2 class="font-bold text-slate-800 text-lg mb-4"><i class="fa-solid fa-plus-circle mr-2 text-brand-500"></i><span data-i18n="add_command">បន្ថែម Command</span></h2>
+          <h2 class="font-bold text-slate-800 text-lg mb-4"><i class="fa-solid fa-plus-circle mr-2 text-brand-500"></i>បន្ថែម Command</h2>
           <form id="bot-form" class="space-y-4">
             <div>
               <label class="block text-sm font-bold text-slate-700 mb-1.5">Command</label>
               <input type="text" id="bot-command-input" placeholder="/start" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none bg-slate-50" required>
             </div>
             <div>
-              <label class="block text-sm font-bold text-slate-700 mb-1.5"><span data-i18n="auto_reply">Auto-Reply Text</span></label>
+              <label class="block text-sm font-bold text-slate-700 mb-1.5">Auto-Reply Text</label>
               <textarea id="bot-reply-input" rows="4" placeholder="សារឆ្លើយតប..." class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none bg-slate-50" required></textarea>
             </div>
-            <button type="submit" class="w-full py-3 bg-brand-600 text-white rounded-xl font-bold shadow hover:bg-brand-700" data-i18n="save">រក្សាទុក</button>
+            <button type="submit" class="w-full py-3 bg-brand-600 text-white rounded-xl font-bold shadow hover:bg-brand-700">រក្សាទុក</button>
           </form>
         </div>
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 md:w-2/3">
           <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center">
-            <i class="fa-solid fa-list mr-2 text-brand-500"></i><span data-i18n="active_replies">Auto-Replies សកម្ម</span>
+            <i class="fa-solid fa-list mr-2 text-brand-500"></i>Auto-Replies សកម្ម
             <span class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full ml-3 animate-pulse border border-emerald-200"><i class="fa-solid fa-circle text-[8px] mr-1.5"></i>Listening</span>
           </h2>
           <div id="bot-commands-container" class="space-y-3"></div>
@@ -410,48 +408,51 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;transition:background 
   </main>
 </div>
 
-<!-- MODALS -->
+<!-- ══════════════════ MODALS ══════════════════ -->
+
+<!-- Staff Modal -->
 <div id="staff-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
   <div class="modal-box bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
     <div class="bg-brand-600 p-5 flex justify-between items-center text-white">
-      <h3 id="staff-modal-title" class="font-bold text-xl" data-i18n="add_staff">បន្ថែមបុគ្គលិក</h3>
+      <h3 id="staff-modal-title" class="font-bold text-xl">បន្ថែមបុគ្គលិក</h3>
       <button onclick="closeModal('staff-modal')" class="bg-white/10 hover:bg-white/20 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <form id="staff-form" class="p-5 space-y-4">
       <input type="hidden" id="staff-id-input">
       <div>
-        <label class="block text-sm font-bold text-slate-700 mb-1" data-i18n="full_name">ឈ្មោះពេញ <span class="text-rose-500">*</span></label>
+        <label class="block text-sm font-bold text-slate-700 mb-1">ឈ្មោះពេញ <span class="text-rose-500">*</span></label>
         <input type="text" id="staff-name-input" placeholder="ឧ. សុខា ចាន" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none" required>
       </div>
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-bold text-slate-700 mb-1" data-i18n="shift_start">ម៉ោងចូល <span class="text-rose-500">*</span></label>
+          <label class="block text-sm font-bold text-slate-700 mb-1">ម៉ោងចូល <span class="text-rose-500">*</span></label>
           <input type="time" id="staff-start-input" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none" required>
         </div>
         <div>
-          <label class="block text-sm font-bold text-slate-700 mb-1" data-i18n="shift_end">ម៉ោងចេញ <span class="text-rose-500">*</span></label>
+          <label class="block text-sm font-bold text-slate-700 mb-1">ម៉ោងចេញ <span class="text-rose-500">*</span></label>
           <input type="time" id="staff-end-input" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none" required>
         </div>
       </div>
       <div>
-        <label class="block text-sm font-bold text-slate-700 mb-1" data-i18n="salary_month">ប្រាក់ខែ ($/ខែ) <span class="text-rose-500">*</span></label>
+        <label class="block text-sm font-bold text-slate-700 mb-1">ប្រាក់ខែ ($/ខែ) <span class="text-rose-500">*</span></label>
         <div class="relative">
           <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
           <input type="number" id="staff-salary-input" placeholder="500" min="0" class="w-full pl-8 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none" required>
         </div>
       </div>
       <div>
-        <label class="block text-sm font-bold text-slate-700 mb-1" data-i18n="role">តួនាទី</label>
+        <label class="block text-sm font-bold text-slate-700 mb-1">តួនាទី</label>
         <input type="text" id="staff-role-input" placeholder="ឧ. Barista, Cashier" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
       </div>
       <div class="flex gap-3 pt-2">
-        <button type="button" onclick="closeModal('staff-modal')" class="flex-1 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold" data-i18n="cancel">បោះបង់</button>
-        <button type="submit" id="staff-submit-btn" class="flex-1 py-3 bg-brand-600 text-white rounded-xl font-bold shadow"><i class="fa-solid fa-save mr-2"></i><span data-i18n="save">រក្សាទុក</span></button>
+        <button type="button" onclick="closeModal('staff-modal')" class="flex-1 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold">បោះបង់</button>
+        <button type="submit" id="staff-submit-btn" class="flex-1 py-3 bg-brand-600 text-white rounded-xl font-bold shadow"><i class="fa-solid fa-save mr-2"></i>រក្សាទុក</button>
       </div>
     </form>
   </div>
 </div>
 
+<!-- Manual Checkin Modal -->
 <div id="manual-checkin-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
   <div class="modal-box bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
     <div class="bg-emerald-600 p-5 flex justify-between items-center text-white">
@@ -460,11 +461,11 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;transition:background 
     </div>
     <form id="manual-checkin-form" class="p-5 space-y-4">
       <div>
-        <label class="block text-sm font-bold text-slate-700 mb-1" data-i18n="select_staff">ជ្រើសបុគ្គលិក</label>
+        <label class="block text-sm font-bold text-slate-700 mb-1">ជ្រើសបុគ្គលិក</label>
         <select id="manual-checkin-staff" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none" required></select>
       </div>
       <div>
-        <label class="block text-sm font-bold text-slate-700 mb-1" data-i18n="action">សកម្មភាព</label>
+        <label class="block text-sm font-bold text-slate-700 mb-1">សកម្មភាព</label>
         <div class="grid grid-cols-2 gap-3">
           <label class="flex items-center justify-center gap-2 p-3 border-2 border-slate-200 rounded-xl cursor-pointer has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50">
             <input type="radio" name="manual-action" value="in" class="accent-emerald-600" required><span class="font-bold">Check-In</span>
@@ -475,48 +476,50 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;transition:background 
         </div>
       </div>
       <div>
-        <label class="block text-sm font-bold text-slate-700 mb-1" data-i18n="date_time">ថ្ងៃ &amp; ម៉ោង</label>
+        <label class="block text-sm font-bold text-slate-700 mb-1">ថ្ងៃ & ម៉ោង</label>
         <input type="datetime-local" id="manual-checkin-datetime" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none" required>
       </div>
       <div>
-        <label class="block text-sm font-bold text-slate-700 mb-1" data-i18n="note">កំណត់ចំណាំ</label>
+        <label class="block text-sm font-bold text-slate-700 mb-1">កំណត់ចំណាំ</label>
         <input type="text" id="manual-checkin-note" placeholder="ឧ. Admin override" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
       </div>
       <div class="flex gap-3 pt-2">
-        <button type="button" onclick="closeModal('manual-checkin-modal')" class="flex-1 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold" data-i18n="cancel">បោះបង់</button>
-        <button type="submit" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold shadow" data-i18n="record">កត់ត្រា</button>
+        <button type="button" onclick="closeModal('manual-checkin-modal')" class="flex-1 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold">បោះបង់</button>
+        <button type="submit" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold shadow">កត់ត្រា</button>
       </div>
     </form>
   </div>
 </div>
 
+<!-- Day Off Modal -->
 <div id="dayoff-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
   <div class="modal-box bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
     <div class="bg-emerald-600 p-5 flex justify-between items-center text-white">
-      <h3 class="font-bold text-xl" data-i18n="set_dayoff">កំណត់ Day-Off</h3>
+      <h3 class="font-bold text-xl">កំណត់ Day-Off</h3>
       <button onclick="closeModal('dayoff-modal')" class="bg-white/10 hover:bg-white/20 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <form id="dayoff-form" class="p-5 space-y-4">
       <div>
-        <label class="block text-sm font-bold text-slate-700 mb-1" data-i18n="select_staff">ជ្រើសបុគ្គលិក</label>
+        <label class="block text-sm font-bold text-slate-700 mb-1">ជ្រើសបុគ្គលិក</label>
         <select id="dayoff-staff-input" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none" required></select>
       </div>
       <div>
-        <label class="block text-sm font-bold text-slate-700 mb-1" data-i18n="date">ថ្ងៃ</label>
+        <label class="block text-sm font-bold text-slate-700 mb-1">ថ្ងៃ</label>
         <input type="date" id="dayoff-date-input" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none" required>
       </div>
       <div>
-        <label class="block text-sm font-bold text-slate-700 mb-1" data-i18n="reason_optional">មូលហេតុ (ស្រេចចិត្ត)</label>
+        <label class="block text-sm font-bold text-slate-700 mb-1">មូលហេតុ (ស្រេចចិត្ត)</label>
         <input type="text" id="dayoff-reason-input" placeholder="ឧ. ឈប់ប្រចាំសប្តាហ៍" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
       </div>
       <div class="flex gap-3 pt-2">
-        <button type="button" onclick="closeModal('dayoff-modal')" class="flex-1 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold" data-i18n="cancel">បោះបង់</button>
-        <button type="submit" id="dayoff-submit-btn" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold shadow" data-i18n="set">កំណត់</button>
+        <button type="button" onclick="closeModal('dayoff-modal')" class="flex-1 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold">បោះបង់</button>
+        <button type="submit" id="dayoff-submit-btn" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold shadow">កំណត់</button>
       </div>
     </form>
   </div>
 </div>
 
+<!-- Auto Dayoff Modal -->
 <div id="auto-dayoff-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
   <div class="modal-box bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
     <div class="bg-purple-600 p-5 flex justify-between items-center text-white">
@@ -526,57 +529,59 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;transition:background 
     <form id="auto-dayoff-form" class="p-5 space-y-4">
       <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-sm text-amber-800 flex items-start gap-2">
         <i class="fa-solid fa-triangle-exclamation mt-0.5 text-amber-500"></i>
-        <div data-i18n="auto_note"><strong>ចំណាំ:</strong> Sat/Sun នឹង skip ដោយស្វ័យប្រវត្តិ</div>
+        <div><strong>ចំណាំ:</strong> Sat/Sun នឹង skip ដោយស្វ័យប្រវត្តិ</div>
       </div>
       <div>
-        <label class="block text-sm font-bold text-slate-700 mb-1" data-i18n="select_staff">ជ្រើសបុគ្គលិក</label>
+        <label class="block text-sm font-bold text-slate-700 mb-1">ជ្រើសបុគ្គលិក</label>
         <select id="auto-dayoff-staff" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none" required></select>
       </div>
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-bold text-slate-700 mb-1" data-i18n="month">ខែ</label>
+          <label class="block text-sm font-bold text-slate-700 mb-1">ខែ</label>
           <input type="month" id="auto-dayoff-month" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none" required>
         </div>
         <div>
-          <label class="block text-sm font-bold text-slate-700 mb-1" data-i18n="day_count">ចំនួនថ្ងៃ</label>
+          <label class="block text-sm font-bold text-slate-700 mb-1">ចំនួនថ្ងៃ</label>
           <input type="number" id="auto-dayoff-count" placeholder="4" min="1" max="20" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none" required>
         </div>
       </div>
       <div class="flex gap-3 pt-2">
-        <button type="button" onclick="closeModal('auto-dayoff-modal')" class="flex-1 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold" data-i18n="cancel">បោះបង់</button>
+        <button type="button" onclick="closeModal('auto-dayoff-modal')" class="flex-1 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold">បោះបង់</button>
         <button type="submit" id="auto-dayoff-submit-btn" class="flex-1 py-3 bg-purple-600 text-white rounded-xl font-bold shadow">Generate</button>
       </div>
     </form>
   </div>
 </div>
 
+<!-- Edit Log Modal -->
 <div id="edit-log-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
   <div class="modal-box bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
     <div class="bg-slate-800 p-5 flex justify-between items-center text-white">
-      <h3 class="font-bold text-xl" data-i18n="edit_log">កែប្រែ Log</h3>
+      <h3 class="font-bold text-xl">កែប្រែ Log</h3>
       <button onclick="closeModal('edit-log-modal')" class="bg-white/10 hover:bg-white/20 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <form id="edit-log-form" class="p-5 space-y-4">
       <input type="hidden" id="edit-log-id">
       <div>
-        <label class="block text-sm font-bold text-slate-700 mb-1" data-i18n="action">សកម្មភាព</label>
+        <label class="block text-sm font-bold text-slate-700 mb-1">សកម្មភាព</label>
         <select id="edit-log-action" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none">
           <option value="Check-In">Check-In</option>
           <option value="Check-Out">Check-Out</option>
         </select>
       </div>
       <div>
-        <label class="block text-sm font-bold text-slate-700 mb-1" data-i18n="status">ស្ថានភាព</label>
+        <label class="block text-sm font-bold text-slate-700 mb-1">ស្ថានភាព</label>
         <input type="text" id="edit-log-status" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-slate-500">
       </div>
       <div class="flex gap-3 pt-2">
-        <button type="button" onclick="closeModal('edit-log-modal')" class="flex-1 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold" data-i18n="cancel">បោះបង់</button>
-        <button type="submit" class="flex-1 py-3 bg-slate-800 text-white rounded-xl font-bold shadow" data-i18n="edit">កែប្រែ</button>
+        <button type="button" onclick="closeModal('edit-log-modal')" class="flex-1 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold">បោះបង់</button>
+        <button type="submit" class="flex-1 py-3 bg-slate-800 text-white rounded-xl font-bold shadow">កែប្រែ</button>
       </div>
     </form>
   </div>
 </div>
 
+<!-- QR Modal -->
 <div id="qr-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
   <div class="modal-box bg-white rounded-3xl shadow-2xl p-7 max-w-sm w-full text-center relative border border-slate-100">
     <button onclick="closeModal('qr-modal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-800 bg-slate-100 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
@@ -592,10 +597,10 @@ body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;transition:background 
   </div>
 </div>
 
-<!-- FIREBASE + LOGIC -->
+<!-- ══════════════════ FIREBASE + LOGIC ══════════════════ -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getFirestore, collection, addDoc, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDRwckLL4SLuzA4DblhyCRFO_veLYik4c4",
@@ -618,6 +623,7 @@ let globalAlertTemplates = {};
 let chartInstance=null, lastUpdateId=0;
 let mapInstance=null, companyMarker=null, radiusCircle=null;
 
+// Default Alert Templates
 const DEFAULT_TEMPLATES = {
   checkin_ontime: `🟢 <b>{name}</b>\n📋 <b>ស្ថានភាព:</b> Check-In ទាន់ម៉ោង\n⏰ <b>ម៉ោង:</b> {time}`,
   checkin_late: `🔴 <b>{name}</b>\n📋 <b>ស្ថានភាព:</b> Check-In យឺត ({late_mins} នាទី)\n⏰ <b>ម៉ោង:</b> {time}\n⚠️ <b>ម៉ោងចូល:</b> {shift_start}`,
@@ -638,7 +644,7 @@ const TEMPLATE_LABELS = {
   daily_summary: '📊 Daily Summary',
 };
 
-// ── TOAST ─────────────────────────────────────────────
+// ─── TOAST ───────────────────────────────────────────
 window.showToast = (msg, type='info', dur=3500) => {
   const c = document.getElementById('toast-container');
   const icons = {success:'fa-check-circle text-emerald-500',error:'fa-circle-xmark text-rose-500',warning:'fa-triangle-exclamation text-amber-500',info:'fa-circle-info text-brand-500'};
@@ -649,12 +655,13 @@ window.showToast = (msg, type='info', dur=3500) => {
   setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400);},dur);
 };
 
+// ─── TEMPLATE ENGINE ─────────────────────────────────
 function applyTemplate(key, vars={}) {
   const tmpl = globalAlertTemplates[key] || DEFAULT_TEMPLATES[key] || '';
   return tmpl.replace(/\{(\w+)\}/g, (_,k) => vars[k] !== undefined ? vars[k] : `{${k}}`);
 }
 
-// ── ENTRY POINT ───────────────────────────────────────
+// ─── ENTRY POINT ─────────────────────────────────────
 const urlParams = new URLSearchParams(window.location.search);
 const staffIdParam = urlParams.get('staffId');
 const actionParam = urlParams.get('action');
@@ -663,35 +670,25 @@ document.readyState==='loading'
   ? document.addEventListener('DOMContentLoaded', ()=>staffIdParam ? runScanEndpoint(staffIdParam,actionParam) : initAdmin())
   : (staffIdParam ? runScanEndpoint(staffIdParam,actionParam) : initAdmin());
 
-// ── SCAN ENDPOINT ─────────────────────────────────────
-// KEY FIX: Use sessionStorage to prevent duplicate submissions on page refresh
+// ─── SCAN ENDPOINT ────────────────────────────────────
 async function runScanEndpoint(id, actionCode) {
   document.getElementById('loading-screen').classList.add('hidden');
   document.getElementById('scan-view').classList.remove('hidden');
   const box = document.getElementById('scan-status');
 
-  // ✅ DUPLICATE PREVENTION: Check if this exact scan was already processed this session
-  const sessionKey = `scan_${id}_${actionCode}_${new Date().toDateString()}`;
-  if (sessionStorage.getItem(sessionKey)) {
-    // Already processed — show result without re-submitting
-    const prevResult = sessionStorage.getItem(sessionKey + '_result');
-    if (prevResult) {
-      box.innerHTML = prevResult;
-      return;
-    }
-  }
-
-  // Load settings
+  // Load settings first
   try {
     const settingsSnap = await getDoc(doc(db,'settings','main'));
     if(settingsSnap.exists()) Object.assign(globalSettings, settingsSnap.data());
   } catch(e){}
 
+  // Load alert templates
   try {
     const atSnap = await getDoc(doc(db,'settings','alert_templates'));
     if(atSnap.exists()) globalAlertTemplates = atSnap.data();
   } catch(e){}
 
+  // Get GPS location
   if(!navigator.geolocation) {
     box.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-500 text-5xl mb-4"></i><h2 class="text-xl font-bold text-rose-700">GPS មិនដំណើរការ</h2><p class="text-slate-600 mt-2">Browser មិនស្គាល់ Geolocation</p>`;
     return;
@@ -703,11 +700,14 @@ async function runScanEndpoint(id, actionCode) {
     const userLat = pos.coords.latitude;
     const userLng = pos.coords.longitude;
 
+    // Check if company location is set
     if(!globalSettings.companyLat || !globalSettings.companyLng) {
-      await processCheckin(id, actionCode, null, null, true, sessionKey);
+      // No location set — allow check-in but note it
+      await processCheckin(id, actionCode, null, null, true);
       return;
     }
 
+    // Calculate distance
     const dist = getDistanceMeters(userLat, userLng, globalSettings.companyLat, globalSettings.companyLng);
     const radius = globalSettings.radius || 100;
 
@@ -721,13 +721,13 @@ async function runScanEndpoint(id, actionCode) {
       return;
     }
 
-    await processCheckin(id, actionCode, userLat, userLng, false, sessionKey);
+    await processCheckin(id, actionCode, userLat, userLng, false);
   }, (err)=>{
     box.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-500 text-5xl mb-4"></i><h2 class="text-xl font-bold text-rose-700">GPS Error</h2><p class="text-slate-600 mt-2">${err.message}</p>`;
   }, { enableHighAccuracy:true, timeout:15000 });
 }
 
-async function processCheckin(id, actionCode, lat, lng, skipLocation, sessionKey) {
+async function processCheckin(id, actionCode, lat, lng, skipLocation) {
   const box = document.getElementById('scan-status');
   box.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-brand-500 text-5xl mb-4"></i><h2 class="text-xl font-bold text-brand-800">កំពុងកត់ត្រា...</h2>`;
 
@@ -740,75 +740,39 @@ async function processCheckin(id, actionCode, lat, lng, skipLocation, sessionKey
     const timeStr = new Date(now).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
     const dateStr = new Date(now).toLocaleDateString('km-KH');
 
-    // ✅ FIX: Duplicate check — prevent same action twice in 2 minutes (handles refresh)
-    const twoMinutesAgo = now - 2 * 60 * 1000;
-    const todayStart = new Date(); todayStart.setHours(0,0,0,0);
-    const recentLogs = globalLogs; // we don't have these in scan view, query Firebase
-
-    // Query for recent duplicate
-    const logsSnap = await getDocs(collection(db,'logs'));
-    const recentDuplicates = logsSnap.docs.filter(d => {
-      const data = d.data();
-      return data.staffId === id &&
-             data.action === actionText &&
-             data.timestamp > twoMinutesAgo;
-    });
-
-    if (recentDuplicates.length > 0) {
-      // Already checked in/out in last 2 minutes — show success without re-adding
-      const lastLog = recentDuplicates[0].data();
-      const existingTimeStr = new Date(lastLog.timestamp).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-      const resultHTML = `
-        <div class="text-slate-400 text-5xl mb-4"><i class="fa-solid fa-circle-check"></i></div>
-        <h2 class="text-2xl font-black text-slate-600 mb-2">បានកត់ត្រារួចហើយ</h2>
-        <p class="text-slate-500 text-sm mb-3">${actionText} ត្រូវបានកត់ត្រា ${existingTimeStr}</p>
-        <p class="text-xl font-bold text-slate-800">${staff.name}</p>
-        <div class="mt-5 pt-4 border-t border-slate-100 text-xs text-slate-400">Already recorded — no duplicate created</div>`;
-      box.innerHTML = resultHTML;
-      if(sessionKey) {
-        sessionStorage.setItem(sessionKey, '1');
-        sessionStorage.setItem(sessionKey + '_result', resultHTML);
-      }
-      return;
-    }
-
     let statusDetail='On Time', isLate=false, diffMins=0, isEarlyOut=false;
 
     if(actionCode==='in' && staff.shiftStart) {
       const [h,m] = staff.shiftStart.split(':').map(Number);
-      // ✅ FIX: Use same date as current timestamp for proper comparison
-      const shiftTime = new Date(now);
-      shiftTime.setHours(h, m, 0, 0);
-      if(now > shiftTime.getTime() + 600000) {  // 10 min grace period
-        isLate=true;
-        diffMins = Math.floor((now - shiftTime.getTime()) / 60000);
-        statusDetail = diffMins >= 60 ? `Late (${Math.floor(diffMins/60)}h ${diffMins%60}m)` : `Late (${diffMins}m)`;
+      const shiftTime = new Date(); shiftTime.setHours(h,m,0,0);
+      if(now > shiftTime.getTime()+600000) {
+        isLate=true; diffMins=Math.floor((now-shiftTime.getTime())/60000);
+        statusDetail = diffMins>=60 ? `Late (${Math.floor(diffMins/60)}h ${diffMins%60}m)` : `Late (${diffMins}m)`;
       }
     }
 
     if(actionCode==='out' && staff.shiftEnd) {
       const [h,m] = staff.shiftEnd.split(':').map(Number);
-      // ✅ FIX: Use same date as current timestamp
-      const shiftEndTime = new Date(now);
-      shiftEndTime.setHours(h, m, 0, 0);
+      const shiftEndTime = new Date(); shiftEndTime.setHours(h,m,0,0);
       const earlyMins = globalSettings.earlyCheckoutMins || 15;
-      if(now < shiftEndTime.getTime() - earlyMins * 60000) {
+      if(now < shiftEndTime.getTime() - earlyMins*60000) {
         isEarlyOut = true;
-        const mins = Math.floor((shiftEndTime.getTime() - now) / 60000);
+        const mins = Math.floor((shiftEndTime.getTime()-now)/60000);
         statusDetail = `Early Out (${mins}m)`;
       }
     }
 
-    await addDoc(collection(db,'logs'), {
+    await addDoc(collection(db,'logs'),{
       staffId:id, staffName:staff.name, action:actionText, status:statusDetail,
       timestamp:now, lat, lng, isLate, isEarlyOut
     });
 
-    // Telegram
+    // Send Telegram with template
     const vars = { name:staff.name, time:timeStr, date:dateStr, status:statusDetail, late_mins:diffMins, shift_start:staff.shiftStart||'', shift_end:staff.shiftEnd||'' };
+
     if(actionCode==='in') {
       if(isLate) {
-        const tmplKey = diffMins > 20 ? 'checkin_late_severe' : 'checkin_late';
+        const tmplKey = diffMins>20 ? 'checkin_late_severe' : 'checkin_late';
         sendTelegram(applyTemplate(tmplKey, vars));
       } else {
         sendTelegram(applyTemplate('checkin_ontime', vars));
@@ -818,23 +782,16 @@ async function processCheckin(id, actionCode, lat, lng, skipLocation, sessionKey
       else sendTelegram(applyTemplate('checkout', vars));
     }
 
+    // Show result
     const colr = actionCode==='in' ? (isLate?'text-rose-600':'text-emerald-600') : (isEarlyOut?'text-purple-600':'text-amber-600');
     const ico = actionCode==='in' ? 'fa-right-to-bracket' : 'fa-person-walking-arrow-right';
-    const resultHTML = `
+    box.innerHTML = `
       <div class="${colr} text-6xl mb-4"><i class="fa-solid ${isLate||isEarlyOut?'fa-triangle-exclamation animate-bounce':ico}"></i></div>
       <h2 class="text-3xl font-black ${colr} mb-2">${actionText} ✓</h2>
       ${(isLate||isEarlyOut)?`<p class="bg-rose-100 text-rose-800 font-bold px-4 py-1.5 rounded-full inline-block mb-3 text-sm">${statusDetail}</p>`:''}
       <p class="text-xl font-bold text-slate-800">${staff.name}</p>
       ${skipLocation?'<p class="text-xs text-amber-600 mt-2 bg-amber-50 px-3 py-1 rounded-full"><i class="fa-solid fa-triangle-exclamation mr-1"></i>ទីតាំងក្រុមហ៊ុននៅមិនទាន់កំណត់</p>':''}
-      <div class="mt-5 pt-4 border-t border-slate-100 text-sm text-slate-500">${new Date(now).toLocaleString()}</div>
-      <p class="mt-3 text-xs text-slate-400 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200"><i class="fa-solid fa-shield-check mr-1 text-emerald-500"></i>Refresh-safe — no duplicate will be created</p>`;
-    box.innerHTML = resultHTML;
-
-    // Save to sessionStorage so refresh shows result without re-submitting
-    if(sessionKey) {
-      sessionStorage.setItem(sessionKey, '1');
-      sessionStorage.setItem(sessionKey + '_result', resultHTML);
-    }
+      <div class="mt-5 pt-4 border-t border-slate-100 text-sm text-slate-500">${new Date(now).toLocaleString()}</div>`;
   } catch(e) {
     box.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-500 text-5xl mb-4"></i><h2 class="text-xl font-bold text-rose-700">Error</h2><p class="text-slate-700 mt-2">${e.message}</p>`;
   }
@@ -850,7 +807,7 @@ function sendTelegram(text) {
   fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TELEGRAM_CHAT_ID,text,parse_mode:'HTML'})}).catch(()=>{});
 }
 
-// ── ADMIN INIT ────────────────────────────────────────
+// ─── ADMIN INIT ───────────────────────────────────────
 function initAdmin() {
   document.getElementById('loading-screen').classList.add('hidden');
   document.getElementById('admin-view').classList.remove('hidden');
@@ -863,6 +820,7 @@ function initAdmin() {
   document.getElementById('bot-form').addEventListener('submit',handleBotCommandSubmit);
   document.getElementById('manual-checkin-form').addEventListener('submit',handleManualCheckin);
 
+  // Load settings once
   getDoc(doc(db,'settings','main')).then(snap=>{
     if(snap.exists()) { Object.assign(globalSettings, snap.data()); applySettingsToUI(); }
   });
@@ -871,6 +829,7 @@ function initAdmin() {
     renderAlertTemplates();
   }).catch(()=>renderAlertTemplates());
 
+  // Listeners
   onSnapshot(collection(db,'staff'),snap=>{
     globalStaff=snap.docs.map(d=>({id:d.id,...d.data()}));
     globalStaff.sort((a,b)=>a.name.localeCompare(b.name));
@@ -900,8 +859,8 @@ function initAdmin() {
 
 function startClock() {
   const el=document.getElementById('live-clock');
-  const tick=()=>{ el.innerText=new Date().toLocaleString('en-US',{weekday:'short',year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'}); };
-  tick(); setInterval(tick,1000);
+  setInterval(()=>{ el.innerText=new Date().toLocaleString('en-US',{weekday:'short',year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'}); },1000);
+  el.innerText=new Date().toLocaleString('en-US',{weekday:'short',year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
 }
 
 function applySettingsToUI() {
@@ -912,18 +871,20 @@ function applySettingsToUI() {
   if(document.getElementById('early-checkout-mins'))
     document.getElementById('early-checkout-mins').value = globalSettings.earlyCheckoutMins||15;
   if(document.getElementById('company-lat-display'))
-    document.getElementById('company-lat-display').innerText = globalSettings.companyLat ? globalSettings.companyLat.toFixed(6) : (window.currentLang==='en'?'Not set yet':'មិនទាន់កំណត់');
+    document.getElementById('company-lat-display').innerText = globalSettings.companyLat ? globalSettings.companyLat.toFixed(6) : 'មិនទាន់កំណត់';
   if(document.getElementById('company-lng-display'))
-    document.getElementById('company-lng-display').innerText = globalSettings.companyLng ? globalSettings.companyLng.toFixed(6) : (window.currentLang==='en'?'Not set yet':'មិនទាន់កំណត់');
+    document.getElementById('company-lng-display').innerText = globalSettings.companyLng ? globalSettings.companyLng.toFixed(6) : 'មិនទាន់កំណត់';
 }
 
-// ── MAP ──────────────────────────────────────────────
+// ─── MAP ─────────────────────────────────────────────
 function initMap() {
   const defaultLat = globalSettings.companyLat || 11.5564;
   const defaultLng = globalSettings.companyLng || 104.9282;
   mapInstance = L.map('map').setView([defaultLat,defaultLng],16);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(mapInstance);
+
   if(globalSettings.companyLat) setMapMarker(globalSettings.companyLat, globalSettings.companyLng);
+
   mapInstance.on('click', e=>{
     setMapMarker(e.latlng.lat, e.latlng.lng);
     globalSettings.companyLat = e.latlng.lat;
@@ -985,7 +946,7 @@ window.saveEarlyCheckoutSetting = async function() {
   } catch(e) { showToast('Error: '+e.message,'error'); }
 };
 
-// ── ALERT TEMPLATES ───────────────────────────────────
+// ─── ALERT TEMPLATES ──────────────────────────────────
 function renderAlertTemplates() {
   const c = document.getElementById('alert-templates-container');
   if(!c) return;
@@ -1017,7 +978,7 @@ window.saveAlertTemplates = async function() {
   } catch(e) { showToast('Error: '+e.message,'error'); }
 };
 
-// ── TELEGRAM POLLING ──────────────────────────────────
+// ─── TELEGRAM POLLING ─────────────────────────────────
 async function pollTelegram() {
   try {
     if(globalCommands.length>0) {
@@ -1038,7 +999,7 @@ async function pollTelegram() {
   setTimeout(pollTelegram,3000);
 }
 
-// ── REFRESH ───────────────────────────────────────────
+// ─── REFRESH ─────────────────────────────────────────
 window.refreshAll = function() {
   renderDashboard(); renderPerformance(); window.renderLogs();
   window.renderStaff(); window.renderPayrollAndChart(); window.renderDayoffs();
@@ -1069,7 +1030,7 @@ function populateDropdowns() {
   ['dayoff-staff-input','auto-dayoff-staff','manual-checkin-staff'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts;});
 }
 
-// ── DASHBOARD ─────────────────────────────────────────
+// ─── DASHBOARD ────────────────────────────────────────
 function renderDashboard() {
   const todayStart=new Date(); todayStart.setHours(0,0,0,0);
   const todayLogs=globalLogs.filter(l=>l.timestamp>=todayStart.getTime());
@@ -1084,6 +1045,7 @@ function renderDashboard() {
   document.getElementById('stat-late').innerText=lateCount;
   document.getElementById('stat-early-out').innerText=earlyOutCount;
 
+  // Best Staff of Month
   const now=new Date(), startOfMonth=new Date(now.getFullYear(),now.getMonth(),1).getTime();
   let bestStaff=null, minLate=Infinity;
   globalStaff.forEach(s=>{
@@ -1093,11 +1055,12 @@ function renderDashboard() {
   });
   const bestEl=document.getElementById('best-staff-display');
   if(bestStaff) {
-    bestEl.innerHTML=`<div class="flex items-center gap-4"><div class="w-16 h-16 rounded-full bg-yellow-100 border-4 border-yellow-300 flex items-center justify-center text-2xl">🏆</div><div><div class="text-2xl font-black text-slate-800">${bestStaff.name}</div><div class="text-sm text-slate-600 mt-1">${bestStaff.role||'Staff'} • <span class="text-emerald-600 font-bold">Late: ${minLate} ដង</span></div></div></div>`;
+    bestEl.innerHTML=`<div class="flex items-center gap-4"><div class="w-16 h-16 rounded-full bg-yellow-100 border-4 border-yellow-300 flex items-center justify-center text-2xl">🏆</div><div><div class="text-2xl font-black text-slate-800">${bestStaff.name}</div><div class="text-sm text-slate-600 mt-1">${bestStaff.role||'Staff'} • <span class="text-emerald-600 font-bold">ចំនួន Late: ${minLate} ដង</span></div></div></div>`;
   } else {
     bestEl.innerHTML=`<div class="text-slate-400 text-sm">ទិន្នន័យមិនគ្រប់គ្រាន់</div>`;
   }
 
+  // Feed
   const feed=document.getElementById('dashboard-feed');
   if(!globalLogs.length) { feed.innerHTML=`<div class="text-sm text-slate-500 text-center py-6">មិនមានសកម្មភាពទេ</div>`; return; }
   feed.innerHTML=globalLogs.slice(0,8).map(log=>{
@@ -1121,7 +1084,7 @@ function renderDashboard() {
   }).join('<hr class="border-slate-100 border-dashed my-1">');
 }
 
-// ── PERFORMANCE ───────────────────────────────────────
+// ─── PERFORMANCE ──────────────────────────────────────
 function renderPerformance() {
   const tbody=document.getElementById('performance-table-body');
   if(!globalStaff.length) { tbody.innerHTML=`<tr><td colspan="5" class="p-6 text-center text-slate-500">គ្មានបុគ្គលិក</td></tr>`; return; }
@@ -1154,6 +1117,7 @@ function renderPerformance() {
   }).join('');
 }
 
+// ─── BEST STAFF BROADCAST ─────────────────────────────
 window.broadcastBestStaff = async function() {
   const now=new Date(), startOfMonth=new Date(now.getFullYear(),now.getMonth(),1).getTime();
   let bestStaff=null, minLate=Infinity;
@@ -1168,7 +1132,7 @@ window.broadcastBestStaff = async function() {
   try { const r=await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TELEGRAM_CHAT_ID,text,parse_mode:'HTML'})}); if(!r.ok)throw new Error(); showToast('ផ្ញើ Best Staff ទៅ Telegram!','success'); } catch(e){showToast('Error','error');}
 };
 
-// ── LOGS ──────────────────────────────────────────────
+// ─── LOGS ────────────────────────────────────────────
 window.renderLogs = function() {
   const container=document.getElementById('logs-container');
   const sort=document.getElementById('logs-sort-filter')?.value||'time-desc';
@@ -1203,7 +1167,7 @@ window.renderLogs = function() {
   window.updateDeleteButtonState();
 };
 
-// ── STAFF ─────────────────────────────────────────────
+// ─── STAFF ───────────────────────────────────────────
 window.renderStaff = function() {
   const c=document.getElementById('staff-container');
   const search=(document.getElementById('staff-search')?.value||'').toLowerCase();
@@ -1232,7 +1196,7 @@ window.renderStaff = function() {
     </div>`).join('');
 };
 
-// ── PAYROLL ───────────────────────────────────────────
+// ─── PAYROLL ──────────────────────────────────────────
 window.renderPayrollAndChart = function() {
   const d=new Date(); document.getElementById('payroll-month-label').innerText=d.toLocaleString('km-KH',{month:'long',year:'numeric'});
   const cm=d.getMonth(), cy=d.getFullYear();
@@ -1260,7 +1224,7 @@ window.renderPayrollAndChart = function() {
   chartInstance=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Earnings ($)',data:earnings,backgroundColor:'#3b82f6',borderRadius:6,yAxisID:'y'},{label:'Paid Days',data:days,backgroundColor:'#10b981',borderRadius:6,yAxisID:'y1'}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},scales:{y:{type:'linear',position:'left',title:{display:true,text:'Earnings ($)'}},y1:{type:'linear',position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'Days'}}}}});
 };
 
-// ── DAYOFFS ───────────────────────────────────────────
+// ─── DAYOFFS ─────────────────────────────────────────
 window.clearDayoffFilter=function(){const el=document.getElementById('dayoff-month-filter');if(el)el.value='';window.renderDayoffs();};
 
 window.renderDayoffs=function(){
@@ -1318,7 +1282,7 @@ function renderBotCommands(){
   </div>`).join('');
 }
 
-// ── CRUD ──────────────────────────────────────────────
+// ─── CRUD ────────────────────────────────────────────
 async function handleStaffSubmit(e) {
   e.preventDefault();
   const id=document.getElementById('staff-id-input').value.trim();
@@ -1352,21 +1316,10 @@ async function handleManualCheckin(e) {
   const actionText=action==='in'?'Check-In':'Check-Out';
   const ts=new Date(dtVal).getTime();
   let status=note||'Manual Entry', isLate=false, isEarlyOut=false;
-  if(action==='in'&&staff?.shiftStart){
-    const[h,m]=staff.shiftStart.split(':').map(Number);
-    const st=new Date(ts); st.setHours(h,m,0,0);
-    if(ts>st.getTime()+600000){isLate=true;const d=Math.floor((ts-st.getTime())/60000);status=`Late (${d}m)${note?' – '+note:''}`;}
-  }
-  if(action==='out'&&staff?.shiftEnd){
-    const[h,m]=staff.shiftEnd.split(':').map(Number);
-    const et=new Date(ts); et.setHours(h,m,0,0);
-    const em=globalSettings.earlyCheckoutMins||15;
-    if(ts<et.getTime()-em*60000){isEarlyOut=true;const d=Math.floor((et.getTime()-ts)/60000);status=`Early Out (${d}m)${note?' – '+note:''}`;}
-  }
-  try{
-    await addDoc(collection(db,'logs'),{staffId,staffName:staff.name,action:actionText,status,timestamp:ts,isLate,isEarlyOut});
-    showToast(`${actionText} — ${staff.name}!`,'success');closeModal('manual-checkin-modal');
-  } catch(e){showToast('Error: '+e.message,'error');}
+  if(action==='in'&&staff?.shiftStart){const[h,m]=staff.shiftStart.split(':').map(Number);const st=new Date(ts);st.setHours(h,m,0,0);if(ts>st.getTime()+600000){isLate=true;const d=Math.floor((ts-st.getTime())/60000);status=`Late (${d}m)${note?' – '+note:''}`;}}
+  if(action==='out'&&staff?.shiftEnd){const[h,m]=staff.shiftEnd.split(':').map(Number);const et=new Date(ts);et.setHours(h,m,0,0);const em=globalSettings.earlyCheckoutMins||15;if(ts<et.getTime()-em*60000){isEarlyOut=true;const d=Math.floor((et.getTime()-ts)/60000);status=`Early Out (${d}m)${note?' – '+note:''}`;}}
+  try{await addDoc(collection(db,'logs'),{staffId,staffName:staff.name,action:actionText,status,timestamp:ts,isLate,isEarlyOut});showToast(`${actionText} — ${staff.name}!`,'success');closeModal('manual-checkin-modal');}
+  catch(e){showToast('Error: '+e.message,'error');}
 }
 
 window.sendSingleDayoffToTelegram=async(name,date,reason='',showAlert=false)=>{
@@ -1417,6 +1370,7 @@ async function handleBotCommandSubmit(e){
   catch(e){showToast('Error: '+e.message,'error');}
 }
 
+// DELETE
 window.deleteDataDB=async(col,id)=>{if(confirm('លុបកំណត់ត្រានេះ?')){try{await deleteDoc(doc(db,col,id));showToast('បានលុប!','success');}catch(e){showToast('Error','error');}}};
 window.toggleSelectAllLogs=cb=>{document.querySelectorAll('.log-checkbox').forEach(x=>x.checked=cb.checked);window.updateDeleteButtonState();};
 window.updateDeleteButtonState=()=>{const ch=document.querySelectorAll('.log-checkbox:checked'),all=document.querySelectorAll('.log-checkbox'),btn=document.getElementById('btn-delete-selected'),sa=document.getElementById('selectAllLogs');if(btn)btn.disabled=ch.length===0;if(sa&&all.length>0)sa.checked=ch.length===all.length;};
@@ -1428,7 +1382,7 @@ window.deleteSelectedDayoffs=async()=>{const ids=Array.from(document.querySelect
 window.editStaffUI=id=>{const s=globalStaff.find(x=>x.id===id);if(!s)return;document.getElementById('staff-id-input').value=s.id;document.getElementById('staff-name-input').value=s.name;document.getElementById('staff-start-input').value=s.shiftStart||'06:00';document.getElementById('staff-end-input').value=s.shiftEnd||'15:00';document.getElementById('staff-salary-input').value=s.salary||'';document.getElementById('staff-role-input').value=s.role||'';document.getElementById('staff-modal-title').innerText='កែប្រែបុគ្គលិក';document.getElementById('staff-modal').classList.remove('hidden');};
 window.openEditLogModal=id=>{const log=globalLogs.find(l=>l.id===id);if(!log)return;document.getElementById('edit-log-id').value=log.id;document.getElementById('edit-log-action').value=log.action;document.getElementById('edit-log-status').value=log.status||'On Time';document.getElementById('edit-log-modal').classList.remove('hidden');};
 
-// ── BROADCASTS ────────────────────────────────────────
+// TELEGRAM BROADCASTS
 window.broadcastRosterToTelegram=async()=>{
   const fEl=document.getElementById('dayoff-month-filter');let d=new Date();
   if(fEl?.value){const[yr,mo]=fEl.value.split('-');d=new Date(yr,parseInt(mo)-1,1);}
@@ -1475,210 +1429,14 @@ window.toggleDayoffView=()=>{
   else{list.classList.add('hidden');bar.classList.add('hidden');cal.classList.remove('hidden');txt.innerText='List';ico.className='fa-solid fa-list mr-1';}
 };
 
+// CSV EXPORTS
 window.exportLogsCSV=function(){const rows=[['ឈ្មោះ','សកម្មភាព','ស្ថានភាព','ថ្ងៃ','ម៉ោង']];globalLogs.forEach(l=>{const dt=new Date(l.timestamp);rows.push([l.staffName,l.action,l.status||'',dt.toLocaleDateString(),dt.toLocaleTimeString()]);});downloadCSV(rows,`attendance_${new Date().toISOString().slice(0,10)}.csv`);showToast('Export CSV!','success');};
 window.exportPayrollCSV=function(){const d=new Date(),cm=d.getMonth(),cy=d.getFullYear();const mL=globalLogs.filter(l=>{const ld=new Date(l.timestamp);return ld.getMonth()===cm&&ld.getFullYear()===cy;});const mD=globalDayOffs.filter(x=>{const dd=new Date(x.date);return dd.getMonth()===cm&&dd.getFullYear()===cy;});const rows=[['ឈ្មោះ','ប្រាក់ខែ','ថ្ងៃចូល','Day-Off','ប្រាក់ទទួល']];globalStaff.forEach(s=>{const sl=mL.filter(l=>l.staffId===s.id&&l.action==='Check-In');const sd=mD.filter(x=>x.staffId===s.id).length;const p=new Set(sl.map(l=>new Date(l.timestamp).toDateString())).size;const b=parseFloat(s.salary)||0;const est=((b/30)*(p+sd)).toFixed(2);rows.push([s.name,b,p,sd,est]);});downloadCSV(rows,`payroll_${d.getFullYear()}_${d.getMonth()+1}.csv`);showToast('Export Payroll CSV!','success');};
 function downloadCSV(rows,fn){const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=fn;a.click();URL.revokeObjectURL(url);}
 </script>
 
-<!-- UI + LANGUAGE SCRIPTS -->
+<!-- UI SCRIPTS -->
 <script>
-// ── LANGUAGE SYSTEM ──────────────────────────────────
-window.currentLang = localStorage.getItem('lang') || 'km';
-
-const TRANSLATIONS = {
-  km: {
-    loading: 'កំពុងផ្ទុក...',
-    tab_dashboard: 'Dashboard',
-    tab_logs: 'វត្តមាន',
-    tab_staff: 'បុគ្គលិក',
-    tab_payroll: 'ប្រាក់ខែ',
-    tab_location: 'ទីតាំង',
-    tab_alerts: 'Alert',
-    overview: 'ទិដ្ឋភាពរួម',
-    manual_checkin: 'Manual Check-In/Out',
-    send_summary: 'ផ្ញើសង្ខេប',
-    stat_total: 'បុគ្គលិកសរុប',
-    stat_present: 'មកធ្វើការថ្ងៃនេះ',
-    stat_absent: 'អវត្តមាន',
-    stat_late: 'មកយឺត',
-    stat_early: 'ចេញមុន',
-    best_staff: 'បុគ្គលិកល្អបំផុតប្រចាំខែ',
-    calculating: 'កំពុងគណនា...',
-    performance: 'ការវាយតម្លៃបុគ្គលិក',
-    live_feed: 'សកម្មភាពបច្ចុប្បន្ន',
-    view_all: 'មើលទាំងអស់',
-    attendance_log: 'កំណត់ត្រាវត្តមាន',
-    newest: 'ថ្មីជាងគេ',
-    oldest: 'ចាស់ជាងគេ',
-    delete: 'លុប',
-    manage_staff: 'គ្រប់គ្រងបុគ្គលិក',
-    add: 'បន្ថែម',
-    salary_chart: 'ក្រាហ្វប្រាក់ខែ',
-    monthly_salary: 'ប្រាក់ខែប្រចាំខែ',
-    calc_note: 'គណនាពី Check-in និង Day-off',
-    name: 'ឈ្មោះ',
-    salary: 'ប្រាក់ខែ',
-    work_days: 'ថ្ងៃមកធ្វើ',
-    earned: 'ប្រាក់ដែលត្រូវទទួល',
-    day_off: 'ថ្ងៃឈប់សម្រាក',
-    all: 'ទាំងអស់',
-    sat_sun_note: 'ថ្ងៃ Sat/Sun មិនអាចជ្រើស',
-    delete_selected: 'លុបដែលជ្រើស',
-    company_location: 'ការកំណត់ទីតាំងក្រុមហ៊ុន',
-    click_map: 'ចុចលើ Map ដើម្បីកំណត់ទីតាំង • Check-In ត្រូវការ GPS',
-    use_my_location: 'ប្រើទីតាំងខ្ញុំ',
-    not_set: 'មិនទាន់កំណត់',
-    save_location: 'រក្សាទុកទីតាំង',
-    alert_settings: 'កំណត់ Alert Telegram',
-    alert_desc: 'កំណត់ Message Template សម្រាប់ Event នីមួយៗ',
-    save_all: 'រក្សាទុក Templates ទាំងអស់',
-    early_checkout_setting: 'ការកំណត់ Early Check-Out',
-    early_checkout_label: 'ចេញមុនម៉ោង Shift End ប៉ុន្មាននាទីគឺចាត់ទុកថា "ចេញមុន"?',
-    minutes: 'នាទី',
-    save: 'រក្សាទុក',
-    bot_note_title: 'ចំណាំ Auto-Reply',
-    bot_note: 'Bot ឆ្លើយតបតែពេល Page នេះបើក',
-    add_command: 'បន្ថែម Command',
-    auto_reply: 'Auto-Reply Text',
-    active_replies: 'Auto-Replies សកម្ម',
-    add_staff: 'បន្ថែមបុគ្គលិក',
-    full_name: 'ឈ្មោះពេញ',
-    shift_start: 'ម៉ោងចូល',
-    shift_end: 'ម៉ោងចេញ',
-    salary_month: 'ប្រាក់ខែ ($/ខែ)',
-    role: 'តួនាទី',
-    cancel: 'បោះបង់',
-    select_staff: 'ជ្រើសបុគ្គលិក',
-    action: 'សកម្មភាព',
-    date_time: 'ថ្ងៃ & ម៉ោង',
-    note: 'កំណត់ចំណាំ',
-    record: 'កត់ត្រា',
-    set_dayoff: 'កំណត់ Day-Off',
-    date: 'ថ្ងៃ',
-    reason_optional: 'មូលហេតុ (ស្រេចចិត្ត)',
-    set: 'កំណត់',
-    auto_note: 'Sat/Sun នឹង skip ដោយស្វ័យប្រវត្តិ',
-    month: 'ខែ',
-    day_count: 'ចំនួនថ្ងៃ',
-    edit_log: 'កែប្រែ Log',
-    status: 'ស្ថានភាព',
-    edit: 'កែប្រែ',
-    th_staff: 'បុគ្គលិក',
-    th_week: 'សប្តាហ៍នេះ',
-    th_month: 'ខែនេះ',
-    th_early_out: 'ចេញមុន',
-    th_eval: 'វាយតម្លៃ',
-  },
-  en: {
-    loading: 'Loading...',
-    tab_dashboard: 'Dashboard',
-    tab_logs: 'Attendance',
-    tab_staff: 'Staff',
-    tab_payroll: 'Payroll',
-    tab_location: 'Location',
-    tab_alerts: 'Alert',
-    overview: 'Overview',
-    manual_checkin: 'Manual Check-In/Out',
-    send_summary: 'Send Summary',
-    stat_total: 'Total Staff',
-    stat_present: 'Present Today',
-    stat_absent: 'Absent',
-    stat_late: 'Late',
-    stat_early: 'Early Out',
-    best_staff: 'Best Staff of the Month',
-    calculating: 'Calculating...',
-    performance: 'Staff Performance',
-    live_feed: 'Live Activity',
-    view_all: 'View All',
-    attendance_log: 'Attendance Log',
-    newest: 'Newest',
-    oldest: 'Oldest',
-    delete: 'Delete',
-    manage_staff: 'Manage Staff',
-    add: 'Add',
-    salary_chart: 'Salary Chart',
-    monthly_salary: 'Monthly Salary',
-    calc_note: 'Calculated from Check-in & Day-off',
-    name: 'Name',
-    salary: 'Salary',
-    work_days: 'Work Days',
-    earned: 'Amount Due',
-    day_off: 'Day Off',
-    all: 'All',
-    sat_sun_note: 'Sat/Sun cannot be selected',
-    delete_selected: 'Delete Selected',
-    company_location: 'Company Location Settings',
-    click_map: 'Click on Map to set location • Check-In requires GPS',
-    use_my_location: 'Use My Location',
-    not_set: 'Not set yet',
-    save_location: 'Save Location',
-    alert_settings: 'Telegram Alert Settings',
-    alert_desc: 'Set message templates for each event',
-    save_all: 'Save All Templates',
-    early_checkout_setting: 'Early Check-Out Settings',
-    early_checkout_label: 'How many minutes before shift end is considered "Early Out"?',
-    minutes: 'minutes',
-    save: 'Save',
-    bot_note_title: 'Note: Auto-Reply',
-    bot_note: 'Bot only replies when this page is open',
-    add_command: 'Add Command',
-    auto_reply: 'Auto-Reply Text',
-    active_replies: 'Active Auto-Replies',
-    add_staff: 'Add Staff',
-    full_name: 'Full Name',
-    shift_start: 'Shift Start',
-    shift_end: 'Shift End',
-    salary_month: 'Salary ($/month)',
-    role: 'Role',
-    cancel: 'Cancel',
-    select_staff: 'Select Staff',
-    action: 'Action',
-    date_time: 'Date & Time',
-    note: 'Note',
-    record: 'Record',
-    set_dayoff: 'Set Day-Off',
-    date: 'Date',
-    reason_optional: 'Reason (optional)',
-    set: 'Set',
-    auto_note: 'Sat/Sun will be skipped automatically',
-    month: 'Month',
-    day_count: 'Number of Days',
-    edit_log: 'Edit Log',
-    status: 'Status',
-    edit: 'Edit',
-    th_staff: 'Staff',
-    th_week: 'This Week',
-    th_month: 'This Month',
-    th_early_out: 'Early Out',
-    th_eval: 'Evaluation',
-  }
-};
-
-window.setLang = function(lang) {
-  window.currentLang = lang;
-  localStorage.setItem('lang', lang);
-  document.getElementById('lang-km').classList.toggle('active', lang === 'km');
-  document.getElementById('lang-en').classList.toggle('active', lang === 'en');
-  document.getElementById('lang-km').classList.toggle('text-white/80', lang !== 'km');
-  document.getElementById('lang-en').classList.toggle('text-white/80', lang !== 'en');
-
-  // Update all i18n elements
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    const val = TRANSLATIONS[lang]?.[key];
-    if (val) el.textContent = val;
-  });
-
-  // Refresh rendered content
-  if(window.refreshAll) window.refreshAll();
-};
-
-// Apply language on load
-document.addEventListener('DOMContentLoaded', () => {
-  window.setLang(window.currentLang);
-});
-
-// ── TAB SYSTEM ────────────────────────────────────────
 const tabs=['dashboard','logs','staff','payroll','location','alerts','bot'];
 function switchTab(id){
   tabs.forEach(t=>{document.getElementById(`section-${t}`).classList.add('hidden');document.getElementById(`tab-${t}`).classList.replace('tab-active','tab-inactive');});
@@ -1693,8 +1451,7 @@ function openStaffModal(){
   document.getElementById('staff-id-input').value='';
   document.getElementById('staff-start-input').value='06:00';
   document.getElementById('staff-end-input').value='15:00';
-  const t = TRANSLATIONS[window.currentLang];
-  document.getElementById('staff-modal-title').innerText = t?.add_staff || 'Add Staff';
+  document.getElementById('staff-modal-title').innerText='បន្ថែមបុគ្គលិក';
   document.getElementById('staff-modal').classList.remove('hidden');
 }
 function openDayoffModal(){document.getElementById('dayoff-form').reset();document.getElementById('dayoff-modal').classList.remove('hidden');}
@@ -1702,6 +1459,7 @@ function openAutoDayoffModal(){document.getElementById('auto-dayoff-form').reset
 function openManualCheckinModal(){document.getElementById('manual-checkin-form').reset();const now=new Date();const local=new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().slice(0,16);document.getElementById('manual-checkin-datetime').value=local;document.getElementById('manual-checkin-modal').classList.remove('hidden');}
 function closeModal(id){document.getElementById(id).classList.add('hidden');}
 
+// Close on backdrop click
 document.addEventListener('DOMContentLoaded',()=>{
   document.querySelectorAll('.fixed.inset-0[id]').forEach(modal=>{
     modal.addEventListener('click',function(e){if(e.target===this)closeModal(this.id);});
@@ -1711,7 +1469,6 @@ document.addEventListener('DOMContentLoaded',()=>{
 window.openQrModal=function(staffId,staffName,action){
   const base=window.location.href.split('?')[0], url=`${base}?staffId=${staffId}&action=${action}`;
   document.getElementById('qr-title').innerText=staffName;
-  const t = TRANSLATIONS[window.currentLang];
   document.getElementById('qr-subtitle').innerHTML=`Scan to <span class="font-bold uppercase ${action==='in'?'text-emerald-600':'text-amber-600'}">${action==='in'?'Check-In':'Check-Out'}</span>`;
   document.getElementById('qr-image').src=`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;
   document.getElementById('qr-url').innerText=url;
