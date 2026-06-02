@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ប្រព័ន្ធគ្រប់គ្រង - Admin Dashboard</title>
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QR Code Generator Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen">
+
+    <div class="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
+        <!-- Header -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-200 pb-5 mb-8">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">ផ្ទាំងគ្រប់គ្រងប្រព័ន្ធ</h1>
+                <p class="text-sm text-gray-500">បង្កើតគណនីបុគ្គលិក និងបង្ហាញ QR Code សម្រាប់ស្កែនចូលការងារ</p>
+            </div>
+            <div class="mt-4 sm:mt-0 flex items-center gap-2 text-sm font-medium text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full">
+                <i class="fa-solid fa-circle-check"></i> ប្រព័ន្ធដំណើរការធម្មតា
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Panel: Create Account & Telegram Settings -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Create Account Form -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+                            <i class="fa-solid fa-user-plus text-lg"></i>
+                        </div>
+                        <h2 class="text-lg font-semibold text-gray-900">បង្កើតគណនីបុគ្គលិក</h2>
+                    </div>
+
+                    <form id="createStaffForm" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">ឈ្មោះបុគ្គលិក</label>
+                            <input type="text" id="staffName" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">អ៊ីមែល (សម្រាប់ Login)</label>
+                            <input type="email" id="staffEmail" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">លេខកូដសម្ងាត់</label>
+                            <input type="password" id="staffPassword" required minlength="6" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2.5 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-save"></i> រក្សាទុកទិន្នន័យ
+                        </button>
+                    </form>
+                    <div id="statusMessage" class="mt-4 text-sm hidden p-3 rounded-lg"></div>
+                </div>
+
+                <!-- Telegram Alert Settings -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-2 bg-sky-50 text-sky-600 rounded-lg">
+                            <i class="fa-brands fa-telegram text-lg"></i>
+                        </div>
+                        <h2 class="text-lg font-semibold text-gray-900">Telegram Alert Setup</h2>
+                    </div>
+                    <form id="telegramForm" class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 mb-1">BOT TOKEN</label>
+                            <input type="text" id="botToken" placeholder="ឧទាហរណ៍: 123456:ABC-DEF..." required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 mb-1">CHAT ID (Group / User)</label>
+                            <input type="text" id="chatId" placeholder="ឧទាហរណ៍: -100123456789" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm">
+                        </div>
+                        <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> រក្សាទុកការកំណត់
+                        </button>
+                    </form>
+                    <div id="tgStatus" class="mt-3 text-xs hidden p-2 rounded-lg"></div>
+                </div>
+            </div>
+
+            <!-- Right Panel: QR Code Display -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
+                <div class="mb-4">
+                    <div class="p-3 bg-amber-50 text-amber-600 rounded-full inline-block mb-2">
+                        <i class="fa-solid fa-qrcode text-2xl"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-900">QR Code រួមសម្រាប់ Check-In</h2>
+                    <p class="text-sm text-gray-500 max-w-sm mt-1">ដាក់បង្ហាញ QR Code នេះនៅមាត់ទ្វារ ឬកន្លែងធ្វើការ ដើម្បីឲ្យបុគ្គលិកបើកទូរស័ព្ទស្កែន</p>
+                </div>
+
+                <!-- QR Code Target Box -->
+                <div class="p-4 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 mb-4">
+                    <div id="qrcode" class="bg-white p-2 rounded shadow-sm"></div>
+                </div>
+
+                <div class="text-xs text-gray-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-lock"></i> តំណភ្ជាប់មានសុវត្ថិភាពខ្ពស់
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (Modular v10) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // បញ្ចូល Firebase Config របស់អ្នក
+        const firebaseConfig = {
+            apiKey: "AIzaSyCVzRdVej7MORKTa-NcQMHJEzQ1nYikZX0",
+            authDomain: "chafe-app.firebaseapp.com",
+            projectId: "chafe-app",
+            storageBucket: "chafe-app.firebasestorage.app",
+            messagingSenderId: "43410802507",
+            appId: "1:43410802507:web:c48c2d946b89008c34cace",
+            measurementId: "G-J1M1DS7502"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // បង្កើត QR Code ទៅកាន់ទំព័រ staff.html
+        const staffPageUrl = window.location.href.replace('admin.html', 'staff.html?action=scan');
+        new QRCode(document.getElementById("qrcode"), {
+            text: staffPageUrl,
+            width: 240,
+            height: 240,
+            colorDark : "#1e1b4b",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+
+        // ទាញយកព័ត៌មាន Telegram ចាស់មកបង្ហាញបើមាន
+        async function loadTelegramSettings() {
+            try {
+                const docRef = doc(db, "settings", "telegram");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('botToken').value = data.botToken || '';
+                    document.getElementById('chatId').value = data.chatId || '';
+                }
+            } catch (err) {
+                console.error("Error loading Telegram settings:", err);
+            }
+        }
+        loadTelegramSettings();
+
+        // ដំណើរការរក្សាទុក Telegram Settings
+        const tgForm = document.getElementById('telegramForm');
+        const tgStatus = document.getElementById('tgStatus');
+        tgForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const botToken = document.getElementById('botToken').value;
+            const chatId = document.getElementById('chatId').value;
+            tgStatus.className = "mt-3 text-xs p-2 rounded-lg bg-blue-50 text-blue-700 block";
+            tgStatus.innerHTML = "កំពុងរក្សាទុក...";
+
+            try {
+                await setDoc(doc(db, "settings", "telegram"), {
+                    botToken: botToken,
+                    chatId: chatId,
+                    updatedAt: new Date().toISOString()
+                });
+                tgStatus.className = "mt-3 text-xs p-2 rounded-lg bg-emerald-50 text-emerald-700 block";
+                tgStatus.innerHTML = "រក្សាទុកដោយជោគជ័យ!";
+            } catch (error) {
+                tgStatus.className = "mt-3 text-xs p-2 rounded-lg bg-rose-50 text-rose-700 block";
+                tgStatus.innerHTML = "បរាជ័យ: " + error.message;
+            }
+        });
+
+        // ដំណើរការបង្កើតគណនីបុគ្គលិក
+        const form = document.getElementById('createStaffForm');
+        const statusMsg = document.getElementById('statusMessage');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('staffName').value;
+            const email = document.getElementById('staffEmail').value;
+            const password = document.getElementById('staffPassword').value;
+
+            statusMsg.className = "mt-4 text-sm p-3 rounded-lg bg-blue-50 text-blue-700 block";
+            statusMsg.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> កំពុងបង្កើតគណនី...`;
+
+            try {
+                // ១. បង្កើត User ក្នុង Firebase Auth
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // ២. រក្សាទុកឈ្មោះ និងព័ត៌មានបន្ថែមក្នុង Firestore
+                await setDoc(doc(db, "users", user.uid), {
+                    uid: user.uid,
+                    name: name,
+                    email: email,
+                    role: "staff",
+                    createdAt: new Date().toISOString()
+                });
+
+                statusMsg.className = "mt-4 text-sm p-3 rounded-lg bg-emerald-50 text-emerald-700 block";
+                statusMsg.innerHTML = `<i class="fa-solid fa-circle-check"></i> គណនីត្រូវបានបង្កើតដោយជោគជ័យ!`;
+                form.reset();
+
+            } catch (error) {
+                statusMsg.className = "mt-4 text-sm p-3 rounded-lg bg-rose-50 text-rose-700 block";
+                statusMsg.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ហ្វេល: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

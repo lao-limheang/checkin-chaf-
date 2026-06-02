@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>បុគ្គលិក - Staff Check-In</title>
+    <!-- Web App Manifest for Home Screen -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Staff CheckIn">
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex items-center justify-center p-4">
+
+    <!-- Container Area -->
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+        
+        <!-- Login Screen Section -->
+        <div id="loginSection" class="p-6 sm:p-8 hidden">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4 shadow-inner">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900">ចូលប្រើប្រាស់ប្រព័ន្ធ</h2>
+                <p class="text-sm text-slate-500 mt-1">សូមបញ្ចូលគណនីដែលផ្តល់ដោយប្រធានគ្រប់គ្រង</p>
+            </div>
+
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">អ៊ីមែល</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                            <i class="fa-solid fa-envelope"></i>
+                        </span>
+                        <input type="email" id="loginEmail" required class="w-full pl-9 pr-3 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">លេខកូដសម្ងាត់</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                            <i class="fa-solid fa-lock"></i>
+                        </span>
+                        <input type="password" id="loginPassword" required class="w-full pl-9 pr-3 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-xl transition shadow-md shadow-indigo-100 text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i> ឡុកអ៊ិនចូលគណនី
+                </button>
+            </form>
+            <div id="loginError" class="mt-4 text-xs p-3 bg-rose-50 text-rose-600 rounded-xl hidden"></div>
+        </div>
+
+        <!-- Main Dashboard / Action Screen -->
+        <div id="mainSection" class="hidden">
+            <!-- App Header -->
+            <div class="bg-indigo-900 p-6 text-white flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-indigo-800 rounded-xl flex items-center justify-center text-indigo-200">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                    <div>
+                        <h3 id="userName" class="font-bold text-sm">...</h3>
+                        <p class="text-xs text-indigo-200">បុគ្គលិកក្រុមហ៊ុន</p>
+                    </div>
+                </div>
+                <button id="logoutBtn" class="text-indigo-300 hover:text-white p-2 rounded-lg hover:bg-indigo-800 transition">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </button>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6 space-y-6 text-center">
+                <div id="statusBox" class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col items-center">
+                    <div id="statusIcon" class="w-14 h-14 bg-slate-200 text-slate-600 rounded-full flex items-center justify-center text-xl mb-3">
+                        <i class="fa-solid fa-hourglass-middle"></i>
+                    </div>
+                    <h4 id="statusTitle" class="font-bold text-slate-900">កំពុងផ្ទៀងផ្ទាត់...</h4>
+                    <p id="statusDesc" class="text-xs text-slate-500 mt-1">សូមរង់ចាំប្រព័ន្ធត្រួតពិនិត្យការស្កែន</p>
+                </div>
+
+                <!-- Action Button Trigger manually if needed -->
+                <button id="manualCheckBtn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl text-sm transition hidden shadow-lg shadow-emerald-100 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-fingerprint"></i> ចុច Check-In ទីនេះ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (Modular v10) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // បញ្ចូល Firebase Config របស់អ្នក (ដូចគ្នានឹង admin.html)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCVzRdVej7MORKTa-NcQMHJEzQ1nYikZX0",
+            authDomain: "chafe-app.firebaseapp.com",
+            projectId: "chafe-app",
+            storageBucket: "chafe-app.firebasestorage.app",
+            messagingSenderId: "43410802507",
+            appId: "1:43410802507:web:c48c2d946b89008c34cace",
+            measurementId: "G-J1M1DS7502"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const loginSection = document.getElementById('loginSection');
+        const mainSection = document.getElementById('mainSection');
+        let currentUserData = null;
+
+        // ពិនិត្យស្ថានភាព Login ជាប់ជានិច្ច
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // ទាញយកទិន្នន័យឈ្មោះរបស់បុគ្គលិកពី Firestore
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists()) {
+                    currentUserData = userDoc.data();
+                    document.getElementById('userName').innerText = currentUserData.name;
+                    
+                    loginSection.classList.add('hidden');
+                    mainSection.classList.remove('hidden');
+
+                    // ពិនិត្យថាតើបុគ្គលិកបានមកពីការស្កែន QR ដែរឬទេ
+                    const urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.get('action') === 'scan') {
+                        executeCheckIn();
+                    } else {
+                        // បើបើកធម្មតាមិនមែនស្កែនទេ ឲ្យបង្ហាញប៊ូតុងចុចខ្លួនឯង
+                        setUINormalState();
+                    }
+                }
+            } else {
+                mainSection.classList.add('hidden');
+                loginSection.classList.remove('hidden');
+            }
+        });
+
+        // Login Form Event
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errBox = document.getElementById('loginError');
+            
+            try {
+                errBox.classList.add('hidden');
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                errBox.classList.remove('hidden');
+                errBox.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> អ៊ីមែល ឬលេខកូដខុស!`;
+            }
+        });
+
+        // មុខងារចាកចេញពីប្រព័ន្ធ
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            signOut(auth);
+        });
+
+        // មុខងារកំណត់ UI ពេលមិនទាន់បានស្កែន
+        function setUINormalState() {
+            updateStatusUI('normal', 'ត្រៀមខ្លួនរួចរាល់', 'សូមស្កែន QR Code រួមនៅកន្លែងធ្វើការ ឬចុចប៊ូតុងខាងក្រោមដើម្បីកត់ត្រាវត្តមាន។');
+            const manualBtn = document.getElementById('manualCheckBtn');
+            manualBtn.classList.remove('hidden');
+            manualBtn.classList.add('flex');
+            manualBtn.onclick = () => executeCheckIn();
+        }
+
+        // មុខងារចម្បង៖ កត់ត្រាចូលការងារ និង Alert ទៅ Telegram
+        async function executeCheckIn() {
+            updateStatusUI('loading', 'កំពុងរក្សាទុក...', 'ប្រព័ន្ធកំពុងកត់ត្រាវត្តមានរបស់អ្នក...');
+            
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('km-KH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const timeStr = now.toLocaleTimeString('km-KH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            try {
+                // ១. រក្សាទុកប្រវត្តិក្នុង Firebase Firestore
+                await addDoc(collection(db, "attendance"), {
+                    userId: currentUserData.uid,
+                    name: currentUserData.name,
+                    email: currentUserData.email,
+                    timestamp: now.toISOString(),
+                    date: dateStr,
+                    time: timeStr
+                });
+
+                // ២. ទាញយក Telegram Token & Chat ID ពី Firestore Settings
+                const tgDoc = await getDoc(doc(db, "settings", "telegram"));
+                if (tgDoc.exists()) {
+                    const tgData = tgDoc.data();
+                    const botToken = tgData.botToken;
+                    const chatId = tgData.chatId;
+
+                    if (botToken && chatId) {
+                        const message = `🔔 *វត្តមានបុគ្គលិក*\n\n👤 ឈ្មោះ: ${currentUserData.name}\n📧 អ៊ីមែល: ${currentUserData.email}\n📅 កាលបរិច្ឆេទ: ${dateStr}\n⏰ ម៉ោងស្កែន: ${timeStr}\n🟢 ស្ថានភាព: ចូលការងារជោគជ័យ`;
+                        
+                        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                chat_id: chatId,
+                                text: message,
+                                parse_mode: 'Markdown'
+                            })
+                        });
+                    }
+                }
+
+                // ប្តូរ UI បង្ហាញភាពជោគជ័យ
+                updateStatusUI('success', 'Check-In ជោគជ័យ', `ម៉ោងចូលការងារ៖ ${timeStr}`);
+                
+                // លុប Action parameters ពី URL កុំអោយវាស្កែនឌុបពេល Refresh ទំព័រ
+                window.history.replaceState({}, document.title, window.location.pathname);
+
+            } catch (error) {
+                updateStatusUI('error', 'មានបញ្ហាខុសឆ្គង', 'មិនអាចកត់ត្រាវត្តមានបានទេ សូមព្យាយាមម្តងទៀត។');
+            }
+        }
+
+        // Helper function សម្រាប់ប្តូរ interface មើលទៅស្អាត
+        function updateStatusUI(type, title, desc) {
+            const iconBox = document.getElementById('statusIcon');
+            const titleBox = document.getElementById('statusTitle');
+            const descBox = document.getElementById('statusDesc');
+
+            titleBox.innerText = title;
+            descBox.innerText = desc;
+
+            if (type === 'loading') {
+                iconBox.className = "w-14 h-14 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-xl mb-3 animate-pulse";
+                iconBox.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
+            } else if (type === 'success') {
+                iconBox.className = "w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-xl mb-3 shadow-md shadow-emerald-50";
+                iconBox.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
+            } else if (type === 'error') {
+                iconBox.className = "w-14 h-14 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center text-xl mb-3";
+                iconBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i>`;
+            } else {
+                iconBox.className = "w-14 h-14 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center text-xl mb-3";
+                iconBox.innerHTML = `<i class="fa-solid fa-qrcode"></i>`;
+            }
+        }
+    </script>
+</body>
+</html>
