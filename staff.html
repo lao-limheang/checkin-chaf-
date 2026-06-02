@@ -16,8 +16,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- HTML5 QR Code Scanner Library -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <style>
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        /* Style for QR Scanner camera box to look premium */
+        #qr-reader video {
+            border-radius: 1rem;
+            object-fit: cover !important;
+        }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex items-center justify-center p-4">
@@ -79,9 +86,10 @@
                 </button>
             </div>
 
-            <!-- Content -->
-            <div class="p-6 space-y-6 text-center">
-                <div id="statusBox" class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col items-center">
+            <!-- Content Area -->
+            <div class="p-6 space-y-6">
+                <!-- Status Box -->
+                <div id="statusBox" class="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col items-center text-center">
                     <div id="statusIcon" class="w-14 h-14 bg-slate-200 text-slate-600 rounded-full flex items-center justify-center text-xl mb-3">
                         <i class="fa-solid fa-hourglass-middle"></i>
                     </div>
@@ -89,10 +97,28 @@
                     <p id="statusDesc" class="text-xs text-slate-500 mt-1">សូមរង់ចាំប្រព័ន្ធត្រួតពិនិត្យការស្កែន</p>
                 </div>
 
-                <!-- Action Button Trigger manually if needed -->
-                <button id="manualCheckBtn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl text-sm transition hidden shadow-lg shadow-emerald-100 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-fingerprint"></i> ចុច Check-In ទីនេះ
-                </button>
+                <!-- Camera Scanner Container (Hidden by default) -->
+                <div id="scannerWrapper" class="hidden space-y-3">
+                    <div class="relative overflow-hidden rounded-2xl border border-slate-200 bg-black">
+                        <div id="qr-reader" class="w-full"></div>
+                    </div>
+                    <button id="stopScanBtn" class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium rounded-xl text-xs transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-camera-rotate"></i> បិទកាមេរ៉ាវិញ
+                    </button>
+                </div>
+
+                <!-- Action Button Options -->
+                <div class="space-y-3" id="actionButtons">
+                    <!-- Scan Button -->
+                    <button id="startScanBtn" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-2xl text-sm transition shadow-lg shadow-indigo-100 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-qrcode text-lg"></i> បើកកាមេរ៉ាស្កែន QR Code
+                    </button>
+
+                    <!-- Manual Fallback Button (Optional for Admin debug) -->
+                    <button id="manualCheckBtn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl text-xs transition hidden shadow-lg shadow-emerald-100 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-fingerprint"></i> ចុចកត់ត្រាវត្តមានផ្ទាល់ (Manual)
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -103,7 +129,7 @@
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // បញ្ចូល Firebase Config របស់អ្នក (ដូចគ្នានឹង admin.html)
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCVzRdVej7MORKTa-NcQMHJEzQ1nYikZX0",
             authDomain: "chafe-app.firebaseapp.com",
@@ -120,13 +146,18 @@
 
         const loginSection = document.getElementById('loginSection');
         const mainSection = document.getElementById('mainSection');
+        const startScanBtn = document.getElementById('startScanBtn');
+        const stopScanBtn = document.getElementById('stopScanBtn');
+        const scannerWrapper = document.getElementById('scannerWrapper');
+        const actionButtons = document.getElementById('actionButtons');
+        
         let currentUserData = null;
+        let html5QrcodeScanner = null;
 
         // ពិនិត្យស្ថានភាព Login ជាប់ជានិច្ច
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 try {
-                    // ទាញយកទិន្នន័យឈ្មោះរបស់បុគ្គលិកពី Firestore
                     const userDoc = await getDoc(doc(db, "users", user.uid));
                     if (userDoc.exists()) {
                         currentUserData = userDoc.data();
@@ -135,16 +166,14 @@
                         loginSection.classList.add('hidden');
                         mainSection.classList.remove('hidden');
 
-                        // ពិនិត្យថាតើបុគ្គលិកបានមកពីការស្កែន QR ដែរឬទេ
+                        // ពិនិត្យថាតើបុគ្គលិកបើកតាមរយៈការស្កែនពីក្រៅ (URL params) ដែរឬទេ
                         const urlParams = new URLSearchParams(window.location.search);
                         if (urlParams.get('action') === 'scan') {
                             executeCheckIn();
                         } else {
-                            // បើបើកធម្មតាមិនមែនស្កែនទេ ឲ្យបង្ហាញប៊ូតុងចុចខ្លួនឯង
                             setUINormalState();
                         }
                     } else {
-                        // បើលុកចូល Firebase Auth បានតែគ្មានឈ្មោះក្នុង Firestore Database
                         document.getElementById('userName').innerText = "គណនីគ្មានឈ្មោះ";
                         loginSection.classList.add('hidden');
                         mainSection.classList.remove('hidden');
@@ -157,8 +186,66 @@
             } else {
                 mainSection.classList.add('hidden');
                 loginSection.classList.remove('hidden');
+                stopCameraScanner(); // បិទកាមេរ៉ា បើចាកចេញ
             }
         });
+
+        // មុខងារបើកកាមេរ៉ាស្កែននៅក្នុង App
+        startScanBtn.addEventListener('click', () => {
+            actionButtons.classList.add('hidden');
+            scannerWrapper.classList.remove('hidden');
+            updateStatusUI('normal', 'កំពុងបើកកាមេរ៉ា', 'សូមដាក់ QR Code ឱ្យចំប្រអប់កាមេរ៉ាដើម្បីស្កែន');
+
+            // កំណត់ទំហំ និងកាមេរ៉ាក្រោយ (Environment)
+            html5QrcodeScanner = new Html5Qrcode("qr-reader");
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+            html5QrcodeScanner.start(
+                { facingMode: "environment" }, 
+                config,
+                onScanSuccess,
+                onScanFailure
+            ).catch(err => {
+                console.error("កាមេរ៉ាមានបញ្ហា៖", err);
+                updateStatusUI('error', 'មិនអាចបើកកាមេរ៉ាបានទេ', 'សូមអនុញ្ញាត (Allow) ឱ្យ App ប្រើប្រាស់កាមេរ៉ា ឬបើកតាមកម្មវិធីស្កែនទូទៅ។');
+                stopCameraScanner();
+            });
+        });
+
+        // មុខងារបិទកាមេរ៉ាវិញ
+        stopScanBtn.addEventListener('click', () => {
+            stopCameraScanner();
+            setUINormalState();
+        });
+
+        function stopCameraScanner() {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.stop().then(() => {
+                    html5QrcodeScanner = null;
+                }).catch(err => console.error(err));
+            }
+            scannerWrapper.classList.add('hidden');
+            actionButtons.classList.remove('hidden');
+        }
+
+        // ពេលស្កែន QR ត្រូវ (ជោគជ័យ)
+        function onScanSuccess(decodedText, decodedResult) {
+            // ពិនិត្យមើលថាតើ QR ដែលស្កែននោះមានផ្ទុកពាក្យគន្លឹះត្រឹមត្រូវឬទេ
+            if (decodedText.includes('action=scan') || decodedText.includes('staff.html')) {
+                stopCameraScanner();
+                executeCheckIn();
+            } else {
+                // ប្រសិនបើស្កែនត្រូវ QR ផ្សេងដែលមិនមែនរបស់ក្រុមហ៊ុន
+                updateStatusUI('error', 'QR Code មិនត្រឹមត្រូវ', 'QR Code នេះមិនមែនជា QR សម្រាប់កត់ត្រាវត្តមានការងារឡើយ!');
+                setTimeout(() => {
+                    updateStatusUI('normal', 'កំពុងស្កែន...', 'សូមសាកល្បងស្កែន QR Code ក្រុមហ៊ុនឡើងវិញ');
+                }, 3000);
+            }
+        }
+
+        function onScanFailure(error) {
+            // មិនបាច់បង្ហាញកំហុសរាល់វិនាទីទេ ព្រោះវាកំពុងចាប់រូបភាពស្កែនជាប់ជានិច្ច
+        }
 
         // Login Form Event
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -176,8 +263,6 @@
                 await signInWithEmailAndPassword(auth, email, password);
             } catch (error) {
                 errBox.classList.remove('hidden');
-                console.error("Login error code:", error.code);
-                
                 if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
                     errBox.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> អ៊ីមែល ឬលេខកូដសម្ងាត់មិនត្រឹមត្រូវឡើយ!`;
                 } else if (error.code === 'auth/network-request-failed') {
@@ -200,7 +285,7 @@
 
         // មុខងារកំណត់ UI ពេលមិនទាន់បានស្កែន
         function setUINormalState() {
-            updateStatusUI('normal', 'ត្រៀមខ្លួនរួចរាល់', 'សូមស្កែន QR Code រួមនៅកន្លែងធ្វើការ ឬចុចប៊ូតុងខាងក្រោមដើម្បីកត់ត្រាវត្តមាន។');
+            updateStatusUI('normal', 'ត្រៀមខ្លួនរួចរាល់', 'សូមចុចប៊ូតុងខាងក្រោមដើម្បីស្កែន QR Code រួម ឬកត់ត្រាវត្តមានការងារ។');
             const manualBtn = document.getElementById('manualCheckBtn');
             manualBtn.classList.remove('hidden');
             manualBtn.classList.add('flex');
