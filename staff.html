@@ -1,420 +1,1066 @@
 <!DOCTYPE html>
-<html lang="km">
+<html lang="km" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>បុគ្គលិក - Staff Attendance</title>
-    <!-- Web App Manifest for Home Screen -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Staff Check">
-    <!-- Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- HTML5 QR Code Scanner Library -->
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <style>
-        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        #qr-reader video {
-            border-radius: 1rem;
-            object-fit: cover !important;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>KRONOS HR — Staff</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KRONOS Staff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;400;500;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#07090f;--bg2:#0d1117;--bg3:#131b26;--bg4:#1a2436;
+  --card:#0f1623;--card2:#141e2e;--border:#1e2d42;--border2:#243349;
+  --text:#e8eef7;--text2:#8fa3bf;--text3:#4a607a;
+  --brand:#00d4ff;--brand2:#0099cc;--brand-dim:#001f2e;
+  --green:#00e676;--green-dim:#002e1a;
+  --amber:#ffb300;--amber-dim:#2e1f00;
+  --red:#ff4757;--red-dim:#2e0a0f;
+  --purple:#c084fc;--purple-dim:#1a0d2e;
+  --r:14px;--r2:10px;--r3:22px;
+  --shadow:0 4px 24px rgba(0,0,0,.5);
+  --glow-brand:0 0 24px rgba(0,212,255,.2);
+  --safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);
+}
+[data-theme="light"]{
+  --bg:#f0f4f8;--bg2:#e8ecf2;--bg3:#dde3ec;--bg4:#d2dae6;
+  --card:#ffffff;--card2:#f8fafd;--border:#d0d8e8;--border2:#c0cad8;
+  --text:#0d1526;--text2:#4a607a;--text3:#8fa3bf;
+  --brand:#0077aa;--brand2:#005588;--brand-dim:#e0f5ff;
+  --green:#00a651;--green-dim:#e0f9ed;
+  --amber:#d48800;--amber-dim:#fff3d4;
+  --red:#d42040;--red-dim:#ffe0e5;
+  --shadow:0 4px 24px rgba(0,0,0,.12);
+  --glow-brand:0 0 0px transparent;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;overflow-x:hidden;max-width:430px;margin:0 auto;transition:background .3s,color .3s}
+::-webkit-scrollbar{display:none}
+
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* LOGIN */
+#loginScreen{background:var(--bg);justify-content:center;align-items:center;padding:24px}
+.login-logo{text-align:center;margin-bottom:32px}
+.login-icon{width:72px;height:72px;background:linear-gradient(135deg,var(--brand),var(--brand2));border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:30px;color:#000;margin:0 auto 16px;box-shadow:var(--glow-brand)}
+.login-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r3);padding:28px;width:100%;box-shadow:var(--shadow)}
+.form-group{margin-bottom:16px}
+.form-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px}
+.input-wrap{position:relative}
+.input-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:13px;pointer-events:none}
+.input-wrap input{background:var(--bg3);border:1.5px solid var(--border);color:var(--text);border-radius:var(--r2);padding:12px 14px 12px 38px;font-family:inherit;font-size:14px;outline:none;transition:all .2s;width:100%}
+.input-wrap input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(0,212,255,.12)}
+.btn-login{width:100%;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#000;font-weight:800;font-family:inherit;font-size:15px;padding:14px;border-radius:var(--r2);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;margin-top:8px}
+.err-box{background:var(--red-dim);border:1px solid rgba(255,71,87,.3);border-radius:var(--r2);padding:10px 14px;font-size:12px;color:var(--red);margin-top:12px;display:none}
+
+/* APP */
+#appScreen{background:var(--bg)}
+.app-topbar{background:linear-gradient(135deg,#00d4ff,#0099cc);padding:calc(var(--safe-top) + 12px) 20px 16px;position:relative;overflow:hidden}
+.app-topbar::before{content:'';position:absolute;top:-30px;right:-20px;width:120px;height:120px;background:rgba(255,255,255,.08);border-radius:50%;pointer-events:none}
+.topbar-row{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.staff-avatar{width:40px;height:40px;border-radius:12px;background:rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#fff;flex-shrink:0;border:2px solid rgba(255,255,255,.3)}
+.icon-btn{width:36px;height:36px;border-radius:10px;background:rgba(0,0,0,.15);border:none;color:#000;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px}
+
+.quick-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 16px}
+.qs{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px;text-align:center}
+.qs-val{font-size:18px;font-weight:900;font-family:'Space Mono',monospace}
+.qs-label{font-size:10px;color:var(--text3);font-weight:600;margin-top:2px}
+
+.bottom-nav{background:var(--card);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:8px 4px calc(var(--safe-bottom) + 8px);position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:100}
+.nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;border-radius:10px;cursor:pointer;transition:all .2s;border:none;background:transparent;color:var(--text3);font-family:inherit}
+.nav-tab.active{color:var(--brand)}
+.nav-tab i{font-size:18px}
+.nav-tab span{font-size:10px;font-weight:600}
+.nav-center-btn{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--brand),var(--brand2));border:none;color:#000;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--glow-brand);transition:all .2s;flex-shrink:0;margin-top:-16px}
+
+.panel{display:none;padding:0 16px;padding-bottom:90px}
+.panel.active{display:block}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.card-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px}
+.card-title i{color:var(--brand)}
+.card-body{padding:16px}
+
+.section-title{font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:14px 0 8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:var(--r2);font-weight:700;font-size:13px;cursor:pointer;transition:all .2s;border:none;font-family:inherit}
+.btn-primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#000}
+.btn-success{background:var(--green);color:#000}
+.btn-danger{background:var(--red);color:#fff}
+.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--text2)}
+.btn-full{width:100%}
+.btn-sm{padding:8px 14px;font-size:12px}
+
+.check-btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.check-btn{padding:18px;border-radius:var(--r);font-size:14px;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:8px;border:2px solid transparent;cursor:pointer;transition:all .25s;font-family:inherit}
+.check-btn i{font-size:28px}
+.check-btn.in{background:var(--green-dim);color:var(--green);border-color:rgba(0,230,118,.25)}
+.check-btn.in:active{background:var(--green);color:#000}
+.check-btn.out{background:var(--amber-dim);color:var(--amber);border-color:rgba(255,179,0,.25)}
+.check-btn.out:active{background:var(--amber);color:#000}
+
+.scanner-wrap{background:#000;border-radius:var(--r);overflow:hidden;margin-bottom:12px;position:relative;min-height:240px}
+#qrReader video{border-radius:0;object-fit:cover!important;width:100%!important}
+.scan-overlay{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
+.scan-frame{width:180px;height:180px;position:relative}
+.scan-frame::before,.scan-frame::after{content:'';position:absolute;width:30px;height:30px;border-color:var(--brand);border-style:solid}
+.scan-frame::before{top:0;left:0;border-width:3px 0 0 3px;border-radius:6px 0 0 0}
+.scan-frame::after{bottom:0;right:0;border-width:0 3px 3px 0;border-radius:0 0 6px 0}
+.scan-corners::before,.scan-corners::after{content:'';position:absolute;width:30px;height:30px;border-color:var(--brand);border-style:solid}
+.scan-corners::before{top:0;right:0;border-width:3px 3px 0 0;border-radius:0 6px 0 0}
+.scan-corners::after{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 6px}
+.scan-line{position:absolute;width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--brand),transparent);animation:scanLine 2s infinite;top:0}
+@keyframes scanLine{0%{top:10%}50%{top:90%}100%{top:10%}}
+
+.att-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.att-item:last-child{border-bottom:none}
+.att-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+
+.mini-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal-head{font-size:10px;font-weight:700;color:var(--text3);padding:4px}
+.cal-cell{padding:6px 4px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;aspect-ratio:1;display:flex;align-items:center;justify-content:center}
+.cal-cell.today{background:var(--brand);color:#000;font-weight:800}
+.cal-cell.present{background:var(--green-dim);color:var(--green)}
+.cal-cell.absent{background:var(--red-dim);color:var(--red)}
+.cal-cell.late{background:var(--amber-dim);color:var(--amber)}
+.cal-cell.empty{color:var(--text3);opacity:.4}
+.cal-cell.future{color:var(--text3);opacity:.3}
+
+.profile-header{background:var(--card);border-radius:var(--r);padding:20px;text-align:center;border:1px solid var(--border);margin-bottom:12px}
+.info-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px}
+.info-row:last-child{border-bottom:none}
+.info-label{color:var(--text3);font-size:11px;font-weight:700;width:80px;flex-shrink:0;text-transform:uppercase;letter-spacing:.04em}
+.info-val{font-weight:600;flex:1}
+
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:99px;font-size:11px;font-weight:700}
+.badge-green{background:var(--green-dim);color:var(--green)}
+.badge-red{background:var(--red-dim);color:var(--red)}
+.badge-amber{background:var(--amber-dim);color:var(--amber)}
+.badge-brand{background:var(--brand-dim);color:var(--brand)}
+.badge-gray{background:var(--bg4);color:var(--text3)}
+
+.leave-card{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:var(--r);padding:14px;margin-bottom:8px}
+.progress{height:5px;background:var(--bg4);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;border-radius:99px;transition:width .6s ease}
+
+#toasts{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;width:calc(100% - 32px);max-width:400px}
+.toast{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;box-shadow:var(--shadow);animation:toastPop .3s ease;pointer-events:auto;border-left:3px solid var(--brand)}
+.toast.success{border-left-color:var(--green)}.toast.error{border-left-color:var(--red)}.toast.warning{border-left-color:var(--amber)}
+@keyframes toastPop{from{transform:translateY(-20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);display:flex;align-items:flex-end;z-index:1000;opacity:0;visibility:hidden;transition:all .3s}
+.modal-overlay.open{opacity:1;visibility:visible}
+.modal-sheet{background:var(--card);border-radius:24px 24px 0 0;border:1px solid var(--border);border-bottom:none;width:100%;padding:24px 20px calc(var(--safe-bottom) + 24px);transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+.modal-overlay.open .modal-sheet{transform:translateY(0)}
+.sheet-handle{width:36px;height:4px;background:var(--border2);border-radius:99px;margin:0 auto 20px}
+.sheet-title{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.sheet-title i{color:var(--brand)}
+
+.loading-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:9998;align-items:center;justify-content:center;gap:16px;display:none;flex-direction:column}
+.loading-spinner{width:48px;height:48px;border:3px solid var(--bg3);border-top-color:var(--brand);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:livePulse 1.5s infinite;display:inline-block}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.6)}}
+.gps-pill{display:flex;align-items:center;gap:6px;background:var(--green-dim);border:1px solid rgba(0,230,118,.25);border-radius:99px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--green)}
+.toggle-switch{width:44px;height:26px;background:var(--bg4);border-radius:99px;position:relative;cursor:pointer;border:1.5px solid var(--border);transition:background .3s;flex-shrink:0}
+.toggle-switch.on{background:var(--brand)}
+.toggle-switch::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:1px;left:1px;transition:all .3s}
+.toggle-switch.on::after{left:20px}
+</style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen flex items-center justify-center p-4">
+<body>
+<div id="toasts"></div>
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div style="font-size:14px;font-weight:600;color:var(--text2)" id="loadingText">Processing…</div>
+</div>
 
-    <!-- Container Area -->
-    <div class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
-        
-        <!-- Login Screen Section -->
-        <div id="loginSection" class="p-6 sm:p-8 hidden">
-            <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4 shadow-inner">
-                    <i class="fa-solid fa-shield-halved"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-slate-900">ចូលប្រើប្រាស់ប្រព័ន្ធ</h2>
-                <p class="text-sm text-slate-500 mt-1">សូមបញ្ចូលគណនីដែលផ្តល់ដោយប្រធានគ្រប់គ្រង</p>
-            </div>
+<!-- LOGIN -->
+<div class="screen active" id="loginScreen">
+  <div class="login-logo">
+    <div class="login-icon"><i class="fa-solid fa-fingerprint"></i></div>
+    <h1 style="font-size:22px;font-weight:900">KRONOS HR</h1>
+    <p style="font-size:12px;color:var(--text3);margin-top:4px">Employee Self-Service Portal</p>
+  </div>
+  <div class="login-card">
+    <div style="margin-bottom:20px">
+      <div style="font-size:16px;font-weight:700;margin-bottom:4px">ចូលប្រើប្រាស់ <span style="font-size:13px;font-weight:400;color:var(--text3)">/ Sign In</span></div>
+      <div style="font-size:12px;color:var(--text3)">Use your account provided by admin</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <div class="input-wrap"><i class="fa-solid fa-envelope"></i><input type="email" id="loginEmail" placeholder="your@cafe.com" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <div class="input-wrap"><i class="fa-solid fa-lock"></i><input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    </div>
+    <button class="btn-login" onclick="doLogin()"><i class="fa-solid fa-right-to-bracket"></i> ចូលគណនី / Sign In</button>
+    <div class="err-box" id="loginErr"></div>
+  </div>
+</div>
 
-            <form id="loginForm" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">អ៊ីមែល</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                            <i class="fa-solid fa-envelope"></i>
-                        </span>
-                        <input type="email" id="loginEmail" required class="w-full pl-9 pr-3 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">លេខកូដសម្ងាត់</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                            <i class="fa-solid fa-lock"></i>
-                        </span>
-                        <input type="password" id="loginPassword" required class="w-full pl-9 pr-3 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-                </div>
-                <button type="submit" id="loginSubmitBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-xl transition shadow-md shadow-indigo-100 text-sm flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-right-to-bracket"></i> <span>ឡុកអ៊ិនចូលគណនី</span>
-                </button>
-            </form>
-            <div id="loginError" class="mt-4 text-xs p-3 bg-rose-50 text-rose-600 rounded-xl hidden"></div>
+<!-- APP -->
+<div class="screen" id="appScreen">
+  <!-- TOPBAR -->
+  <div class="app-topbar">
+    <div class="topbar-row">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="staff-avatar" id="staffAvatar">SC</div>
+        <div>
+          <div style="font-weight:800;font-size:15px;color:#000" id="staffName">Loading…</div>
+          <div style="font-size:11px;color:rgba(0,0,0,.6)" id="staffRole">—</div>
         </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="icon-btn" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke"></i></button>
+        <button class="icon-btn" onclick="doLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+      </div>
+    </div>
+    <div style="margin-top:16px;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:22px;font-weight:900;color:#000;font-family:'Space Mono',monospace" id="heroClock">--:--</div>
+        <div style="font-size:11px;color:rgba(0,0,0,.6);margin-top:2px" id="heroDate">—</div>
+      </div>
+      <div style="text-align:right">
+        <div class="gps-pill"><span class="live-dot" style="width:6px;height:6px"></span> <span id="gpsStatus">Checking…</span></div>
+        <div style="font-size:10px;color:rgba(0,0,0,.5);margin-top:4px" id="checkStatusLabel">—</div>
+      </div>
+    </div>
+  </div>
 
-        <!-- Main Dashboard / Action Screen -->
-        <div id="mainSection" class="hidden">
-            <!-- App Header -->
-            <div class="bg-indigo-900 p-6 text-white flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-indigo-800 rounded-xl flex items-center justify-center text-indigo-200">
-                        <i class="fa-solid fa-user-tie"></i>
-                    </div>
-                    <div>
-                        <h3 id="userName" class="font-bold text-sm">...</h3>
-                        <p class="text-xs text-indigo-200">បុគ្គលិកក្រុមហ៊ុន</p>
-                    </div>
-                </div>
-                <button id="logoutBtn" class="text-indigo-300 hover:text-white p-2 rounded-lg hover:bg-indigo-800 transition">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                </button>
-            </div>
+  <!-- QUICK STATS -->
+  <div class="quick-stats">
+    <div class="qs"><div class="qs-val" style="color:var(--green)" id="hoursToday">0h</div><div class="qs-label">Today</div></div>
+    <div class="qs"><div class="qs-val" style="color:var(--brand)" id="attDays">0</div><div class="qs-label">Days This Mo</div></div>
+    <div class="qs"><div class="qs-val" style="color:var(--amber)" id="attPct">—%</div><div class="qs-label">Attendance</div></div>
+  </div>
 
-            <!-- Content Area -->
-            <div class="p-6 space-y-6">
-                <!-- Status Box -->
-                <div id="statusBox" class="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col items-center text-center">
-                    <div id="statusIcon" class="w-14 h-14 bg-slate-200 text-slate-600 rounded-full flex items-center justify-center text-xl mb-3">
-                        <i class="fa-solid fa-hourglass-middle"></i>
-                    </div>
-                    <h4 id="statusTitle" class="font-bold text-slate-900">កំពុងផ្ទៀងផ្ទាត់...</h4>
-                    <p id="statusDesc" class="text-xs text-slate-500 mt-1">សូមរង់ចាំប្រព័ន្ធត្រួតពិនិត្យការស្កែន</p>
-                </div>
-
-                <!-- Camera Scanner Container (Hidden by default) -->
-                <div id="scannerWrapper" class="hidden space-y-3">
-                    <div class="relative overflow-hidden rounded-2xl border border-slate-200 bg-black">
-                        <div id="qr-reader" class="w-full"></div>
-                    </div>
-                    <button id="stopScanBtn" class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium rounded-xl text-xs transition flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-camera-rotate"></i> បិទកាមេរ៉ាវិញ
-                    </button>
-                </div>
-
-                <!-- Check-In / Check-Out Action Choice Modal (Shown after scanner success) -->
-                <div id="attendanceActionBlock" class="hidden p-4 bg-indigo-50/50 border border-indigo-100 rounded-2xl space-y-3 text-center">
-                    <p class="text-sm font-semibold text-indigo-950">សូមជ្រើសរើសប្រភេទវត្តមាន៖</p>
-                    <div class="grid grid-cols-2 gap-3">
-                        <!-- Check-In Button -->
-                        <button id="checkInBtn" class="py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-sm transition flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-right-to-bracket"></i> Check-In
-                        </button>
-                        <!-- Check-Out Button -->
-                        <button id="checkOutBtn" class="py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl text-sm transition flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-right-from-bracket"></i> Check-Out
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Open Scanner Button -->
-                <div class="space-y-3" id="actionButtons">
-                    <button id="startScanBtn" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-2xl text-sm transition shadow-lg shadow-indigo-100 flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-qrcode text-lg"></i> បើកកាមេរ៉ាស្កែន QR Code
-                    </button>
-                </div>
-            </div>
-        </div>
+  <!-- HOME PANEL -->
+  <div class="panel active" id="panel-home">
+    <div class="section-title"><i class="fa-solid fa-clock" style="color:var(--brand)"></i> Quick Actions</div>
+    <div class="check-btn-row">
+      <button class="check-btn in" onclick="openCheckSheet('IN')">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        <span>Check In<br><small style="font-size:10px;opacity:.7">ចូលការងារ</small></span>
+      </button>
+      <button class="check-btn out" onclick="openCheckSheet('OUT')">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        <span>Check Out<br><small style="font-size:10px;opacity:.7">ចេញការ</small></span>
+      </button>
     </div>
 
-    <!-- Firebase SDK (Modular v10) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    <!-- Last Activity -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-header">
+        <div class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Last Activity</div>
+        <span class="badge badge-gray" id="lastActBadge">—</span>
+      </div>
+      <div class="card-body" style="display:flex;align-items:center;gap:12px">
+        <div style="width:44px;height:44px;background:var(--bg3);color:var(--text3);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0" id="lastActIcon"><i class="fa-solid fa-clock"></i></div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:14px" id="lastActType">No activity today</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px" id="lastActTime">—</div>
+        </div>
+        <div style="margin-left:auto;text-align:right"><div style="font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--green)" id="lastActHours">—</div><div style="font-size:10px;color:var(--text3)">hours</div></div>
+      </div>
+    </div>
 
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCVzRdVej7MORKTa-NcQMHJEzQ1nYikZX0",
-            authDomain: "chafe-app.firebaseapp.com",
-            projectId: "chafe-app",
-            storageBucket: "chafe-app.firebasestorage.app",
-            messagingSenderId: "43410802507",
-            appId: "1:43410802507:web:c48c2d946b89008c34cace",
-            measurementId: "G-J1M1DS7502"
-        };
+    <!-- Today's Shift -->
+    <div class="section-title"><i class="fa-solid fa-calendar-day" style="color:var(--brand)"></i> Today's Shift</div>
+    <div style="background:var(--card);border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:var(--r);padding:14px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div style="font-weight:700" id="shiftName">Morning Shift</div>
+        <span class="badge badge-green">Active</span>
+      </div>
+      <div style="font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--brand);margin-bottom:8px" id="shiftTime">06:00 – 15:00</div>
+      <div class="progress"><div class="progress-bar" id="shiftProgress" style="background:var(--brand);width:0%"></div></div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--text3)">
+        <span id="shiftStartLabel">06:00</span><span id="shiftPct">0%</span><span id="shiftEndLabel">15:00</span>
+      </div>
+    </div>
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+    <!-- Leave Balance -->
+    <div class="section-title"><i class="fa-solid fa-calendar-check" style="color:var(--brand)"></i> Leave Balance</div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center" id="leaveBalance">
+          <div><div style="font-size:22px;font-weight:900;color:var(--green);font-family:'Space Mono',monospace" id="sickBal">—</div><div style="font-size:10px;color:var(--text3);font-weight:600">SICK</div></div>
+          <div><div style="font-size:22px;font-weight:900;color:var(--brand);font-family:'Space Mono',monospace" id="vacBal">—</div><div style="font-size:10px;color:var(--text3);font-weight:600">VACATION</div></div>
+          <div><div style="font-size:22px;font-weight:900;color:var(--amber);font-family:'Space Mono',monospace" id="emgBal">—</div><div style="font-size:10px;color:var(--text3);font-weight:600">EMERGENCY</div></div>
+        </div>
+        <button class="btn btn-ghost btn-full" style="margin-top:12px" onclick="switchTab('leave')"><i class="fa-solid fa-plus"></i> Request Leave</button>
+      </div>
+    </div>
 
-        const loginSection = document.getElementById('loginSection');
-        const mainSection = document.getElementById('mainSection');
-        const startScanBtn = document.getElementById('startScanBtn');
-        const stopScanBtn = document.getElementById('stopScanBtn');
-        const scannerWrapper = document.getElementById('scannerWrapper');
-        const actionButtons = document.getElementById('actionButtons');
-        const attendanceActionBlock = document.getElementById('attendanceActionBlock');
-        const checkInBtn = document.getElementById('checkInBtn');
-        const checkOutBtn = document.getElementById('checkOutBtn');
-        
-        let currentUserData = null;
-        let html5QrcodeScanner = null;
+    <!-- Announcements -->
+    <div class="section-title"><i class="fa-solid fa-bullhorn" style="color:var(--brand)"></i> From Admin</div>
+    <div id="announcementsList">
+      <div style="text-align:center;padding:20px;color:var(--text3)"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div>
+    </div>
+  </div>
 
-        // ពិនិត្យស្ថានភាព Login ជាប់ជានិច្ច
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                try {
-                    const userDoc = await getDoc(doc(db, "users", user.uid));
-                    if (userDoc.exists()) {
-                        currentUserData = userDoc.data();
-                        document.getElementById('userName').innerText = currentUserData.name;
-                        
-                        loginSection.classList.add('hidden');
-                        mainSection.classList.remove('hidden');
+  <!-- ATTENDANCE PANEL -->
+  <div class="panel" id="panel-attendance">
+    <div style="display:flex;gap:4px;background:var(--bg3);border-radius:var(--r2);padding:4px;margin:12px 0">
+      <button class="nav-tab" style="flex:1;flex-direction:row;font-size:12px;padding:8px;border-radius:8px;background:var(--card);color:var(--text)" id="attTabHistory" onclick="switchAttTab('history',this)">History</button>
+      <button class="nav-tab" style="flex:1;flex-direction:row;font-size:12px;padding:8px;border-radius:8px" id="attTabCalendar" onclick="switchAttTab('calendar',this)">Calendar</button>
+      <button class="nav-tab" style="flex:1;flex-direction:row;font-size:12px;padding:8px;border-radius:8px" id="attTabStats" onclick="switchAttTab('stats',this)">Stats</button>
+    </div>
 
-                        // ពិនិត្យថាតើបុគ្គលិកបើកតាមរយៈការស្កែនពីក្រៅ (URL params) ដែរឬទេ
-                        const urlParams = new URLSearchParams(window.location.search);
-                        if (urlParams.get('action') === 'scan') {
-                            showAttendanceChoice();
-                        } else {
-                            setUINormalState();
-                        }
-                    } else {
-                        document.getElementById('userName').innerText = "គណនីគ្មានឈ្មោះ";
-                        loginSection.classList.add('hidden');
-                        mainSection.classList.remove('hidden');
-                        updateStatusUI('error', 'រកមិនឃើញទិន្នន័យ', 'គណនីនេះត្រូវបានបង្កើតក្នុង Auth ប៉ុន្តែរកមិនឃើញឈ្មោះក្នុង Database ទេ។ សូមទាក់ទង Admin!');
-                    }
-                } catch (error) {
-                    console.error("Error fetching user data:", error);
-                    alert("មានបញ្ហាក្នុងការទាញយកទិន្នន័យ៖ " + error.message);
-                }
-            } else {
-                mainSection.classList.add('hidden');
-                loginSection.classList.remove('hidden');
-                stopCameraScanner();
-            }
-        });
+    <div id="attHistory">
+      <div class="section-title"><i class="fa-solid fa-list-check" style="color:var(--brand)"></i> Recent Records</div>
+      <div class="card" style="margin-bottom:8px">
+        <div class="card-body" style="padding:8px 16px" id="attHistoryList">
+          <div style="text-align:center;padding:20px;color:var(--text3)"><i class="fa-solid fa-spinner fa-spin"></i></div>
+        </div>
+      </div>
+    </div>
 
-        // មុខងារបើកកាមេរ៉ាស្កែននៅក្នុង App
-        startScanBtn.addEventListener('click', () => {
-            actionButtons.classList.add('hidden');
-            attendanceActionBlock.classList.add('hidden');
-            scannerWrapper.classList.remove('hidden');
-            updateStatusUI('normal', 'កំពុងបើកកាមេរ៉ា', 'សូមដាក់ QR Code ឱ្យចំប្រអប់កាមេរ៉ាដើម្បីស្កែន');
+    <div id="attCalendarView" style="display:none">
+      <div class="section-title"><i class="fa-solid fa-calendar-alt" style="color:var(--brand)"></i> <span id="calMonthLabel">June 2026</span></div>
+      <div class="card" style="margin-bottom:8px">
+        <div class="card-body">
+          <div class="mini-cal" id="miniCal"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px"><div style="width:10px;height:10px;border-radius:3px;background:var(--green)"></div>Present</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px"><div style="width:10px;height:10px;border-radius:3px;background:var(--amber)"></div>Late</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px"><div style="width:10px;height:10px;border-radius:3px;background:var(--red)"></div>Absent</div>
+      </div>
+    </div>
 
-            html5QrcodeScanner = new Html5Qrcode("qr-reader");
-            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+    <div id="attStatsView" style="display:none">
+      <div class="section-title"><i class="fa-solid fa-chart-pie" style="color:var(--brand)"></i> This Month Stats</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px" id="statsGrid">
+        <div class="card" style="padding:14px;text-align:center"><div style="font-size:24px;font-weight:900;color:var(--green);font-family:'Space Mono',monospace" id="statAttRate">—%</div><div style="font-size:11px;color:var(--text3);font-weight:600;margin-top:2px">ATTENDANCE RATE</div></div>
+        <div class="card" style="padding:14px;text-align:center"><div style="font-size:24px;font-weight:900;color:var(--brand);font-family:'Space Mono',monospace" id="statTotalHours">—h</div><div style="font-size:11px;color:var(--text3);font-weight:600;margin-top:2px">TOTAL HOURS</div></div>
+        <div class="card" style="padding:14px;text-align:center"><div style="font-size:24px;font-weight:900;color:var(--amber);font-family:'Space Mono',monospace" id="statLateDays">—</div><div style="font-size:11px;color:var(--text3);font-weight:600;margin-top:2px">LATE DAYS</div></div>
+        <div class="card" style="padding:14px;text-align:center"><div style="font-size:24px;font-weight:900;color:var(--purple);font-family:'Space Mono',monospace" id="statOTHours">—h</div><div style="font-size:11px;color:var(--text3);font-weight:600;margin-top:2px">OVERTIME</div></div>
+      </div>
+    </div>
+  </div>
 
-            html5QrcodeScanner.start(
-                { facingMode: "environment" }, 
-                config,
-                onScanSuccess,
-                onScanFailure
-            ).catch(err => {
-                console.error("កាមេរ៉ាមានបញ្ហា៖", err);
-                updateStatusUI('error', 'មិនអាចបើកកាមេរ៉ាបានទេ', 'សូមអនុញ្ញាត (Allow) ឱ្យ App ប្រើប្រាស់កាមេរ៉ា ឬបើកតាមកម្មវិធីស្កែនទូទៅ។');
-                stopCameraScanner();
-            });
-        });
+  <!-- LEAVE PANEL -->
+  <div class="panel" id="panel-leave">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;margin-bottom:4px">
+      <div class="section-title" style="margin:0"><i class="fa-solid fa-calendar-check" style="color:var(--brand)"></i> My Leave</div>
+      <button class="btn btn-primary btn-sm" onclick="openLeaveModal()"><i class="fa-solid fa-plus"></i> Request</button>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-header"><div class="card-title"><i class="fa-solid fa-chart-bar"></i> Leave Balance</div></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:10px" id="leaveBalanceDetail">
+        <div style="text-align:center;padding:12px;color:var(--text3)"><i class="fa-solid fa-spinner fa-spin"></i></div>
+      </div>
+    </div>
+    <div class="section-title"><i class="fa-solid fa-list" style="color:var(--brand)"></i> My Requests</div>
+    <div id="leaveList"><div style="text-align:center;padding:20px;color:var(--text3)"><i class="fa-solid fa-spinner fa-spin"></i></div></div>
+  </div>
 
-        // មុខងារបិទកាមេរ៉ាវិញ
-        stopScanBtn.addEventListener('click', () => {
-            stopCameraScanner();
-            setUINormalState();
-        });
+  <!-- NOTIFICATIONS PANEL -->
+  <div class="panel" id="panel-notifications">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;margin-bottom:4px">
+      <div class="section-title" style="margin:0"><i class="fa-solid fa-bell" style="color:var(--brand)"></i> Notifications</div>
+    </div>
+    <div class="card">
+      <div id="notifList" style="padding:4px 16px">
+        <div style="text-align:center;padding:20px;color:var(--text3)"><i class="fa-solid fa-spinner fa-spin"></i></div>
+      </div>
+    </div>
+  </div>
 
-        function stopCameraScanner() {
-            if (html5QrcodeScanner) {
-                html5QrcodeScanner.stop().then(() => {
-                    html5QrcodeScanner = null;
-                }).catch(err => console.error(err));
-            }
-            scannerWrapper.classList.add('hidden');
-            actionButtons.classList.remove('hidden');
-        }
+  <!-- PROFILE PANEL -->
+  <div class="panel" id="panel-profile">
+    <div class="profile-header">
+      <div style="width:72px;height:72px;border-radius:20px;margin:0 auto 12px;border:3px solid var(--brand);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;background:var(--brand-dim);color:var(--brand)" id="profileAvatar">SC</div>
+      <div style="font-size:18px;font-weight:800;margin-bottom:4px" id="profileName">—</div>
+      <div style="font-size:12px;color:var(--text2)" id="profileRoleLine">—</div>
+      <div style="margin-top:8px"><span class="badge badge-green">Active</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+      <button class="btn btn-ghost" onclick="openEditProfile()"><i class="fa-solid fa-pen"></i> Edit Profile</button>
+      <button class="btn btn-ghost" onclick="openChangePass()"><i class="fa-solid fa-key"></i> Password</button>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-header"><div class="card-title"><i class="fa-solid fa-id-card"></i> My Information</div></div>
+      <div class="card-body" style="padding:8px 16px">
+        <div class="info-row"><span class="info-label">Name</span><span class="info-val" id="infName">—</span></div>
+        <div class="info-row"><span class="info-label">Email</span><span class="info-val" id="infEmail" style="font-size:12px">—</span></div>
+        <div class="info-row"><span class="info-label">Dept</span><span class="info-val" id="infDept">—</span></div>
+        <div class="info-row"><span class="info-label">Role</span><span class="info-val" id="infRole">—</span></div>
+        <div class="info-row"><span class="info-label">Shift</span><span class="info-val" id="infShift">—</span></div>
+        <div class="info-row"><span class="info-label">Salary</span><span class="info-val" style="color:var(--green);font-weight:700" id="infSalary">—</span></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-header"><div class="card-title"><i class="fa-solid fa-sliders"></i> Preferences</div></div>
+      <div class="card-body" style="padding:8px 16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:13px;font-weight:600"><i class="fa-solid fa-moon" style="width:18px;color:var(--brand)"></i> Dark Mode</span>
+          <div class="toggle-switch on" id="themeSwitch" onclick="toggleTheme()"></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0">
+          <span style="font-size:13px;font-weight:600"><i class="fa-solid fa-language" style="width:18px;color:var(--brand)"></i> Language</span>
+          <select style="background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:12px;color:var(--text);width:auto">
+            <option>English</option><option>ភាសាខ្មែរ</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-danger btn-full" onclick="doLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out</button>
+  </div>
 
-        // ពេលស្កែន QR ជោគជ័យ
-        function onScanSuccess(decodedText, decodedResult) {
-            if (decodedText.includes('action=scan') || decodedText.includes('staff.html')) {
-                stopCameraScanner();
-                showAttendanceChoice();
-            } else {
-                updateStatusUI('error', 'QR Code មិនត្រឹមត្រូវ', 'QR Code នេះមិនមែនជា QR សម្រាប់វត្តមានការងារឡើយ!');
-                setTimeout(() => {
-                    updateStatusUI('normal', 'កំពុងស្កែន...', 'សូមសាកល្បងស្កែន QR Code ក្រុមហ៊ុនឡើងវិញ');
-                }, 3000);
-            }
-        }
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-tab active" id="navHome" onclick="switchTab('home')"><i class="fa-solid fa-house"></i><span>Home</span></button>
+    <button class="nav-tab" id="navAttendance" onclick="switchTab('attendance')"><i class="fa-solid fa-clipboard-list"></i><span>Attendance</span></button>
+    <div style="display:flex;align-items:flex-end;padding-bottom:4px">
+      <button class="nav-center-btn" onclick="openCheckSheet('scan')"><i class="fa-solid fa-qrcode"></i></button>
+    </div>
+    <button class="nav-tab" id="navLeave" onclick="switchTab('leave')"><i class="fa-solid fa-calendar-check"></i><span>Leave</span></button>
+    <button class="nav-tab" id="navProfile" onclick="switchTab('profile')"><i class="fa-solid fa-user"></i><span>Profile</span></button>
+  </nav>
+</div>
 
-        function onScanFailure(error) {
-            // មិនបង្ហាញកំហុសរាល់វិនាទី
-        }
+<!-- CHECK SHEET MODAL -->
+<div class="modal-overlay" id="checkModal">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="checkTitle"><i class="fa-solid fa-qrcode"></i> Scan QR Code</div>
+    <div id="checkScanMode">
+      <div class="scanner-wrap">
+        <div id="qrReader"></div>
+        <div class="scan-overlay"><div class="scan-frame"><div class="scan-corners"></div><div class="scan-line"></div></div></div>
+      </div>
+      <p style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:12px">Scan the QR code at the entrance</p>
+      <button class="btn btn-ghost btn-full" onclick="closeScanModal()"><i class="fa-solid fa-xmark"></i> Cancel</button>
+    </div>
+    <div id="checkDirectMode" style="display:none">
+      <div style="background:var(--bg3);border-radius:var(--r);padding:16px;margin-bottom:16px;text-align:center">
+        <div style="font-size:28px;font-weight:900;font-family:'Space Mono',monospace;color:var(--brand)" id="checkTimeCurrent">--:--:--</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:4px" id="checkDateCurrent">—</div>
+        <div class="gps-pill" style="margin:8px auto 0;width:fit-content"><span class="live-dot" style="width:6px;height:6px"></span> GPS Verified</div>
+      </div>
+      <div class="check-btn-row" style="margin-bottom:12px">
+        <button class="check-btn in" onclick="executeCheck('IN')"><i class="fa-solid fa-arrow-right-to-bracket"></i><span>Check In<br><small style="font-size:10px">ចូលការងារ</small></span></button>
+        <button class="check-btn out" onclick="executeCheck('OUT')"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Check Out<br><small style="font-size:10px">ចេញការ</small></span></button>
+      </div>
+      <button class="btn btn-ghost btn-full" onclick="closeScanModal()">Cancel</button>
+    </div>
+    <div id="checkSuccessMode" style="display:none;text-align:center;padding:8px 0">
+      <div style="width:72px;height:72px;border-radius:50%;background:var(--green-dim);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--green);margin:0 auto 16px"><i class="fa-solid fa-circle-check"></i></div>
+      <div style="font-size:18px;font-weight:800;margin-bottom:6px" id="successTitle">Successful!</div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:4px" id="successTime">—</div>
+      <div style="font-size:11px;color:var(--green);margin-bottom:20px" id="successNotif">✓ Telegram notified</div>
+      <button class="btn btn-success btn-full" onclick="closeScanModal()"><i class="fa-solid fa-check"></i> Done</button>
+    </div>
+  </div>
+</div>
 
-        // បង្ហាញជម្រើស Check-In / Check-Out
-        function showAttendanceChoice() {
-            updateStatusUI('choice', 'ស្កែនបានជោគជ័យ!', 'សូមជ្រើសរើសប្រភេទវត្តមានរបស់អ្នកខាងក្រោម៖');
-            actionButtons.classList.add('hidden');
-            attendanceActionBlock.classList.remove('hidden');
+<!-- LEAVE REQUEST MODAL -->
+<div class="modal-overlay" id="leaveModal">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title"><i class="fa-solid fa-calendar-plus"></i> Request Leave</div>
+    <div style="margin-bottom:12px">
+      <label class="form-label">Leave Type</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="leaveTypeBtns">
+        <button class="btn btn-ghost" onclick="selectLeaveType(this,'sick')" style="background:var(--red-dim);border-color:rgba(255,71,87,.3);color:var(--red)"><i class="fa-solid fa-virus"></i> Sick</button>
+        <button class="btn btn-ghost" onclick="selectLeaveType(this,'vacation')"><i class="fa-solid fa-umbrella-beach"></i> Vacation</button>
+        <button class="btn btn-ghost" onclick="selectLeaveType(this,'emergency')"><i class="fa-solid fa-bolt"></i> Emergency</button>
+        <button class="btn btn-ghost" onclick="selectLeaveType(this,'other')"><i class="fa-solid fa-ellipsis"></i> Other</button>
+      </div>
+    </div>
+    <input type="hidden" id="selectedLeaveType" value="sick">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+      <div><label class="form-label">From</label><input type="date" id="leaveFrom" style="background:var(--bg3);border:1.5px solid var(--border);color:var(--text);border-radius:var(--r2);padding:10px 12px;font-family:inherit;font-size:13px;outline:none;width:100%"></div>
+      <div><label class="form-label">To</label><input type="date" id="leaveTo" style="background:var(--bg3);border:1.5px solid var(--border);color:var(--text);border-radius:var(--r2);padding:10px 12px;font-family:inherit;font-size:13px;outline:none;width:100%"></div>
+    </div>
+    <div style="margin-bottom:16px"><label class="form-label">Reason</label><textarea id="leaveReason" style="background:var(--bg3);border:1.5px solid var(--border);color:var(--text);border-radius:var(--r2);padding:10px 12px;font-family:inherit;font-size:13px;outline:none;width:100%;resize:none;height:80px" placeholder="Brief reason…"></textarea></div>
+    <button class="btn btn-primary btn-full" onclick="submitLeave()"><i class="fa-solid fa-paper-plane"></i> Submit Request</button>
+    <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="closeModal('leaveModal')">Cancel</button>
+  </div>
+</div>
 
-            // ភ្ជាប់ Event ទៅនឹងប៊ូតុងទាំងពីរ
-            checkInBtn.onclick = () => {
-                attendanceActionBlock.classList.add('hidden');
-                executeCheck('IN');
-            };
-            checkOutBtn.onclick = () => {
-                attendanceActionBlock.classList.add('hidden');
-                executeCheck('OUT');
-            };
-        }
+<!-- EDIT PROFILE MODAL -->
+<div class="modal-overlay" id="editProfileModal">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title"><i class="fa-solid fa-pen"></i> Edit Profile</div>
+    <div style="margin-bottom:12px"><label class="form-label">Full Name</label><input type="text" id="editName" style="background:var(--bg3);border:1.5px solid var(--border);color:var(--text);border-radius:var(--r2);padding:10px 12px;font-family:inherit;font-size:13px;outline:none;width:100%"></div>
+    <div style="margin-bottom:16px"><label class="form-label">Phone</label><input type="tel" id="editPhone" placeholder="+855 12 345 678" style="background:var(--bg3);border:1.5px solid var(--border);color:var(--text);border-radius:var(--r2);padding:10px 12px;font-family:inherit;font-size:13px;outline:none;width:100%"></div>
+    <button class="btn btn-primary btn-full" onclick="saveProfile()"><i class="fa-solid fa-save"></i> Save Changes</button>
+    <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="closeModal('editProfileModal')">Cancel</button>
+  </div>
+</div>
 
-        // ដំណើរការកត់ត្រាវត្តមាន (Check In หรือ Check Out)
-        async function executeCheck(type) {
-            const typeText = type === 'IN' ? 'Check-In (ចូលការងារ)' : 'Check-Out (ចេញពីការងារ)';
-            updateStatusUI('loading', `កំពុងរក្សាទុក ${type}...`, `ប្រព័ន្ធកំពុងកត់ត្រាវត្តមាន ${typeText} របស់អ្នក...`);
-            
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('km-KH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            const timeStr = now.toLocaleTimeString('km-KH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal-overlay" id="changePassModal">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title"><i class="fa-solid fa-key"></i> Change Password</div>
+    <div style="margin-bottom:12px"><label class="form-label">Current Password</label><input type="password" id="currPass" style="background:var(--bg3);border:1.5px solid var(--border);color:var(--text);border-radius:var(--r2);padding:10px 12px;font-family:inherit;font-size:13px;outline:none;width:100%"></div>
+    <div style="margin-bottom:12px"><label class="form-label">New Password</label><input type="password" id="newPass" style="background:var(--bg3);border:1.5px solid var(--border);color:var(--text);border-radius:var(--r2);padding:10px 12px;font-family:inherit;font-size:13px;outline:none;width:100%"></div>
+    <div style="margin-bottom:16px"><label class="form-label">Confirm New Password</label><input type="password" id="confPass" style="background:var(--bg3);border:1.5px solid var(--border);color:var(--text);border-radius:var(--r2);padding:10px 12px;font-family:inherit;font-size:13px;outline:none;width:100%"></div>
+    <button class="btn btn-primary btn-full" onclick="changePassword()"><i class="fa-solid fa-lock"></i> Update Password</button>
+    <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="closeModal('changePassModal')">Cancel</button>
+  </div>
+</div>
 
-            try {
-                if (!currentUserData) {
-                    throw new Error("រកមិនឃើញព័ត៌មានបុគ្គលិកឡើយ");
-                }
+<script>
+window.showToast=(msg,type='info',dur=3500)=>{
+  const c=document.getElementById('toasts');
+  const ic={success:'fa-check-circle',error:'fa-circle-xmark',warning:'fa-triangle-exclamation',info:'fa-circle-info'};
+  const cl={success:'var(--green)',error:'var(--red)',warning:'var(--amber)',info:'var(--brand)'};
+  const el=document.createElement('div');el.className='toast '+type;
+  el.innerHTML=`<i class="fa-solid ${ic[type]}" style="color:${cl[type]};font-size:16px;flex-shrink:0"></i><span>${msg}</span>`;
+  c.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';el.style.transform='translateY(-20px)';el.style.transition='.4s';setTimeout(()=>el.remove(),400);},dur);
+};
+function showLoading(msg='Processing…'){const o=document.getElementById('loadingOverlay');document.getElementById('loadingText').textContent=msg;o.style.display='flex';}
+function hideLoading(){document.getElementById('loadingOverlay').style.display='none';}
+function setTheme(t){document.documentElement.setAttribute('data-theme',t);localStorage.setItem('st',t);const s=document.getElementById('themeSwitch');if(s)s.classList.toggle('on',t==='dark');}
+function toggleTheme(){setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');}
+window.toggleTheme=toggleTheme;
+if(localStorage.getItem('st'))setTheme(localStorage.getItem('st'));
+window.openModal=id=>document.getElementById(id)?.classList.add('open');
+window.closeModal=id=>document.getElementById(id)?.classList.remove('open');
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal(m.id);}));
+</script>
 
-                // ១. រក្សាទុកប្រវត្តិក្នុង Firebase Firestore
-                await addDoc(collection(db, "attendance"), {
-                    userId: currentUserData.uid,
-                    name: currentUserData.name,
-                    email: currentUserData.email,
-                    type: type, // 'IN' ឬ 'OUT'
-                    timestamp: now.toISOString(),
-                    date: dateStr,
-                    time: timeStr
-                });
+<!-- FIREBASE -->
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged,updatePassword,EmailAuthProvider,reauthenticateWithCredential}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,addDoc,updateDoc,collection,query,where,orderBy,getDocs,onSnapshot}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-                // ២. ទាញយក Telegram Config ពី Database
-                let botToken = "8672044632:AAEfQw3Cvu-ydscwkLbpgwy8XHTeQzUFErY";
-                let chatId = "-5005798325";
+const FC={apiKey:"AIzaSyCVzRdVej7MORKTa-NcQMHJEzQ1nYikZX0",authDomain:"chafe-app.firebaseapp.com",projectId:"chafe-app",storageBucket:"chafe-app.firebasestorage.app",messagingSenderId:"43410802507",appId:"1:43410802507:web:c48c2d946b89008c34cace"};
+const app=initializeApp(FC);
+const auth=getAuth(app);
+const db=getFirestore(app);
 
-                try {
-                    const tgDoc = await getDoc(doc(db, "settings", "telegram"));
-                    if (tgDoc.exists()) {
-                        const tgData = tgDoc.data();
-                        if (tgData.botToken && tgData.chatId) {
-                            botToken = tgData.botToken;
-                            chatId = tgData.chatId;
-                        }
-                    }
-                } catch (e) {
-                    console.log("Using default telegram settings.");
-                }
+let currentUser=null;
+let myAtt=[];
+let myLeave=[];
+let settings={};
+let html5QR=null;
 
-                // រៀបចំសារ Telegram
-                const statusSymbol = type === 'IN' ? '🟢 [Check-In]' : '🔴 [Check-Out]';
-                const message = `🔔 *វត្តមានបុគ្គលិក*\n\n👤 ឈ្មោះ: ${currentUserData.name}\n📧 អ៊ីមែល: ${currentUserData.email}\n📅 កាលបរិច្ឆេទ: ${dateStr}\n⏰ ម៉ោងស្កែន: ${timeStr}\n\n${statusSymbol}៖ ជោគជ័យ`;
-                
-                await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: chatId,
-                        text: message,
-                        parse_mode: 'Markdown'
-                    })
-                });
+const $=id=>document.getElementById(id);
+const COLORS=['#00d4ff','#00e676','#ffb300','#ff4757','#c084fc','#f472b6'];
+function avatarColor(n){let h=0;for(const c of(n||'A'))h=(h*31+c.charCodeAt(0))%COLORS.length;return COLORS[h];}
+function initials(n){return(n||'?').split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2);}
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function fmtTime(ts){if(!ts)return'—';const d=new Date(ts);return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
 
-                // ប្តូរ UI បង្ហាញភាពជោគជ័យ
-                updateStatusUI('success', `${typeText} ជោគជ័យ`, `ម៉ោងកត់ត្រា៖ ${timeStr}`);
-                
-                // បិទលុប Action parameters ពី URL
-                window.history.replaceState({}, document.title, window.location.pathname);
+// CLOCK
+function startClock(){
+  const t=()=>{
+    const n=new Date();
+    $('heroClock').textContent=n.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    $('heroDate').textContent=n.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+    const ct=$('checkTimeCurrent');
+    if(ct)ct.textContent=n.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    if(currentUser)updateShiftProgress();
+  };
+  t();setInterval(t,1000);
+}
+startClock();
 
-                // បង្ហាញប៊ូតុងស្កែនឡើងវិញក្រោយ 5 វិនាទី
-                setTimeout(() => {
-                    setUINormalState();
-                }, 5000);
+function updateShiftProgress(){
+  const start=currentUser?.shiftStart||'06:00';
+  const end=currentUser?.shiftEnd||'15:00';
+  const [sh,sm]=start.split(':').map(Number);
+  const [eh,em]=end.split(':').map(Number);
+  const now=new Date();const nh=now.getHours()+now.getMinutes()/60;
+  const startH=sh+sm/60;const endH=eh+em/60;
+  const pct=Math.min(100,Math.max(0,((nh-startH)/(endH-startH))*100));
+  const pb=$('shiftProgress');const pp=$('shiftPct');
+  if(pb)pb.style.width=pct+'%';
+  if(pp)pp.textContent=Math.round(pct)+'% complete';
+}
 
-            } catch (error) {
-                console.error("Attendance error:", error);
-                updateStatusUI('error', 'មានបញ្ហាខុសឆ្គង', 'មិនអាចកត់ត្រាវត្តមានបានទេ៖ ' + error.message);
-            }
-        }
+// AUTH
+onAuthStateChanged(auth,async user=>{
+  if(user){
+    try{
+      const snap=await getDoc(doc(db,'users',user.uid));
+      if(snap.exists()){
+        currentUser={uid:user.uid,...snap.data()};
+        setupUI();
+        $('loginScreen').classList.remove('active');
+        $('appScreen').classList.add('active');
+        loadMyData();
+        const params=new URLSearchParams(window.location.search);
+        if(params.get('action')==='scan')openCheckSheet('scan');
+      } else {
+        showToast('Account not found in system','error');
+        await signOut(auth);
+      }
+    }catch(e){showToast('Error: '+e.message,'error');}
+  }else{
+    $('appScreen').classList.remove('active');
+    $('loginScreen').classList.add('active');
+    currentUser=null;
+  }
+});
 
-        // Login Form Event
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            const errBox = document.getElementById('loginError');
-            const submitBtn = document.getElementById('loginSubmitBtn');
-            
-            try {
-                errBox.classList.add('hidden');
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> កំពុងផ្ទៀងផ្ទាត់...`;
-                
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
-                errBox.classList.remove('hidden');
-                if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-                    errBox.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> អ៊ីមែល ឬលេខកូដសម្ងាត់មិនត្រឹមត្រូវឡើយ!`;
-                } else if (error.code === 'auth/network-request-failed') {
-                    errBox.innerHTML = `<i class="fa-solid fa-wifi"></i> គ្មានការតភ្ជាប់អ៊ីនធឺណិតទេ!`;
-                } else {
-                    errBox.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> កំហុស៖ ${error.message}`;
-                }
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> <span>ឡុកអ៊ិនចូលគណនី</span>`;
-            }
-        });
+function setupUI(){
+  const{name,dept,role,salary,shiftStart,shiftEnd,email,phone}=currentUser;
+  const c=avatarColor(name);const ini=initials(name);
+  $('staffAvatar').textContent=ini;
+  $('staffName').textContent=name||'—';
+  $('staffRole').textContent=(dept||'')+(shiftStart?` · ${shiftStart}–${shiftEnd||''}`: '');
+  $('profileAvatar').textContent=ini;
+  $('profileAvatar').style.background=c+'18';
+  $('profileAvatar').style.color=c;
+  $('profileName').textContent=name||'—';
+  $('profileRoleLine').textContent=(role||dept||'Staff')+(shiftStart?` · ${shiftStart}–${shiftEnd}`:'');
+  $('infName').textContent=name||'—';
+  $('infEmail').textContent=email||'—';
+  $('infDept').textContent=dept||'—';
+  $('infRole').textContent=role||'—';
+  $('infShift').textContent=(shiftStart||'06:00')+' – '+(shiftEnd||'15:00');
+  $('infSalary').textContent='$'+(salary||0)+' / month';
+  $('shiftTime').textContent=(shiftStart||'06:00')+' – '+(shiftEnd||'15:00');
+  $('shiftStartLabel').textContent=shiftStart||'06:00';
+  $('shiftEndLabel').textContent=shiftEnd||'15:00';
+  $('editName').value=name||'';
+  $('editPhone').value=phone||'';
+  $('checkDateCurrent').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+}
 
-        // មុខងារចាកចេញពីប្រព័ន្ធ
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            signOut(auth).then(() => {
-                window.location.reload();
-            });
-        });
+async function loadMyData(){
+  await loadSettings();
+  await loadMyAttendance();
+  await loadMyLeave();
+  loadAnnouncements();
+  updateQuickStats();
+}
 
-        // មុខងារកំណត់ UI ពេលមិនទាន់បានស្កែន
-        function setUINormalState() {
-            updateStatusUI('normal', 'ត្រៀមខ្លួនរួចរាល់', 'សូមចុចប៊ូតុងខាងក្រោមដើម្បីស្កែន QR Code រួមរបស់ក្រុមហ៊ុន។');
-            actionButtons.classList.remove('hidden');
-            attendanceActionBlock.classList.add('hidden');
-        }
+async function loadSettings(){
+  try{const snap=await getDoc(doc(db,'settings','main'));if(snap.exists())settings=snap.data();}catch(e){}
+}
 
-        // Helper function សម្រាប់ប្តូរ interface មើលទៅស្អាត
-        function updateStatusUI(type, title, desc) {
-            const iconBox = document.getElementById('statusIcon');
-            const titleBox = document.getElementById('statusTitle');
-            const descBox = document.getElementById('statusDesc');
+// MY ATTENDANCE
+async function loadMyAttendance(){
+  const now=new Date();
+  const monthStart=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
+  try{
+    const snap=await getDocs(query(collection(db,'attendance'),where('userId','==',currentUser.uid),where('date','>=',monthStart)));
+    myAtt=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+    renderAttHistory();
+    renderMiniCal();
+    updateQuickStats();
+    updateLastActivity();
+    renderAttStats();
+  }catch(e){showToast('Error loading attendance','error');}
+}
 
-            titleBox.innerText = title;
-            descBox.innerText = desc;
+function updateLastActivity(){
+  const todayRecs=myAtt.filter(r=>r.date===todayStr()).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+  if(!todayRecs.length){
+    $('lastActType').textContent='No activity today';
+    $('lastActTime').textContent='—';
+    $('lastActBadge').textContent='—';
+    $('lastActBadge').className='badge badge-gray';
+    $('lastActHours').textContent='—';
+    $('lastActIcon').innerHTML='<i class="fa-solid fa-clock"></i>';
+    $('lastActIcon').style.background='var(--bg3)';$('lastActIcon').style.color='var(--text3)';
+    $('checkStatusLabel').textContent='Status: Not checked in';
+    return;
+  }
+  const last=todayRecs[0];
+  const isIn=last.type==='IN';
+  $('lastActType').textContent=isIn?'Checked In':'Checked Out';
+  $('lastActTime').textContent='Today at '+fmtTime(last.timestamp);
+  $('lastActBadge').textContent=last.type;
+  $('lastActBadge').className='badge '+(isIn?'badge-green':'badge-amber');
+  $('lastActIcon').innerHTML=`<i class="fa-solid ${isIn?'fa-arrow-right-to-bracket':'fa-arrow-right-from-bracket'}"></i>`;
+  $('lastActIcon').style.background=isIn?'var(--green-dim)':'var(--amber-dim)';
+  $('lastActIcon').style.color=isIn?'var(--green)':'var(--amber)';
+  $('checkStatusLabel').textContent=isIn?'Status: Working':'Status: Off Duty';
+  // Hours
+  const ins=todayRecs.filter(r=>r.type==='IN');
+  const outs=todayRecs.filter(r=>r.type==='OUT');
+  if(ins.length&&outs.length){
+    const diff=(new Date(outs[0].timestamp)-new Date(ins[ins.length-1].timestamp))/3600000;
+    $('lastActHours').textContent=diff.toFixed(1);
+  }
+}
 
-            if (type === 'loading') {
-                iconBox.className = "w-14 h-14 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-xl mb-3 animate-pulse";
-                iconBox.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
-            } else if (type === 'success') {
-                iconBox.className = "w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-xl mb-3 shadow-md shadow-emerald-50";
-                iconBox.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
-            } else if (type === 'error') {
-                iconBox.className = "w-14 h-14 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center text-xl mb-3";
-                iconBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i>`;
-            } else if (type === 'choice') {
-                iconBox.className = "w-14 h-14 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center text-xl mb-3";
-                iconBox.innerHTML = `<i class="fa-solid fa-fingerprint"></i>`;
-            } else {
-                iconBox.className = "w-14 h-14 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center text-xl mb-3";
-                iconBox.innerHTML = `<i class="fa-solid fa-qrcode"></i>`;
-            }
-        }
-    </script>
+function updateQuickStats(){
+  const today=todayStr();const now=new Date();
+  const month=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const monthRecs=myAtt.filter(r=>r.date.startsWith(month));
+  // Today hours
+  const todayIn=myAtt.find(r=>r.date===today&&r.type==='IN');
+  const todayOut=myAtt.find(r=>r.date===today&&r.type==='OUT');
+  if(todayIn&&todayOut){
+    const h=(new Date(todayOut.timestamp)-new Date(todayIn.timestamp))/3600000;
+    $('hoursToday').textContent=h.toFixed(1)+'h';
+  } else if(todayIn){
+    const h=(Date.now()-new Date(todayIn.timestamp).getTime())/3600000;
+    $('hoursToday').textContent=h.toFixed(1)+'h';
+  }
+  // Days this month
+  const uniqueDays=[...new Set(monthRecs.filter(r=>r.type==='IN').map(r=>r.date))].length;
+  $('attDays').textContent=uniqueDays;
+  // Attendance %
+  const workDays=now.getDate();
+  $('attPct').textContent=workDays?Math.round((uniqueDays/workDays)*100)+'%':'—%';
+}
+
+function renderAttHistory(){
+  const el=$('attHistoryList');
+  const recent=myAtt.slice(0,14);
+  if(!recent.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--text3)">No records yet</div>';return;}
+  // Group by date
+  const byDate={};
+  recent.forEach(r=>{if(!byDate[r.date])byDate[r.date]=[];byDate[r.date].push(r);});
+  el.innerHTML=Object.entries(byDate).slice(0,7).map(([date,recs])=>{
+    const inR=recs.find(r=>r.type==='IN');const outR=recs.find(r=>r.type==='OUT');
+    const d=new Date(date+'T00:00:00');
+    const label=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+    let hours='—';if(inR&&outR)hours=((new Date(outR.timestamp)-new Date(inR.timestamp))/3600000).toFixed(1)+'h';
+    const status=inR?.status;
+    const badge=status==='on_time'?'badge-green':status==='late'?'badge-amber':'badge-gray';
+    const badgeLabel=status==='on_time'?'On Time':status==='late'?'Late':'—';
+    return `<div class="att-item">
+      <div class="att-icon" style="background:${inR?'var(--green-dim)':'var(--red-dim)'};color:${inR?'var(--green)':'var(--red)'}"><i class="fa-solid ${inR?'fa-check':'fa-xmark'}"></i></div>
+      <div style="flex:1"><div style="font-weight:700;font-size:13px">${label}</div><div style="font-size:11px;color:var(--text3)">In: ${inR?fmtTime(inR.timestamp):'—'} · Out: ${outR?fmtTime(outR.timestamp):'—'}</div></div>
+      <div style="text-align:right"><span class="badge ${badge}">${badgeLabel}</span><div style="font-size:11px;font-family:'Space Mono',monospace;color:var(--text3);margin-top:4px">${hours}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderMiniCal(){
+  const cal=$('miniCal');if(!cal)return;
+  const now=new Date();
+  $('calMonthLabel').textContent=now.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  const year=now.getFullYear();const month=now.getMonth();
+  const firstDay=new Date(year,month,1).getDay();
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const today=now.getDate();
+  const monthStr=`${year}-${String(month+1).padStart(2,'0')}`;
+  // Build attendance map
+  const attMap={};
+  myAtt.filter(r=>r.date.startsWith(monthStr)&&r.type==='IN').forEach(r=>{
+    const d=parseInt(r.date.split('-')[2]);
+    attMap[d]=r.status==='late'?'late':'present';
+  });
+  const heads=['S','M','T','W','T','F','S'];
+  let html=heads.map(h=>`<div class="cal-head">${h}</div>`).join('');
+  for(let i=0;i<firstDay;i++)html+=`<div class="cal-cell empty">·</div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const isToday=d===today;
+    const isFuture=d>today;
+    const cls=isToday?'today':isFuture?'future':attMap[d]||'absent';
+    html+=`<div class="cal-cell ${cls}">${d}</div>`;
+  }
+  cal.innerHTML=html;
+}
+
+function renderAttStats(){
+  const now=new Date();
+  const month=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const monthRecs=myAtt.filter(r=>r.date.startsWith(month));
+  const uniqueDays=[...new Set(monthRecs.filter(r=>r.type==='IN').map(r=>r.date))].length;
+  const workDays=now.getDate();
+  const late=monthRecs.filter(r=>r.type==='IN'&&r.status==='late').length;
+  let totalH=0,otH=0;
+  const days=[...new Set(monthRecs.filter(r=>r.type==='IN').map(r=>r.date))];
+  days.forEach(date=>{
+    const inR=monthRecs.find(r=>r.date===date&&r.type==='IN');
+    const outR=monthRecs.find(r=>r.date===date&&r.type==='OUT');
+    if(inR&&outR){
+      const h=(new Date(outR.timestamp)-new Date(inR.timestamp))/3600000;
+      totalH+=h;if(h>8)otH+=h-8;
+    }
+  });
+  $('statAttRate').textContent=workDays?Math.round((uniqueDays/workDays)*100)+'%':'—%';
+  $('statTotalHours').textContent=totalH.toFixed(0)+'h';
+  $('statLateDays').textContent=late;
+  $('statOTHours').textContent=otH.toFixed(1)+'h';
+}
+
+// MY LEAVE
+async function loadMyLeave(){
+  try{
+    const snap=await getDocs(query(collection(db,'leave'),where('userId','==',currentUser.uid)));
+    myLeave=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+    renderLeaveList();
+    renderLeaveBalance();
+    updateHomLeaveBalance();
+  }catch(e){showToast('Error loading leave','error');}
+}
+
+function renderLeaveBalance(){
+  const types={sick:0,vacation:0,emergency:0};
+  const defaultMax={sick:15,vacation:10,emergency:3};
+  const approved=myLeave.filter(l=>l.status==='approved');
+  approved.forEach(l=>{
+    const d=l.from&&l.to?Math.max(1,Math.round((new Date(l.to)-new Date(l.from))/(1000*60*60*24))+1):1;
+    if(types[l.type]!==undefined)types[l.type]+=d;
+  });
+  $('leaveBalanceDetail').innerHTML=Object.entries(defaultMax).map(([type,max])=>{
+    const used=types[type]||0;const rem=Math.max(0,max-used);
+    const pct=Math.round((rem/max)*100);
+    const color=type==='sick'?'var(--green)':type==='vacation'?'var(--brand)':'var(--amber)';
+    return `<div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px"><span>${type.charAt(0).toUpperCase()+type.slice(1)} Leave</span><span style="font-weight:700;color:${color}">${rem} / ${max} days</span></div>
+      <div class="progress"><div class="progress-bar" style="width:${pct}%;background:${color}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function updateHomLeaveBalance(){
+  const approved=myLeave.filter(l=>l.status==='approved');
+  const countType=type=>{const mx=type==='sick'?15:type==='vacation'?10:3;const used=approved.filter(l=>l.type===type).reduce((a,l)=>a+Math.max(1,Math.round((new Date(l.to)-new Date(l.from))/(1000*60*60*24))+1),0);return Math.max(0,mx-used);};
+  $('sickBal').textContent=countType('sick');
+  $('vacBal').textContent=countType('vacation');
+  $('emgBal').textContent=countType('emergency');
+}
+
+function renderLeaveList(){
+  const el=$('leaveList');
+  if(!myLeave.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--text3)">No leave requests</div>';return;}
+  const typeIcon={sick:'fa-virus',vacation:'fa-umbrella-beach',emergency:'fa-bolt',other:'fa-ellipsis'};
+  const statusBadge=s=>s==='approved'?'badge-green':s==='pending'?'badge-amber':'badge-red';
+  el.innerHTML=myLeave.slice(0,10).map(l=>`
+    <div class="leave-card" style="border-left-color:${l.status==='approved'?'var(--green)':l.status==='pending'?'var(--amber)':'var(--red)'}">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px"><i class="fa-solid ${typeIcon[l.type]||'fa-ellipsis'}"></i> ${l.type.charAt(0).toUpperCase()+l.type.slice(1)} Leave</div>
+        <span class="badge ${statusBadge(l.status)}">${l.status}</span>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">${l.from||'—'} → ${l.to||'—'} · ${l.reason||'—'}</div>
+      ${l.status==='pending'?`<div style="margin-top:8px"><button class="btn btn-danger" style="padding:5px 12px;font-size:11px" onclick="cancelLeave('${l.id}')">Cancel Request</button></div>`:''}
+    </div>`).join('');
+}
+
+window.cancelLeave=async id=>{
+  if(!confirm('Cancel this leave request?'))return;
+  try{
+    await updateDoc(doc(db,'leave',id),{status:'cancelled',cancelledAt:new Date().toISOString()});
+    showToast('Leave cancelled','warning');
+    loadMyLeave();
+  }catch(e){showToast('Error: '+e.message,'error');}
+};
+
+// ANNOUNCEMENTS
+async function loadAnnouncements(){
+  try{
+    const snap=await getDocs(query(collection(db,'announcements')));
+    const ann=snap.docs.map(d=>d.data()).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+    $('announcementsList').innerHTML=ann.length?ann.slice(0,3).map(a=>`
+      <div style="background:linear-gradient(135deg,var(--brand-dim),var(--purple-dim));border:1px solid rgba(0,212,255,.2);border-radius:var(--r);padding:14px;margin-bottom:8px">
+        <div style="font-size:10px;color:var(--brand);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px"><i class="fa-solid fa-bullhorn"></i> ${a.category||'Notice'}</div>
+        <div style="font-weight:700;font-size:13px;margin-bottom:4px">${a.title||'—'}</div>
+        <div style="font-size:12px;color:var(--text2)">${a.body||''}</div>
+      </div>`).join('')
+      :`<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;color:var(--text3);font-size:12px;text-align:center">No announcements yet</div>`;
+  }catch(e){
+    $('announcementsList').innerHTML=`<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;color:var(--text3);font-size:12px;text-align:center">No announcements yet</div>`;
+  }
+}
+
+// NOTIFICATIONS
+async function loadNotifications(){
+  try{
+    const snap=await getDocs(query(collection(db,'notifications'),where('userId','==',currentUser.uid)));
+    const notifs=snap.docs.map(d=>d.data()).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+    const typeIcon={checkin:'fa-check-circle',checkout:'fa-arrow-right-from-bracket',leave:'fa-calendar-check',salary:'fa-money-bill',announcement:'fa-bullhorn'};
+    const typeColor={checkin:'var(--green-dim)',checkout:'var(--amber-dim)',leave:'var(--green-dim)',salary:'var(--brand-dim)',announcement:'var(--purple-dim)'};
+    const typeText={checkin:'var(--green)',checkout:'var(--amber)',leave:'var(--green)',salary:'var(--brand)',announcement:'var(--purple)'};
+    $('notifList').innerHTML=notifs.length?notifs.slice(0,20).map(n=>`
+      <div style="display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);align-items:flex-start">
+        <div style="width:36px;height:36px;background:${typeColor[n.type]||'var(--bg3)'};color:${typeText[n.type]||'var(--text3)'};border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0"><i class="fa-solid ${typeIcon[n.type]||'fa-bell'}"></i></div>
+        <div><div style="font-weight:600;font-size:13px">${n.title||'—'}</div><div style="font-size:11px;color:var(--text3);margin-top:2px">${n.body||''}</div></div>
+      </div>`).join('')
+      :'<div style="text-align:center;padding:20px;color:var(--text3)">No notifications</div>';
+  }catch(e){$('notifList').innerHTML='<div style="text-align:center;padding:20px;color:var(--text3)">No notifications</div>';}
+}
+
+// CHECK IN/OUT
+window.openCheckSheet=mode=>{
+  const modal=$('checkModal');
+  $('checkSuccessMode').style.display='none';
+  if(mode==='scan'){
+    $('checkTitle').innerHTML='<i class="fa-solid fa-qrcode"></i> Scan QR Code';
+    $('checkScanMode').style.display='block';
+    $('checkDirectMode').style.display='none';
+    modal.classList.add('open');
+    setTimeout(startQRScanner,300);
+  }else{
+    $('checkTitle').innerHTML=mode==='IN'?'<i class="fa-solid fa-arrow-right-to-bracket"></i> Check In':'<i class="fa-solid fa-arrow-right-from-bracket"></i> Check Out';
+    $('checkScanMode').style.display='none';
+    $('checkDirectMode').style.display='block';
+    modal.classList.add('open');
+  }
+};
+
+function startQRScanner(){
+  const el=$('qrReader');if(!el)return;
+  html5QR=new Html5Qrcode('qrReader');
+  html5QR.start({facingMode:'environment'},{fps:10,qrbox:{width:200,height:200}},
+    decoded=>{stopQRScanner();$('checkScanMode').style.display='none';$('checkDirectMode').style.display='block';$('checkTitle').innerHTML='<i class="fa-solid fa-fingerprint"></i> Confirm';},
+    ()=>{}
+  ).catch(()=>{showToast('Camera access denied','error');closeScanModal();});
+}
+function stopQRScanner(){if(html5QR)html5QR.stop().then(()=>{html5QR=null;}).catch(()=>{});}
+window.closeScanModal=()=>{stopQRScanner();closeModal('checkModal');};
+
+window.executeCheck=async type=>{
+  if(!currentUser){showToast('Not logged in','error');return;}
+  $('checkDirectMode').style.display='none';
+  showLoading(type==='IN'?'Recording Check-In…':'Recording Check-Out…');
+  const now=new Date();
+  const today=now.toISOString().slice(0,10);
+  // Determine status
+  const shiftStart=currentUser.shiftStart||'06:00';
+  const [sh,sm]=shiftStart.split(':').map(Number);
+  const thresh=settings.lateThresh||15;
+  const lateMinutes=(now.getHours()-sh)*60+(now.getMinutes()-sm);
+  const status=type==='IN'?(lateMinutes>thresh?'late':'on_time'):'checked_out';
+  try{
+    await addDoc(collection(db,'attendance'),{
+      userId:currentUser.uid, name:currentUser.name, email:currentUser.email, dept:currentUser.dept||'',
+      type, date:today, timestamp:now.toISOString(),
+      status:type==='IN'?status:'on_time',
+      notes:'', manual:false, createdAt:now.toISOString()
+    });
+    // Telegram
+    if(settings.tgToken&&settings.tgChat){
+      const sym=type==='IN'?'🟢':'🔴';
+      const late=type==='IN'&&status==='late'?` ⏰ (Late ${lateMinutes}m)`:'';
+      await fetch(`https://api.telegram.org/bot${settings.tgToken}/sendMessage`,{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({chat_id:settings.tgChat,text:`${sym} *${currentUser.name}* — ${type==='IN'?'Check-In':'Check-Out'}${late}\n⏰ ${now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}\n📅 ${now.toLocaleDateString()}\n🏢 ${currentUser.dept||'—'}`,parse_mode:'Markdown'})
+      }).catch(()=>{});
+      $('successNotif').textContent='✓ Telegram notified';
+    } else {
+      $('successNotif').textContent='⚠ Telegram not configured';
+    }
+    // Save notification for user
+    await addDoc(collection(db,'notifications'),{
+      userId:currentUser.uid,
+      type:'check'+type.toLowerCase(),
+      title:`${type==='IN'?'Check-In':'Check-Out'} recorded`,
+      body:`${now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} · ${status==='late'?`Late ${lateMinutes}m`:'On time'}`,
+      createdAt:now.toISOString(),read:false
+    });
+    hideLoading();
+    $('successTitle').textContent=type==='IN'?'Check-In Successful! ✓':'Check-Out Successful! ✓';
+    $('successTime').textContent=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+' · '+(type==='IN'?status==='late'?`Late ${lateMinutes}m`:'On Time':'Completed');
+    $('checkSuccessMode').style.display='block';
+    showToast(type==='IN'?'Checked in!':'Checked out!','success');
+    loadMyAttendance();
+  }catch(e){hideLoading();showToast('Error: '+e.message,'error');}
+};
+
+// LEAVE REQUEST
+window.openLeaveModal=()=>{
+  $('leaveFrom').value='';$('leaveTo').value='';$('leaveReason').value='';
+  openModal('leaveModal');
+};
+window.selectLeaveType=(btn,type)=>{
+  document.querySelectorAll('#leaveTypeBtns .btn').forEach(b=>{b.style.background='';b.style.borderColor='';b.style.color='';});
+  btn.style.background='var(--brand-dim)';btn.style.borderColor='var(--brand)';btn.style.color='var(--brand)';
+  $('selectedLeaveType').value=type;
+};
+window.submitLeave=async()=>{
+  const from=$('leaveFrom').value;const to=$('leaveTo').value;const reason=$('leaveReason').value;
+  const type=$('selectedLeaveType').value||'sick';
+  if(!from||!to){showToast('Select dates','error');return;}
+  try{
+    await addDoc(collection(db,'leave'),{
+      userId:currentUser.uid,name:currentUser.name,email:currentUser.email,dept:currentUser.dept||'',
+      type,from,to,reason,status:'pending',createdAt:new Date().toISOString()
+    });
+    // Notify admin via Telegram
+    if(settings.tgToken&&settings.tgChat){
+      await fetch(`https://api.telegram.org/bot${settings.tgToken}/sendMessage`,{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({chat_id:settings.tgChat,text:`📋 Leave Request from *${currentUser.name}*\nType: ${type}\nFrom: ${from} → ${to}\nReason: ${reason}`,parse_mode:'Markdown'})
+      }).catch(()=>{});
+    }
+    showToast('Leave request submitted!','success');
+    closeModal('leaveModal');
+    loadMyLeave();
+  }catch(e){showToast('Error: '+e.message,'error');}
+};
+
+// PROFILE
+window.openEditProfile=()=>openModal('editProfileModal');
+window.saveProfile=async()=>{
+  const name=$('editName').value.trim();const phone=$('editPhone').value.trim();
+  if(!name){showToast('Name required','error');return;}
+  try{
+    await updateDoc(doc(db,'users',currentUser.uid),{name,phone,updatedAt:new Date().toISOString()});
+    currentUser.name=name;currentUser.phone=phone;
+    setupUI();
+    showToast('Profile updated!','success');closeModal('editProfileModal');
+  }catch(e){showToast('Error: '+e.message,'error');}
+};
+
+window.openChangePass=()=>openModal('changePassModal');
+window.changePassword=async()=>{
+  const curr=$('currPass').value;const np=$('newPass').value;const conf=$('confPass').value;
+  if(!curr||!np||!conf){showToast('Fill all fields','error');return;}
+  if(np!==conf){showToast('Passwords do not match','error');return;}
+  if(np.length<6){showToast('Min 6 characters','error');return;}
+  try{
+    const cred=EmailAuthProvider.credential(currentUser.email,curr);
+    await reauthenticateWithCredential(auth.currentUser,cred);
+    await updatePassword(auth.currentUser,np);
+    showToast('Password updated!','success');closeModal('changePassModal');
+    $('currPass').value='';$('newPass').value='';$('confPass').value='';
+  }catch(e){
+    if(e.code==='auth/wrong-password')showToast('Wrong current password','error');
+    else showToast('Error: '+e.message,'error');
+  }
+};
+
+// AUTH
+window.doLogin=async()=>{
+  const email=$('loginEmail').value.trim();const pass=$('loginPassword').value;
+  const err=$('loginErr');err.style.display='none';
+  if(!email||!pass){err.textContent='Fill all fields.';err.style.display='block';return;}
+  showLoading('Signing in…');
+  try{await signInWithEmailAndPassword(auth,email,pass);}
+  catch(e){hideLoading();err.textContent=e.code==='auth/invalid-credential'?'Invalid email or password.':e.message;err.style.display='block';}
+  finally{hideLoading();}
+};
+window.doLogout=async()=>{try{await signOut(auth);}catch(e){}};
+
+// NAVIGATION
+window.switchTab=name=>{
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  $('panel-'+name)?.classList.add('active');
+  const navEl=$('nav'+name.charAt(0).toUpperCase()+name.slice(1));
+  if(navEl)navEl.classList.add('active');
+  if(name==='attendance'){renderMiniCal();renderAttHistory();renderAttStats();}
+  if(name==='leave'){loadMyLeave();}
+  if(name==='notifications')loadNotifications();
+};
+
+window.switchAttTab=(mode,btn)=>{
+  document.querySelectorAll('[id^=attTab]').forEach(b=>{b.style.background='transparent';b.style.color='var(--text3)';});
+  btn.style.background='var(--card)';btn.style.color='var(--text)';
+  $('attHistory').style.display=mode==='history'?'block':'none';
+  $('attCalendarView').style.display=mode==='calendar'?'block':'none';
+  $('attStatsView').style.display=mode==='stats'?'block':'none';
+  if(mode==='calendar')renderMiniCal();
+  if(mode==='stats')renderAttStats();
+};
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));});
+</script>
 </body>
 </html>

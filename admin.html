@@ -1,224 +1,1443 @@
 <!DOCTYPE html>
-<html lang="km">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ប្រព័ន្ធគ្រប់គ្រង - Admin Dashboard</title>
-    <!-- Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- QR Code Generator Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KRONOS HR — Admin Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;400;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#07090f;--bg2:#0d1117;--bg3:#131b26;--bg4:#1a2436;
+  --card:#0f1623;--card2:#141e2e;--border:#1e2d42;--border2:#243349;
+  --text:#e8eef7;--text2:#8fa3bf;--text3:#4a607a;
+  --brand:#00d4ff;--brand2:#0099cc;--brand-dim:#001f2e;
+  --green:#00e676;--green-dim:#002e1a;
+  --amber:#ffb300;--amber-dim:#2e1f00;
+  --red:#ff4757;--red-dim:#2e0a0f;
+  --purple:#c084fc;--purple-dim:#1a0d2e;
+  --pink:#f472b6;--pink-dim:#2e0d1f;
+  --r:12px;--r2:8px;--r3:20px;
+  --shadow:0 4px 24px rgba(0,0,0,.4);--shadow2:0 2px 8px rgba(0,0,0,.3);
+  --glow-brand:0 0 20px rgba(0,212,255,.15);--glow-green:0 0 20px rgba(0,230,118,.15);
+}
+[data-theme="light"]{
+  --bg:#f0f4f8;--bg2:#e8ecf2;--bg3:#dde3ec;--bg4:#d2dae6;
+  --card:#ffffff;--card2:#f8fafd;--border:#d0d8e8;--border2:#c0cad8;
+  --text:#0d1526;--text2:#4a607a;--text3:#8fa3bf;
+  --brand:#0077aa;--brand2:#005588;--brand-dim:#e0f5ff;
+  --green:#00a651;--green-dim:#e0f9ed;
+  --amber:#d48800;--amber-dim:#fff3d4;
+  --red:#d42040;--red-dim:#ffe0e5;
+  --purple:#7c3aed;--purple-dim:#f0e8ff;
+  --shadow:0 4px 24px rgba(0,0,0,.1);--shadow2:0 2px 8px rgba(0,0,0,.08);
+  --glow-brand:0 0 0px transparent;--glow-green:0 0 0px transparent;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;transition:background .3s,color .3s;font-size:14px;overflow-x:hidden}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+
+/* LOGIN */
+#loginWrap{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;padding:16px}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:var(--r3);padding:40px 36px;width:100%;max-width:420px;box-shadow:var(--shadow)}
+.login-logo{text-align:center;margin-bottom:32px}
+.login-icon{width:64px;height:64px;background:linear-gradient(135deg,var(--brand),var(--brand2));border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:26px;color:#000;margin:0 auto 14px;box-shadow:var(--glow-brand)}
+.login-title{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;letter-spacing:.04em}
+.login-sub{font-size:12px;color:var(--text3);margin-top:4px}
+.fl{margin-bottom:14px}
+.fl label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px}
+.fl input{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:var(--r2);padding:11px 14px;font-family:inherit;font-size:14px;outline:none;transition:all .2s;width:100%}
+.fl input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(0,212,255,.1)}
+.login-btn{width:100%;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#000;font-weight:800;font-family:inherit;font-size:15px;padding:13px;border-radius:var(--r2);border:none;cursor:pointer;transition:all .2s;margin-top:4px}
+.login-btn:hover{filter:brightness(1.08)}
+.login-err{background:var(--red-dim);border:1px solid rgba(255,71,87,.3);border-radius:var(--r2);padding:10px 14px;font-size:12px;color:var(--red);margin-top:12px;display:none}
+
+/* SIDEBAR */
+#sidebar{width:240px;min-height:100vh;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;transition:width .3s,transform .3s}
+#sidebar.collapsed{width:64px}
+#sidebar.mobile-hidden{transform:translateX(-100%)}
+.sidebar-logo{padding:20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;min-height:64px;overflow:hidden;white-space:nowrap}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--brand),var(--brand2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#000;flex-shrink:0}
+.logo-text{font-family:'Space Mono',monospace;font-weight:700;font-size:15px}
+.logo-sub{font-size:10px;color:var(--text3);margin-top:1px}
+.sidebar-nav{flex:1;overflow-y:auto;padding:12px 8px}
+.nav-section-title{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;padding:8px 10px 4px;white-space:nowrap;overflow:hidden}
+#sidebar.collapsed .nav-section-title{opacity:0;height:0;padding:0;margin:0}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--r2);cursor:pointer;transition:all .2s;color:var(--text2);font-size:13px;font-weight:500;position:relative;white-space:nowrap;overflow:hidden;border:none;background:none;width:100%;font-family:inherit;text-align:left}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:linear-gradient(135deg,var(--brand-dim),rgba(0,212,255,.05));color:var(--brand);font-weight:600}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--brand);border-radius:0 3px 3px 0}
+.nav-item i{width:20px;text-align:center;font-size:13px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px;flex-shrink:0}
+#sidebar.collapsed .nav-badge,.sidebar.collapsed .nav-item span{display:none}
+.sidebar-footer{padding:12px 8px;border-top:1px solid var(--border)}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px;border-radius:var(--r);background:var(--bg3);overflow:hidden;white-space:nowrap}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--brand),var(--purple));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#000;flex-shrink:0}
+
+/* MAIN */
+#main{margin-left:240px;flex:1;min-height:100vh;display:flex;flex-direction:column;transition:margin .3s}
+#main.collapsed{margin-left:64px}
+#topbar{background:var(--card);border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;gap:16px}
+.menu-toggle{width:36px;height:36px;border-radius:var(--r2);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:14px}
+.menu-toggle:hover{background:var(--bg3);color:var(--text)}
+.page-title{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+.page-title span{font-size:12px;color:var(--text3);font-weight:400}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.topbar-btn{width:36px;height:36px;border-radius:var(--r2);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:13px}
+.topbar-btn:hover{background:var(--bg3);color:var(--text)}
+.clock-badge{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:6px 12px;font-family:'Space Mono',monospace;font-size:12px;color:var(--brand);font-weight:700}
+.theme-toggle{width:42px;height:24px;background:var(--bg4);border-radius:99px;position:relative;cursor:pointer;border:1px solid var(--border);transition:background .3s;flex-shrink:0}
+.theme-toggle::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:var(--text3);top:2px;left:2px;transition:all .3s}
+[data-theme="light"] .theme-toggle::after{left:20px;background:var(--amber)}
+[data-theme="light"] .theme-toggle{background:var(--amber-dim)}
+
+/* CONTENT */
+#content{flex:1;padding:24px;overflow-y:auto}
+.page{display:none}.page.active{display:block}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow2)}
+.card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.card-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card-title i{color:var(--brand)}
+.card-body{padding:20px}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;position:relative;overflow:hidden;transition:all .25s}
+.stat:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.stat-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:12px}
+.stat-val{font-size:28px;font-weight:900;font-family:'Space Mono',monospace;line-height:1;margin-bottom:4px}
+.stat-label{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.stat-change{font-size:11px;margin-top:6px;font-weight:600;color:var(--text3)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r2);font-weight:600;font-size:13px;cursor:pointer;transition:all .2s;border:none;outline:none;font-family:inherit}
+.btn-xs{padding:5px 10px;font-size:11px}.btn-sm{padding:6px 12px;font-size:12px}
+.btn-primary{background:var(--brand);color:#000;font-weight:700}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-success{background:var(--green);color:#000;font-weight:700}
+.btn-danger{background:var(--red);color:#fff}
+.btn-warning{background:var(--amber);color:#000;font-weight:700}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text2)}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text);background:var(--bg3)}
+.btn-icon{width:32px;height:32px;padding:0;justify-content:center;flex-shrink:0}
+
+/* INPUTS */
+input,select,textarea{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:var(--r2);padding:9px 12px;font-family:inherit;font-size:13px;outline:none;transition:all .2s;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(0,212,255,.1)}
+.input-group{position:relative}
+.input-group i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none}
+.input-group input{padding-left:32px}
+.form-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px}
+.form-row{display:grid;gap:12px;margin-bottom:12px}
+.form-row.cols-2{grid-template-columns:1fr 1fr}
+.form-row.cols-3{grid-template-columns:1fr 1fr 1fr}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{background:var(--bg3);color:var(--text3);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:10px 16px;text-align:left;border-bottom:1px solid var(--border)}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
+tbody tr:hover{background:var(--bg3)}
+tbody td{padding:12px 16px;font-size:13px}
+tbody tr:last-child{border-bottom:none}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:99px;font-size:11px;font-weight:700}
+.badge-green{background:var(--green-dim);color:var(--green)}
+.badge-red{background:var(--red-dim);color:var(--red)}
+.badge-amber{background:var(--amber-dim);color:var(--amber)}
+.badge-brand{background:var(--brand-dim);color:var(--brand)}
+.badge-purple{background:var(--purple-dim);color:var(--purple)}
+.badge-gray{background:var(--bg4);color:var(--text3)}
+
+/* AVATAR */
+.avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.avatar-sm{width:28px;height:28px;font-size:10px}
+.avatar-md{width:36px;height:36px;font-size:13px}
+.avatar-lg{width:48px;height:48px;font-size:16px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px;opacity:0;visibility:hidden;transition:all .25s}
+.modal-overlay.open{opacity:1;visibility:visible}
+.modal-box{background:var(--card);border:1px solid var(--border2);border-radius:var(--r3);box-shadow:var(--shadow);width:100%;max-width:500px;max-height:90vh;overflow-y:auto;transform:scale(.95);transition:transform .25s}
+.modal-overlay.open .modal-box{transform:scale(1)}
+.modal-box.wide{max-width:680px}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--card);z-index:1}
+.modal-title{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+.modal-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s}
+.modal-close:hover{background:var(--red-dim);color:var(--red);border-color:var(--red)}
+.modal-body{padding:24px}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;gap:8px}
+
+/* TOAST */
+#toasts{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;max-width:320px}
+.toast{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;box-shadow:var(--shadow);animation:toastIn .3s ease;pointer-events:auto;border-left:3px solid var(--brand)}
+.toast.success{border-left-color:var(--green)}.toast.error{border-left-color:var(--red)}.toast.warning{border-left-color:var(--amber)}
+@keyframes toastIn{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* MISC */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.section-title{font-size:18px;font-weight:700}
+.section-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.scroll-body{max-height:360px;overflow-y:auto}
+.progress{height:6px;background:var(--bg4);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;border-radius:99px;transition:width .6s ease}
+.tab-list{display:flex;gap:4px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:4px;margin-bottom:20px;flex-wrap:wrap}
+.tab-btn{flex:1;min-width:fit-content;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;border:none;background:transparent;color:var(--text3);cursor:pointer;transition:all .2s;font-family:inherit;text-align:center;white-space:nowrap}
+.tab-btn.active{background:var(--card);color:var(--text);box-shadow:var(--shadow2)}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:livePulse 1.5s infinite;display:inline-block}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.6)}}
+.empty-state{text-align:center;padding:48px 20px;color:var(--text3)}
+.empty-state i{font-size:40px;margin-bottom:12px;display:block}
+.loading-row td{text-align:center;padding:32px;color:var(--text3)}
+
+@media(max-width:768px){#sidebar{transform:translateX(-100%)}#sidebar.mobile-open{transform:translateX(0)}#main{margin-left:0!important}.stats-grid{grid-template-columns:repeat(2,1fr)}.form-row.cols-2,.form-row.cols-3{grid-template-columns:1fr}.clock-badge{display:none}#topbar{padding:0 16px}#content{padding:16px}}
+@media(max-width:480px){.stats-grid{grid-template-columns:1fr}}
+</style>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen">
+<body>
+<div id="toasts"></div>
 
-    <div class="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
-        <!-- Header -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-200 pb-5 mb-8">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">ផ្ទាំងគ្រប់គ្រងប្រព័ន្ធ</h1>
-                <p class="text-sm text-gray-500">បង្កើតគណនីបុគ្គលិក និងបង្ហាញ QR Code សម្រាប់ស្កែនចូលការងារ</p>
-            </div>
-            <div class="mt-4 sm:mt-0 flex items-center gap-2 text-sm font-medium text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full">
-                <i class="fa-solid fa-circle-check"></i> ប្រព័ន្ធដំណើរការធម្មតា
-            </div>
-        </header>
+<!-- LOGIN -->
+<div id="loginWrap">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-icon"><i class="fa-solid fa-fingerprint"></i></div>
+      <div class="login-title">KRONOS HR</div>
+      <div class="login-sub">Admin Console — Secure Login</div>
+    </div>
+    <div class="fl"><label>Email</label><input type="email" id="lEmail" placeholder="admin@cafe.com" onkeydown="if(event.key==='Enter')doAdminLogin()"></div>
+    <div class="fl"><label>Password</label><input type="password" id="lPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doAdminLogin()"></div>
+    <button class="login-btn" onclick="doAdminLogin()"><i class="fa-solid fa-right-to-bracket"></i> Sign In</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Left Panel: Create Account & Telegram Settings -->
-            <div class="lg:col-span-1 space-y-6">
-                <!-- Create Account Form -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
-                            <i class="fa-solid fa-user-plus text-lg"></i>
-                        </div>
-                        <h2 class="text-lg font-semibold text-gray-900">បង្កើតគណនីបុគ្គលិក</h2>
-                    </div>
+<!-- SIDEBAR -->
+<nav id="sidebar" style="display:none">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><i class="fa-solid fa-fingerprint"></i></div>
+    <div><div class="logo-text">KRONOS HR</div><div class="logo-sub">Admin Console</div></div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section-title">Overview</div>
+    <button class="nav-item active" onclick="showPage('dashboard',this)"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></button>
+    <button class="nav-item" onclick="showPage('realtime',this)"><i class="fa-solid fa-satellite-dish"></i><span>Live Monitor</span><div class="nav-badge">LIVE</div></button>
 
-                    <form id="createStaffForm" class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">ឈ្មោះបុគ្គលិក</label>
-                            <input type="text" id="staffName" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">អ៊ីមែល (សម្រាប់ Login)</label>
-                            <input type="email" id="staffEmail" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">លេខកូដសម្ងាត់</label>
-                            <input type="password" id="staffPassword" required minlength="6" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                        </div>
-                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2.5 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-save"></i> រក្សាទុកទិន្នន័យ
-                        </button>
-                    </form>
-                    <div id="statusMessage" class="mt-4 text-sm hidden p-3 rounded-lg"></div>
-                </div>
+    <div class="nav-section-title" style="margin-top:8px">HR Management</div>
+    <button class="nav-item" onclick="showPage('employees',this)"><i class="fa-solid fa-users"></i><span>Employees</span></button>
+    <button class="nav-item" onclick="showPage('attendance',this)"><i class="fa-solid fa-clipboard-list"></i><span>Attendance</span></button>
+    <button class="nav-item" onclick="showPage('leave',this)"><i class="fa-solid fa-calendar-check"></i><span>Leave Management</span><div class="nav-badge" id="pendingLeaveBadge">0</div></button>
 
-                <!-- Telegram Alert Settings -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="p-2 bg-sky-50 text-sky-600 rounded-lg">
-                            <i class="fa-brands fa-telegram text-lg"></i>
-                        </div>
-                        <h2 class="text-lg font-semibold text-gray-900">Telegram Alert Setup</h2>
-                    </div>
-                    <form id="telegramForm" class="space-y-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 mb-1">BOT TOKEN</label>
-                            <input type="text" id="botToken" placeholder="ឧទាហរណ៍: 123456:ABC-DEF..." required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 mb-1">CHAT ID (Group / User)</label>
-                            <input type="text" id="chatId" placeholder="ឧទាហរណ៍: -100123456789" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm">
-                        </div>
-                        <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-cloud-arrow-up"></i> រក្សាទុកការកំណត់
-                        </button>
-                    </form>
-                    <div id="tgStatus" class="mt-3 text-xs hidden p-2 rounded-lg"></div>
-                </div>
-            </div>
+    <div class="nav-section-title" style="margin-top:8px">Finance</div>
+    <button class="nav-item" onclick="showPage('payroll',this)"><i class="fa-solid fa-money-bill-wave"></i><span>Payroll</span></button>
+    <button class="nav-item" onclick="showPage('reports',this)"><i class="fa-solid fa-file-chart-column"></i><span>Reports</span></button>
 
-            <!-- Right Panel: QR Code Display -->
-            <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
-                <div class="mb-4">
-                    <div class="p-3 bg-amber-50 text-amber-600 rounded-full inline-block mb-2">
-                        <i class="fa-solid fa-qrcode text-2xl"></i>
-                    </div>
-                    <h2 class="text-xl font-bold text-gray-900">QR Code រួមសម្រាប់ Check-In</h2>
-                    <p class="text-sm text-gray-500 max-w-sm mt-1">ដាក់បង្ហាញ QR Code នេះនៅមាត់ទ្វារ ឬកន្លែងធ្វើការ ដើម្បីឲ្យបុគ្គលិកបើកទូរស័ព្ទស្កែន</p>
-                </div>
+    <div class="nav-section-title" style="margin-top:8px">Security</div>
+    <button class="nav-item" onclick="showPage('security',this)"><i class="fa-solid fa-shield-halved"></i><span>Access & Logs</span></button>
 
-                <!-- QR Code Target Box -->
-                <div class="p-4 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 mb-4">
-                    <div id="qrcode" class="bg-white p-2 rounded shadow-sm"></div>
-                </div>
+    <div class="nav-section-title" style="margin-top:8px">Config</div>
+    <button class="nav-item" onclick="showPage('settings',this)"><i class="fa-solid fa-sliders"></i><span>System Settings</span></button>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar" id="adminAvatarSidebar">SA</div>
+      <div style="overflow:hidden;flex:1"><div style="font-size:12px;font-weight:600" id="adminNameSidebar">Admin</div><div style="font-size:10px;color:var(--text3)">All permissions</div></div>
+      <button class="btn btn-ghost btn-xs btn-icon" onclick="doLogout()" title="Logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+    </div>
+  </div>
+</nav>
 
-                <div class="text-xs text-gray-400 flex items-center gap-1.5">
-                    <i class="fa-solid fa-lock"></i> តំណភ្ជាប់មានសុវត្ថិភាពខ្ពស់
-                </div>
-            </div>
+<!-- MAIN -->
+<div id="main" style="display:none">
+  <header id="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+      <div class="page-title" id="pageTitle"><i class="fa-solid fa-chart-pie" style="color:var(--brand)"></i> Dashboard <span>/ Overview</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="clock-badge" id="clock">--:--:--</div>
+      <div class="theme-toggle" onclick="toggleTheme()"></div>
+      <button class="topbar-btn" onclick="doLogout()" title="Logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+    </div>
+  </header>
+
+  <div id="content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Good Morning, Admin ☕</div>
+          <div class="section-sub" id="dashDate">Wednesday, June 03, 2026 · Phnom Penh, Cambodia</div>
         </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--green);font-weight:700"><span class="live-dot"></span> Live</div>
+          <button class="btn btn-primary btn-sm" onclick="showPage('employees',document.querySelector('[onclick*=employees]'))"><i class="fa-solid fa-user-plus"></i> Add Employee</button>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat">
+          <div class="stat-icon" style="background:var(--brand-dim);color:var(--brand)"><i class="fa-solid fa-users"></i></div>
+          <div class="stat-val" style="color:var(--brand)" id="statTotal">—</div>
+          <div class="stat-label">Total Employees</div>
+          <div class="stat-change" id="statActiveCount">Loading…</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon" style="background:var(--green-dim);color:var(--green)"><i class="fa-solid fa-arrow-right-to-bracket"></i></div>
+          <div class="stat-val" style="color:var(--green)" id="statCheckedIn">—</div>
+          <div class="stat-label">Checked In Today</div>
+          <div class="stat-change" id="statInRate">Loading…</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon" style="background:var(--amber-dim);color:var(--amber)"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
+          <div class="stat-val" style="color:var(--amber)" id="statCheckedOut">—</div>
+          <div class="stat-label">Checked Out</div>
+          <div class="stat-change">Today's completed</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon" style="background:var(--red-dim);color:var(--red)"><i class="fa-solid fa-user-xmark"></i></div>
+          <div class="stat-val" style="color:var(--red)" id="statAbsent">—</div>
+          <div class="stat-label">Absent Today</div>
+          <div class="stat-change" id="statAbsentNote">No notice</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon" style="background:var(--amber-dim);color:var(--amber)"><i class="fa-solid fa-clock"></i></div>
+          <div class="stat-val" style="color:var(--amber)" id="statLate">—</div>
+          <div class="stat-label">Late Arrivals</div>
+          <div class="stat-change">Today</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon" style="background:var(--purple-dim);color:var(--purple)"><i class="fa-solid fa-calendar-minus"></i></div>
+          <div class="stat-val" style="color:var(--purple)" id="statOnLeave">—</div>
+          <div class="stat-label">On Leave</div>
+          <div class="stat-change">Approved leave</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <!-- Recent Activity -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-bolt"></i> Recent Check-Ins</div>
+            <span class="badge badge-green"><span class="live-dot" style="width:5px;height:5px"></span> Live</span>
+          </div>
+          <div class="card-body scroll-body" id="activityLog">
+            <div style="text-align:center;padding:20px;color:var(--text3)"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div>
+          </div>
+        </div>
+
+        <!-- Pending Leave -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-inbox"></i> Pending Leave</div>
+            <span class="badge badge-amber" id="pendingLeaveCount">0</span>
+          </div>
+          <div class="card-body scroll-body" id="pendingLeaveList">
+            <div style="text-align:center;padding:20px;color:var(--text3)"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Firebase SDK (Modular v10) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    <!-- EMPLOYEES -->
+    <div class="page" id="page-employees">
+      <div class="section-header">
+        <div><div class="section-title">Employee Management</div><div class="section-sub" id="empSubtitle">Loading…</div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="input-group" style="width:200px"><i class="fa-solid fa-search"></i><input type="text" placeholder="Search…" id="empSearch" oninput="filterEmployees()"></div>
+          <select id="empDeptFilter" onchange="filterEmployees()" style="width:140px"><option value="">All Departments</option><option>Barista</option><option>Cashier</option><option>Kitchen</option><option>Manager</option><option>Server</option></select>
+          <button class="btn btn-primary" onclick="openEmpModal()"><i class="fa-solid fa-user-plus"></i> Add Employee</button>
+          <button class="btn btn-ghost btn-sm" onclick="exportCSV()"><i class="fa-solid fa-file-export"></i> Export</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px" id="empGrid">
+        <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3)"><i class="fa-solid fa-spinner fa-spin" style="font-size:24px"></i></div>
+      </div>
+    </div>
 
-        // បញ្ចូល Firebase Config របស់អ្នក
-        const firebaseConfig = {
-            apiKey: "AIzaSyCVzRdVej7MORKTa-NcQMHJEzQ1nYikZX0",
-            authDomain: "chafe-app.firebaseapp.com",
-            projectId: "chafe-app",
-            storageBucket: "chafe-app.firebasestorage.app",
-            messagingSenderId: "43410802507",
-            appId: "1:43410802507:web:c48c2d946b89008c34cace",
-            measurementId: "G-J1M1DS7502"
-        };
+    <!-- ATTENDANCE -->
+    <div class="page" id="page-attendance">
+      <div class="section-header">
+        <div><div class="section-title">Attendance Records</div><div class="section-sub">View, edit, and manage check-in / check-out logs</div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <input type="date" id="attDate" style="width:160px" onchange="loadAttendance()">
+          <button class="btn btn-primary btn-sm" onclick="openManualEntry()"><i class="fa-solid fa-pen-to-square"></i> Manual Entry</button>
+          <button class="btn btn-ghost btn-sm" onclick="exportAttCSV()"><i class="fa-solid fa-file-export"></i> Export</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fa-solid fa-table"></i> Attendance Log</div>
+          <span class="badge badge-green"><span class="live-dot" style="width:5px;height:5px;margin-right:2px"></span>Real-time</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Employee</th><th>Dept</th><th>Check In</th><th>Check Out</th><th>Hours</th><th>Status</th><th>Notes</th><th>Actions</th></tr></thead>
+            <tbody id="attBody"><tr class="loading-row"><td colspan="8"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+    <!-- LEAVE -->
+    <div class="page" id="page-leave">
+      <div class="section-header">
+        <div><div class="section-title">Leave Management</div><div class="section-sub" id="leaveSubtitle">Loading…</div></div>
+        <button class="btn btn-primary" onclick="openAddLeaveModal()"><i class="fa-solid fa-plus"></i> Add Leave</button>
+      </div>
+      <div class="tab-list">
+        <button class="tab-btn active" onclick="leaveTab('pending',this)">Pending</button>
+        <button class="tab-btn" onclick="leaveTab('approved',this)">Approved</button>
+        <button class="tab-btn" onclick="leaveTab('rejected',this)">Rejected</button>
+        <button class="tab-btn" onclick="leaveTab('all',this)">All</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="leaveBody"><tr class="loading-row"><td colspan="8"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
-        // បង្កើត QR Code ទៅកាន់ទំព័រ staff.html
-        const staffPageUrl = window.location.href.replace('admin.html', 'staff.html?action=scan');
-        new QRCode(document.getElementById("qrcode"), {
-            text: staffPageUrl,
-            width: 240,
-            height: 240,
-            colorDark : "#1e1b4b",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
-        });
+    <!-- PAYROLL -->
+    <div class="page" id="page-payroll">
+      <div class="section-header">
+        <div><div class="section-title">Payroll & Salary</div><div class="section-sub">Monthly salary summary</div></div>
+        <div style="display:flex;gap:8px">
+          <input type="month" id="payrollMonth" style="width:160px" onchange="loadPayroll()">
+          <button class="btn btn-ghost btn-sm" onclick="exportPayrollCSV()"><i class="fa-solid fa-file-export"></i> Export</button>
+        </div>
+      </div>
+      <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px">
+        <div class="stat"><div class="stat-icon" style="background:var(--green-dim);color:var(--green)"><i class="fa-solid fa-money-bill-wave"></i></div><div class="stat-val" style="color:var(--green);font-size:20px" id="payTotal">$0</div><div class="stat-label">Total Payroll</div></div>
+        <div class="stat"><div class="stat-icon" style="background:var(--brand-dim);color:var(--brand)"><i class="fa-solid fa-clock"></i></div><div class="stat-val" style="color:var(--brand);font-size:20px" id="payHours">0h</div><div class="stat-label">Total Hours</div></div>
+        <div class="stat"><div class="stat-icon" style="background:var(--amber-dim);color:var(--amber)"><i class="fa-solid fa-business-time"></i></div><div class="stat-val" style="color:var(--amber);font-size:20px" id="payOT">0h</div><div class="stat-label">OT Hours</div></div>
+        <div class="stat"><div class="stat-icon" style="background:var(--purple-dim);color:var(--purple)"><i class="fa-solid fa-users"></i></div><div class="stat-val" style="color:var(--purple);font-size:20px" id="payCount">0</div><div class="stat-label">Staff Paid</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title"><i class="fa-solid fa-table"></i> Payroll Summary</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Employee</th><th>Dept</th><th>Base Salary</th><th>Work Days</th><th>Attendance Days</th><th>OT Hours</th><th>OT Pay</th><th>Deductions</th><th>Net Pay</th><th>Action</th></tr></thead>
+            <tbody id="payrollBody"><tr class="loading-row"><td colspan="10"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
-        // ទាញយកព័ត៌មាន Telegram ចាស់មកបង្ហាញបើមាន
-        async function loadTelegramSettings() {
-            try {
-                const docRef = doc(db, "settings", "telegram");
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    document.getElementById('botToken').value = data.botToken || '';
-                    document.getElementById('chatId').value = data.chatId || '';
-                }
-            } catch (err) {
-                console.error("Error loading Telegram settings:", err);
-            }
-        }
-        loadTelegramSettings();
+    <!-- REPORTS -->
+    <div class="page" id="page-reports">
+      <div class="section-header">
+        <div><div class="section-title">Reports</div><div class="section-sub">Export attendance and HR data</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px">
+        <div class="card" style="padding:20px;cursor:pointer" onmouseenter="this.style.borderColor='var(--brand)'" onmouseleave="this.style.borderColor=''">
+          <div style="width:44px;height:44px;border-radius:12px;background:var(--brand-dim);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--brand);margin-bottom:12px"><i class="fa-solid fa-calendar-day"></i></div>
+          <div style="font-weight:700;margin-bottom:4px">Daily Attendance</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:12px">Today's check-in/out log</div>
+          <button class="btn btn-ghost btn-sm" onclick="exportAttCSV()"><i class="fa-solid fa-download"></i> Export CSV</button>
+        </div>
+        <div class="card" style="padding:20px;cursor:pointer" onmouseenter="this.style.borderColor='var(--green)'" onmouseleave="this.style.borderColor=''">
+          <div style="width:44px;height:44px;border-radius:12px;background:var(--green-dim);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--green);margin-bottom:12px"><i class="fa-solid fa-money-bill-wave"></i></div>
+          <div style="font-weight:700;margin-bottom:4px">Payroll Report</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:12px">Monthly salary breakdown</div>
+          <button class="btn btn-ghost btn-sm" onclick="exportPayrollCSV()"><i class="fa-solid fa-download"></i> Export CSV</button>
+        </div>
+        <div class="card" style="padding:20px;cursor:pointer" onmouseenter="this.style.borderColor='var(--purple)'" onmouseleave="this.style.borderColor=''">
+          <div style="width:44px;height:44px;border-radius:12px;background:var(--purple-dim);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--purple);margin-bottom:12px"><i class="fa-solid fa-users"></i></div>
+          <div style="font-weight:700;margin-bottom:4px">Employee List</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:12px">All staff with details</div>
+          <button class="btn btn-ghost btn-sm" onclick="exportCSV()"><i class="fa-solid fa-download"></i> Export CSV</button>
+        </div>
+        <div class="card" style="padding:20px;cursor:pointer" onmouseenter="this.style.borderColor='var(--amber)'" onmouseleave="this.style.borderColor=''">
+          <div style="width:44px;height:44px;border-radius:12px;background:var(--amber-dim);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--amber);margin-bottom:12px"><i class="fa-solid fa-calendar-check"></i></div>
+          <div style="font-weight:700;margin-bottom:4px">Leave Report</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:12px">All leave requests</div>
+          <button class="btn btn-ghost btn-sm" onclick="exportLeaveCSV()"><i class="fa-solid fa-download"></i> Export CSV</button>
+        </div>
+      </div>
+    </div>
 
-        // ដំណើរការរក្សាទុក Telegram Settings
-        const tgForm = document.getElementById('telegramForm');
-        const tgStatus = document.getElementById('tgStatus');
-        tgForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const botToken = document.getElementById('botToken').value;
-            const chatId = document.getElementById('chatId').value;
-            tgStatus.className = "mt-3 text-xs p-2 rounded-lg bg-blue-50 text-blue-700 block";
-            tgStatus.innerHTML = "កំពុងរក្សាទុក...";
+    <!-- SECURITY / LOGIN LOGS -->
+    <div class="page" id="page-security">
+      <div class="section-header">
+        <div><div class="section-title">Access & Login Logs</div><div class="section-sub">Admin activity tracking</div></div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>User</th><th>Action</th><th>IP / Device</th><th>Time</th><th>Status</th></tr></thead>
+            <tbody id="securityBody"><tr class="loading-row"><td colspan="5"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
-            try {
-                await setDoc(doc(db, "settings", "telegram"), {
-                    botToken: botToken,
-                    chatId: chatId,
-                    updatedAt: new Date().toISOString()
-                });
-                tgStatus.className = "mt-3 text-xs p-2 rounded-lg bg-emerald-50 text-emerald-700 block";
-                tgStatus.innerHTML = "រក្សាទុកដោយជោគជ័យ!";
-            } catch (error) {
-                tgStatus.className = "mt-3 text-xs p-2 rounded-lg bg-rose-50 text-rose-700 block";
-                tgStatus.innerHTML = "បរាជ័យ: " + error.message;
-            }
-        });
+    <!-- LIVE MONITOR -->
+    <div class="page" id="page-realtime">
+      <div class="section-header">
+        <div><div class="section-title">Live Monitor</div><div class="section-sub"><span class="live-dot"></span> Real-time · Auto-refresh</div></div>
+        <span class="badge badge-green" id="liveActiveCount"><span class="live-dot" style="width:5px;height:5px;margin-right:4px"></span>0 Active</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px" id="liveGrid">
+        <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3)"><i class="fa-solid fa-spinner fa-spin" style="font-size:24px"></i></div>
+      </div>
+    </div>
 
-        // ដំណើរការបង្កើតគណនីបុគ្គលិក
-        const form = document.getElementById('createStaffForm');
-        const statusMsg = document.getElementById('statusMessage');
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <div class="section-header">
+        <div><div class="section-title">System Settings</div><div class="section-sub">Configure company & Telegram notifications</div></div>
+        <button class="btn btn-primary btn-sm" onclick="saveSettings()"><i class="fa-solid fa-save"></i> Save All</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="fa-solid fa-building"></i> Company Info</div></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
+            <div><label class="form-label">Company Name</label><input type="text" id="sCompanyName" placeholder="My Café"></div>
+            <div><label class="form-label">Address</label><input type="text" id="sAddress" placeholder="Phnom Penh, Cambodia"></div>
+            <div class="form-row cols-2">
+              <div><label class="form-label">Work Start</label><input type="time" id="sWorkStart" value="06:00"></div>
+              <div><label class="form-label">Work End</label><input type="time" id="sWorkEnd" value="18:00"></div>
+            </div>
+            <div class="form-row cols-2">
+              <div><label class="form-label">Late Threshold (min)</label><input type="number" id="sLateThresh" value="15"></div>
+              <div><label class="form-label">OT Rate (×)</label><input type="number" id="sOTRate" value="1.5" step="0.1"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title"><i class="fa-brands fa-telegram"></i> Telegram Notifications</div></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
+            <div><label class="form-label">Bot Token</label><input type="text" id="sTgToken" placeholder="123456:ABC-DEF…"></div>
+            <div><label class="form-label">Chat ID / Group ID</label><input type="text" id="sTgChat" placeholder="-100123456789"></div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="saveSettings()"><i class="fa-solid fa-save"></i> Save</button>
+              <button class="btn btn-ghost" onclick="testTelegram()"><i class="fa-brands fa-telegram"></i> Test</button>
+            </div>
+            <hr style="border-color:var(--border)">
+            <div style="font-size:12px;color:var(--text3)">
+              <strong style="color:var(--text2)">Theme</strong><br>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <button class="btn btn-ghost btn-sm" onclick="setTheme('dark')" style="flex:1;justify-content:center"><i class="fa-solid fa-moon"></i> Dark</button>
+                <button class="btn btn-ghost btn-sm" onclick="setTheme('light')" style="flex:1;justify-content:center"><i class="fa-solid fa-sun"></i> Light</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('staffName').value;
-            const email = document.getElementById('staffEmail').value;
-            const password = document.getElementById('staffPassword').value;
+  </div>
+</div>
 
-            statusMsg.className = "mt-4 text-sm p-3 rounded-lg bg-blue-50 text-blue-700 block";
-            statusMsg.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> កំពុងបង្កើតគណនី...`;
+<!-- ADD / EDIT EMPLOYEE MODAL -->
+<div class="modal-overlay" id="empModal">
+  <div class="modal-box wide">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa-solid fa-user-pen" style="color:var(--brand)"></i> <span id="empModalTitle">Add Employee</span></div>
+      <button class="modal-close" onclick="closeModal('empModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="empUID">
+      <div class="form-row cols-2">
+        <div><label class="form-label">Full Name *</label><input type="text" id="empName" placeholder="Sokha Chan"></div>
+        <div><label class="form-label">Employee ID *</label><input type="text" id="empIdField" placeholder="E001"></div>
+      </div>
+      <div class="form-row cols-2">
+        <div><label class="form-label">Email (Login) *</label><input type="email" id="empEmail" placeholder="sokha@cafe.com"></div>
+        <div><label class="form-label">Password <span id="empPassNote" style="color:var(--text3);font-size:10px">(leave blank to keep)</span></label><input type="password" id="empPassword" placeholder="min 6 chars"></div>
+      </div>
+      <div class="form-row cols-3">
+        <div><label class="form-label">Department</label>
+          <select id="empDept">
+            <option>Barista</option><option>Cashier</option><option>Kitchen</option><option>Manager</option><option>Server</option>
+          </select>
+        </div>
+        <div><label class="form-label">Position/Role</label><input type="text" id="empRole" placeholder="Head Barista"></div>
+        <div><label class="form-label">Base Salary ($)</label><input type="number" id="empSalary" placeholder="500"></div>
+      </div>
+      <div class="form-row cols-3">
+        <div><label class="form-label">Shift Start</label><input type="time" id="empStart" value="06:00"></div>
+        <div><label class="form-label">Shift End</label><input type="time" id="empEnd" value="15:00"></div>
+        <div><label class="form-label">Status</label>
+          <select id="empStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select>
+        </div>
+      </div>
+      <div class="form-row cols-2">
+        <div><label class="form-label">Phone</label><input type="tel" id="empPhone" placeholder="+855 12 345 678"></div>
+        <div><label class="form-label">Start Date</label><input type="date" id="empStartDate"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('empModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEmployee()"><i class="fa-solid fa-save"></i> <span id="empSaveLabel">Create Account</span></button>
+    </div>
+  </div>
+</div>
 
-            try {
-                // ១. បង្កើត User ក្នុង Firebase Auth
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
+<!-- MANUAL ATTENDANCE MODAL -->
+<div class="modal-overlay" id="manualAttModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa-solid fa-pen-to-square" style="color:var(--brand)"></i> <span id="manualAttTitle">Manual Attendance Entry</span></div>
+      <button class="modal-close" onclick="closeModal('manualAttModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="manualAttId">
+      <div style="margin-bottom:12px"><label class="form-label">Employee</label>
+        <select id="manualEmp"></select>
+      </div>
+      <div class="form-row cols-2">
+        <div><label class="form-label">Type</label>
+          <select id="manualType"><option value="IN">Check In</option><option value="OUT">Check Out</option></select>
+        </div>
+        <div><label class="form-label">Date</label><input type="date" id="manualDate"></div>
+      </div>
+      <div class="form-row cols-2">
+        <div><label class="form-label">Time</label><input type="time" id="manualTime"></div>
+        <div><label class="form-label">Status</label>
+          <select id="manualStatus"><option value="on_time">On Time</option><option value="late">Late</option><option value="early_leave">Early Leave</option></select>
+        </div>
+      </div>
+      <div><label class="form-label">Notes</label><textarea id="manualNotes" placeholder="Reason for manual entry…" rows="2" style="resize:none"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('manualAttModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveManualAtt()"><i class="fa-solid fa-save"></i> Save Record</button>
+    </div>
+  </div>
+</div>
 
-                // ២. រក្សាទុកឈ្មោះ និងព័ត៌មានបន្ថែមក្នុង Firestore
-                await setDoc(doc(db, "users", user.uid), {
-                    uid: user.uid,
-                    name: name,
-                    email: email,
-                    role: "staff",
-                    createdAt: new Date().toISOString()
-                });
+<!-- ADD LEAVE MODAL -->
+<div class="modal-overlay" id="leaveModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa-solid fa-calendar-plus" style="color:var(--brand)"></i> Add Leave Request</div>
+      <button class="modal-close" onclick="closeModal('leaveModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:12px"><label class="form-label">Employee</label><select id="leaveEmp"></select></div>
+      <div style="margin-bottom:12px"><label class="form-label">Leave Type</label>
+        <select id="leaveType">
+          <option value="sick">Sick Leave</option>
+          <option value="vacation">Vacation Leave</option>
+          <option value="emergency">Emergency Leave</option>
+          <option value="maternity">Maternity Leave</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-row cols-2">
+        <div><label class="form-label">From</label><input type="date" id="leaveFrom"></div>
+        <div><label class="form-label">To</label><input type="date" id="leaveTo"></div>
+      </div>
+      <div><label class="form-label">Reason</label><textarea id="leaveReason" rows="2" style="resize:none" placeholder="Reason…"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('leaveModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLeave()"><i class="fa-solid fa-save"></i> Submit</button>
+    </div>
+  </div>
+</div>
 
-                statusMsg.className = "mt-4 text-sm p-3 rounded-lg bg-emerald-50 text-emerald-700 block";
-                statusMsg.innerHTML = `<i class="fa-solid fa-circle-check"></i> គណនីត្រូវបានបង្កើតដោយជោគជ័យ!`;
-                form.reset();
+<!-- CONFIRM DELETE MODAL -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box" style="max-width:360px">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa-solid fa-triangle-exclamation" style="color:var(--red)"></i> Confirm Delete</div>
+      <button class="modal-close" onclick="closeModal('confirmModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <p id="confirmMsg" style="color:var(--text2)">Are you sure you want to delete this record?</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('confirmModal')">Cancel</button>
+      <button class="btn btn-danger" id="confirmOkBtn"><i class="fa-solid fa-trash"></i> Delete</button>
+    </div>
+  </div>
+</div>
 
-            } catch (error) {
-                statusMsg.className = "mt-4 text-sm p-3 rounded-lg bg-rose-50 text-rose-700 block";
-                statusMsg.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ហ្វេល: ${error.message}`;
-            }
-        });
-    </script>
+<!-- VIEW EMPLOYEE MODAL -->
+<div class="modal-overlay" id="viewEmpModal">
+  <div class="modal-box wide">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa-solid fa-id-card" style="color:var(--brand)"></i> Employee Profile</div>
+      <button class="modal-close" onclick="closeModal('viewEmpModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="viewEmpBody">Loading…</div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('viewEmpModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, collection, query, where, orderBy, onSnapshot, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+const FC = {
+  apiKey: "AIzaSyCVzRdVej7MORKTa-NcQMHJEzQ1nYikZX0",
+  authDomain: "chafe-app.firebaseapp.com",
+  projectId: "chafe-app",
+  storageBucket: "chafe-app.firebasestorage.app",
+  messagingSenderId: "43410802507",
+  appId: "1:43410802507:web:c48c2d946b89008c34cace"
+};
+const app = initializeApp(FC);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentAdmin = null;
+let allEmployees = [];
+let allLeave = [];
+let allAttendance = [];
+let currentLeaveFilter = 'pending';
+let settings = {};
+let liveUnsubscribe = null;
+
+// ── HELPERS ──
+const $ = id => document.getElementById(id);
+const COLORS = ['#00d4ff','#00e676','#ffb300','#ff4757','#c084fc','#f472b6'];
+function avatarColor(name){ let h=0; for(const c of (name||'A')) h=(h*31+c.charCodeAt(0))%COLORS.length; return COLORS[h]; }
+function initials(n){ return (n||'?').split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2); }
+function fmtTime(ts){ if(!ts) return '—'; const d = ts.toDate ? ts.toDate() : new Date(ts); return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
+function fmtDate(ts){ if(!ts) return '—'; const d = ts.toDate ? ts.toDate() : new Date(ts); return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function daysDiff(from,to){ return Math.max(1,Math.round((new Date(to)-new Date(from))/(1000*60*60*24))+1); }
+
+window.showToast = (msg, type='info', dur=3500) => {
+  const c = $('toasts');
+  const icons = {success:'fa-check-circle',error:'fa-circle-xmark',warning:'fa-triangle-exclamation',info:'fa-circle-info'};
+  const clr = {success:'var(--green)',error:'var(--red)',warning:'var(--amber)',info:'var(--brand)'};
+  const el = document.createElement('div'); el.className='toast '+type;
+  el.innerHTML=`<i class="fa-solid ${icons[type]}" style="color:${clr[type]};font-size:16px;flex-shrink:0"></i><span>${msg}</span>`;
+  c.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';el.style.transform='translateX(110%)';el.style.transition='.4s';setTimeout(()=>el.remove(),400);},dur);
+};
+
+window.openModal = id => document.getElementById(id)?.classList.add('open');
+window.closeModal = id => document.getElementById(id)?.classList.remove('open');
+
+// ── AUTH ──
+onAuthStateChanged(auth, async user => {
+  if(user){
+    const snap = await getDoc(doc(db,'users',user.uid));
+    if(snap.exists() && snap.data().isAdmin){
+      currentAdmin = { uid:user.uid, ...snap.data() };
+      $('adminNameSidebar').textContent = currentAdmin.name || 'Admin';
+      $('adminAvatarSidebar').textContent = initials(currentAdmin.name||'Admin');
+      $('loginWrap').style.display = 'none';
+      $('sidebar').style.display = '';
+      $('main').style.display = '';
+      initApp();
+    } else if(snap.exists() && !snap.data().isAdmin) {
+      showToast('Not authorized as admin','error');
+      await signOut(auth);
+    } else {
+      // First time super admin — allow
+      currentAdmin = { uid:user.uid, name:'Super Admin', email:user.email };
+      $('adminNameSidebar').textContent = 'Super Admin';
+      $('loginWrap').style.display = 'none';
+      $('sidebar').style.display = '';
+      $('main').style.display = '';
+      initApp();
+    }
+  } else {
+    $('loginWrap').style.display = '';
+    $('sidebar').style.display = 'none';
+    $('main').style.display = 'none';
+  }
+});
+
+window.doAdminLogin = async () => {
+  const email = $('lEmail').value.trim();
+  const pass = $('lPass').value;
+  const err = $('loginErr');
+  err.style.display='none';
+  if(!email||!pass){ err.textContent='Fill all fields.'; err.style.display='block'; return; }
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch(e) {
+    err.textContent = e.code==='auth/invalid-credential' ? 'Invalid email or password.' : e.message;
+    err.style.display='block';
+  }
+};
+
+window.doLogout = async () => {
+  await signOut(auth);
+};
+
+// ── INIT ──
+async function initApp(){
+  startClock();
+  loadSettings();
+  await loadEmployees();
+  loadDashboard();
+  loadAttendance();
+  loadLeave();
+  loadPayroll();
+  populateEmpDropdowns();
+  loadLogs();
+}
+
+// ── CLOCK ──
+function startClock(){
+  const t=()=>{$('clock').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});};
+  t(); setInterval(t,1000);
+  const now=new Date();
+  $('dashDate').textContent=now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'})+' · Phnom Penh, Cambodia';
+}
+
+// ── SETTINGS ──
+async function loadSettings(){
+  try {
+    const snap = await getDoc(doc(db,'settings','main'));
+    if(snap.exists()){ settings=snap.data(); applySettings(); }
+  } catch(e){}
+}
+function applySettings(){
+  if(settings.companyName) $('sCompanyName').value = settings.companyName;
+  if(settings.address) $('sAddress').value = settings.address;
+  if(settings.workStart) $('sWorkStart').value = settings.workStart;
+  if(settings.workEnd) $('sWorkEnd').value = settings.workEnd;
+  if(settings.lateThresh) $('sLateThresh').value = settings.lateThresh;
+  if(settings.otRate) $('sOTRate').value = settings.otRate;
+  if(settings.tgToken) $('sTgToken').value = settings.tgToken;
+  if(settings.tgChat) $('sTgChat').value = settings.tgChat;
+}
+window.saveSettings = async () => {
+  settings = {
+    companyName: $('sCompanyName').value,
+    address: $('sAddress').value,
+    workStart: $('sWorkStart').value,
+    workEnd: $('sWorkEnd').value,
+    lateThresh: parseInt($('sLateThresh').value)||15,
+    otRate: parseFloat($('sOTRate').value)||1.5,
+    tgToken: $('sTgToken').value,
+    tgChat: $('sTgChat').value,
+    updatedAt: new Date().toISOString()
+  };
+  try {
+    await setDoc(doc(db,'settings','main'), settings);
+    showToast('Settings saved!','success');
+  } catch(e){ showToast('Error: '+e.message,'error'); }
+};
+window.testTelegram = async () => {
+  const t=$('sTgToken').value, c=$('sTgChat').value;
+  if(!t||!c){ showToast('Enter token & chat ID','warning'); return; }
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${t}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:c,text:'✅ KRONOS HR — Test message. Connected!'})});
+    const j = await r.json();
+    j.ok ? showToast('Telegram test sent!','success') : showToast('Telegram error: '+j.description,'error');
+  } catch(e){ showToast('Network error','error'); }
+};
+
+// ── EMPLOYEES ──
+async function loadEmployees(){
+  try {
+    const snap = await getDocs(collection(db,'users'));
+    allEmployees = snap.docs.map(d=>({uid:d.id,...d.data()}));
+    renderEmployees();
+    populateEmpDropdowns();
+    $('empSubtitle').textContent = `${allEmployees.length} total · ${allEmployees.filter(e=>e.status==='active').length} active · ${allEmployees.filter(e=>e.status==='inactive').length} inactive`;
+  } catch(e){ showToast('Error loading employees: '+e.message,'error'); }
+}
+window.filterEmployees = () => renderEmployees();
+function renderEmployees(){
+  const search = $('empSearch')?.value?.toLowerCase()||'';
+  const dept = $('empDeptFilter')?.value||'';
+  const filtered = allEmployees.filter(s=>{
+    if(dept && s.dept!==dept) return false;
+    if(search && !s.name?.toLowerCase().includes(search) && !s.email?.toLowerCase().includes(search) && !s.empId?.toLowerCase().includes(search)) return false;
+    return true;
+  });
+  const grid = $('empGrid');
+  if(!grid) return;
+  if(!filtered.length){
+    grid.innerHTML=`<div style="grid-column:1/-1" class="empty-state"><i class="fa-solid fa-users-slash"></i>No employees found</div>`;
+    return;
+  }
+  const c=avatarColor, ini=initials;
+  grid.innerHTML = filtered.map(s=>`
+    <div class="card" style="padding:20px;transition:border-color .2s;cursor:pointer" onmouseenter="this.style.borderColor='${c(s.name)}'" onmouseleave="this.style.borderColor=''">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <div class="avatar avatar-lg" style="background:${c(s.name)}18;color:${c(s.name)};border:2px solid ${c(s.name)}44;flex-shrink:0">${ini(s.name)}</div>
+        <div style="min-width:0">
+          <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name||'—'}</div>
+          <div style="font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.email||''}</div>
+          <span class="badge ${s.status==='active'?'badge-green':'badge-red'}" style="margin-top:4px;font-size:10px">${s.status==='active'?'Active':'Inactive'}</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;color:var(--text3);margin-bottom:14px">
+        <div><i class="fa-solid fa-briefcase" style="width:14px"></i> ${s.dept||'—'}</div>
+        <div><i class="fa-solid fa-id-badge" style="width:14px"></i> ${s.empId||'—'}</div>
+        <div><i class="fa-solid fa-clock" style="width:14px"></i> ${s.shiftStart||'06:00'}–${s.shiftEnd||'15:00'}</div>
+        <div><i class="fa-solid fa-dollar-sign" style="width:14px"></i> $${s.salary||0}/mo</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-xs" style="flex:1;justify-content:center" onclick="viewEmployee('${s.uid}')"><i class="fa-solid fa-eye"></i> View</button>
+        <button class="btn btn-ghost btn-xs" style="flex:1;justify-content:center" onclick="editEmployee('${s.uid}')"><i class="fa-solid fa-pen"></i> Edit</button>
+        <button class="btn btn-danger btn-xs btn-icon" onclick="confirmDelete('employee','${s.uid}','${s.name}')"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    </div>
+  `).join('');
+}
+
+window.openEmpModal = () => {
+  $('empUID').value='';
+  $('empModalTitle').textContent='Add Employee';
+  $('empSaveLabel').textContent='Create Account';
+  $('empPassNote').textContent='required';
+  ['empName','empIdField','empEmail','empPassword','empRole','empSalary','empPhone'].forEach(f=>$(f).value='');
+  $('empDept').value='Barista';
+  $('empStatus').value='active';
+  $('empStart').value='06:00';
+  $('empEnd').value='15:00';
+  $('empStartDate').value = todayStr();
+  openModal('empModal');
+};
+
+window.editEmployee = uid => {
+  const emp = allEmployees.find(e=>e.uid===uid);
+  if(!emp) return;
+  $('empUID').value = emp.uid;
+  $('empModalTitle').textContent = 'Edit Employee';
+  $('empSaveLabel').textContent = 'Save Changes';
+  $('empPassNote').textContent = '(leave blank to keep)';
+  $('empName').value = emp.name||'';
+  $('empIdField').value = emp.empId||'';
+  $('empEmail').value = emp.email||'';
+  $('empPassword').value = '';
+  $('empDept').value = emp.dept||'Barista';
+  $('empRole').value = emp.role||'';
+  $('empSalary').value = emp.salary||'';
+  $('empStart').value = emp.shiftStart||'06:00';
+  $('empEnd').value = emp.shiftEnd||'15:00';
+  $('empStatus').value = emp.status||'active';
+  $('empPhone').value = emp.phone||'';
+  $('empStartDate').value = emp.startDate||'';
+  openModal('empModal');
+};
+
+window.viewEmployee = uid => {
+  const emp = allEmployees.find(e=>e.uid===uid);
+  if(!emp) return;
+  const c=avatarColor(emp.name), ini=initials(emp.name);
+  $('viewEmpBody').innerHTML=`
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+      <div class="avatar avatar-lg" style="width:64px;height:64px;font-size:22px;background:${c}18;color:${c};border:2px solid ${c}44">${ini}</div>
+      <div><div style="font-size:20px;font-weight:800">${emp.name}</div><div style="color:var(--text3)">${emp.role||''} · ${emp.dept||''}</div><span class="badge ${emp.status==='active'?'badge-green':'badge-red'}" style="margin-top:6px">${emp.status}</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px">
+      <div style="background:var(--bg3);padding:12px;border-radius:var(--r2)"><div style="color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:4px">Email</div><div>${emp.email||'—'}</div></div>
+      <div style="background:var(--bg3);padding:12px;border-radius:var(--r2)"><div style="color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:4px">Employee ID</div><div>${emp.empId||'—'}</div></div>
+      <div style="background:var(--bg3);padding:12px;border-radius:var(--r2)"><div style="color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:4px">Phone</div><div>${emp.phone||'—'}</div></div>
+      <div style="background:var(--bg3);padding:12px;border-radius:var(--r2)"><div style="color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:4px">Salary</div><div style="color:var(--green);font-weight:700">$${emp.salary||0}/mo</div></div>
+      <div style="background:var(--bg3);padding:12px;border-radius:var(--r2)"><div style="color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:4px">Shift</div><div>${emp.shiftStart||'06:00'} – ${emp.shiftEnd||'15:00'}</div></div>
+      <div style="background:var(--bg3);padding:12px;border-radius:var(--r2)"><div style="color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:4px">Start Date</div><div>${emp.startDate||'—'}</div></div>
+    </div>`;
+  openModal('viewEmpModal');
+};
+
+window.saveEmployee = async () => {
+  const uid = $('empUID').value;
+  const name = $('empName').value.trim();
+  const email = $('empEmail').value.trim();
+  const pass = $('empPassword').value;
+  const isNew = !uid;
+  if(!name||!email){ showToast('Name and email required','error'); return; }
+  if(isNew && !pass){ showToast('Password required for new employee','error'); return; }
+  try {
+    if(isNew){
+      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      const data = {
+        uid:cred.user.uid, name, email, empId:$('empIdField').value,
+        dept:$('empDept').value, role:$('empRole').value,
+        salary:Number($('empSalary').value)||0,
+        shiftStart:$('empStart').value, shiftEnd:$('empEnd').value,
+        status:$('empStatus').value, phone:$('empPhone').value,
+        startDate:$('empStartDate').value, isAdmin:false,
+        createdAt:new Date().toISOString()
+      };
+      await setDoc(doc(db,'users',cred.user.uid), data);
+      showToast(`${name} created!`,'success');
+    } else {
+      const data = {
+        name, empId:$('empIdField').value,
+        dept:$('empDept').value, role:$('empRole').value,
+        salary:Number($('empSalary').value)||0,
+        shiftStart:$('empStart').value, shiftEnd:$('empEnd').value,
+        status:$('empStatus').value, phone:$('empPhone').value,
+        startDate:$('empStartDate').value,
+        updatedAt:new Date().toISOString()
+      };
+      await updateDoc(doc(db,'users',uid), data);
+      showToast(`${name} updated!`,'success');
+    }
+    closeModal('empModal');
+    await loadEmployees();
+    loadDashboard();
+  } catch(e){ showToast('Error: '+e.message,'error'); }
+};
+
+window.confirmDelete = (type, id, name='') => {
+  $('confirmMsg').textContent = `Delete "${name}"? This cannot be undone.`;
+  $('confirmOkBtn').onclick = () => {
+    if(type==='employee') deleteEmployee(id,name);
+    else if(type==='attendance') deleteAttendance(id);
+    else if(type==='leave') deleteLeave(id);
+    closeModal('confirmModal');
+  };
+  openModal('confirmModal');
+};
+
+async function deleteEmployee(uid, name){
+  try {
+    await deleteDoc(doc(db,'users',uid));
+    showToast(`${name} deleted`,'success');
+    await loadEmployees();
+    loadDashboard();
+  } catch(e){ showToast('Error: '+e.message,'error'); }
+}
+
+// ── ATTENDANCE ──
+async function loadAttendance(){
+  const dateVal = $('attDate')?.value || todayStr();
+  try {
+    const snap = await getDocs(query(collection(db,'attendance'), where('date','==',dateVal), orderBy('timestamp','desc')));
+    allAttendance = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderAttendance();
+  } catch(e){
+    // If no index yet, load without order
+    try {
+      const snap = await getDocs(query(collection(db,'attendance'), where('date','==',dateVal)));
+      allAttendance = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+      renderAttendance();
+    } catch(e2){ $('attBody').innerHTML=`<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--red)">Error: ${e2.message}</td></tr>`; }
+  }
+}
+
+function renderAttendance(){
+  const tbody = $('attBody');
+  if(!allAttendance.length){ tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text3)">No records for this date</td></tr>`; return; }
+  // Group by user
+  const byUser = {};
+  allAttendance.forEach(r=>{
+    if(!byUser[r.userId]) byUser[r.userId]={in:null,out:null,name:r.name,dept:r.dept||'—',records:[]};
+    byUser[r.userId].records.push(r);
+    if(r.type==='IN' && (!byUser[r.userId].in || new Date(r.timestamp)<new Date(byUser[r.userId].in.timestamp))) byUser[r.userId].in=r;
+    if(r.type==='OUT' && (!byUser[r.userId].out || new Date(r.timestamp)>new Date(byUser[r.userId].out.timestamp))) byUser[r.userId].out=r;
+  });
+  tbody.innerHTML = Object.values(byUser).map(u=>{
+    const emp = allEmployees.find(e=>e.name===u.name)||{};
+    const c = avatarColor(u.name); const ini = initials(u.name);
+    const inTime = u.in ? fmtTime(u.in.timestamp) : '—';
+    const outTime = u.out ? fmtTime(u.out.timestamp) : '—';
+    let hours='—';
+    if(u.in && u.out){ const diff=(new Date(u.out.timestamp)-new Date(u.in.timestamp))/3600000; hours=diff.toFixed(1)+'h'; }
+    const status = u.in?.status||'—';
+    const statusBadge = status==='on_time'?'<span class="badge badge-green">On Time</span>':status==='late'?'<span class="badge badge-amber">Late</span>':status==='early_leave'?'<span class="badge badge-purple">Early</span>':'<span class="badge badge-gray">—</span>';
+    const inId = u.in?.id||''; const outId = u.out?.id||'';
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:8px"><div class="avatar avatar-sm" style="background:${c}18;color:${c}">${ini}</div><div><div style="font-weight:600;font-size:12px">${u.name}</div><div style="font-size:10px;color:var(--text3)">${emp.empId||'—'}</div></div></div></td>
+      <td>${u.dept}</td>
+      <td><span style="font-family:'Space Mono',monospace;font-size:12px;color:${u.in?'var(--green)':'var(--text3)'}">${inTime}</span></td>
+      <td><span style="font-family:'Space Mono',monospace;font-size:12px;color:${u.out?'var(--amber)':'var(--text3)'}">${outTime}</span></td>
+      <td><span style="font-family:'Space Mono',monospace;font-size:12px">${hours}</span></td>
+      <td>${statusBadge}</td>
+      <td style="font-size:11px;color:var(--text3)">${u.in?.notes||'—'}</td>
+      <td><div style="display:flex;gap:4px">
+        <button class="btn btn-ghost btn-xs btn-icon" title="Edit" onclick="editAttendance('${inId||outId}')"><i class="fa-solid fa-pen"></i></button>
+        ${inId?`<button class="btn btn-danger btn-xs btn-icon" onclick="confirmDelete('attendance','${inId}')"><i class="fa-solid fa-trash"></i></button>`:''}
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+window.openManualEntry = () => {
+  $('manualAttId').value='';
+  $('manualAttTitle').textContent='Manual Attendance Entry';
+  $('manualDate').value = $('attDate')?.value || todayStr();
+  $('manualTime').value = new Date().toTimeString().slice(0,5);
+  $('manualNotes').value='';
+  openModal('manualAttModal');
+};
+
+window.editAttendance = async id => {
+  const rec = allAttendance.find(r=>r.id===id);
+  if(!rec) return;
+  $('manualAttId').value = id;
+  $('manualAttTitle').textContent='Edit Attendance Record';
+  $('manualEmp').value = rec.userId||'';
+  $('manualType').value = rec.type;
+  $('manualDate').value = rec.date||todayStr();
+  const t = new Date(rec.timestamp);
+  $('manualTime').value = t.toTimeString().slice(0,5);
+  $('manualStatus').value = rec.status||'on_time';
+  $('manualNotes').value = rec.notes||'';
+  openModal('manualAttModal');
+};
+
+window.saveManualAtt = async () => {
+  const id = $('manualAttId').value;
+  const empUid = $('manualEmp').value;
+  const emp = allEmployees.find(e=>e.uid===empUid);
+  const date = $('manualDate').value;
+  const time = $('manualTime').value;
+  const type = $('manualType').value;
+  const status = $('manualStatus').value;
+  const notes = $('manualNotes').value;
+  if(!empUid||!date||!time){ showToast('Fill all required fields','error'); return; }
+  const timestamp = new Date(`${date}T${time}:00`).toISOString();
+  const data = {
+    userId:empUid, name:emp?.name||'', email:emp?.email||'', dept:emp?.dept||'',
+    type, date, timestamp, status, notes, manual:true,
+    updatedAt:new Date().toISOString()
+  };
+  try {
+    if(id){ await updateDoc(doc(db,'attendance',id), data); showToast('Attendance updated!','success'); }
+    else { await addDoc(collection(db,'attendance'), {...data,createdAt:new Date().toISOString()}); showToast('Attendance recorded!','success'); }
+    closeModal('manualAttModal');
+    loadAttendance();
+  } catch(e){ showToast('Error: '+e.message,'error'); }
+};
+
+async function deleteAttendance(id){
+  try { await deleteDoc(doc(db,'attendance',id)); showToast('Record deleted','success'); loadAttendance(); }
+  catch(e){ showToast('Error: '+e.message,'error'); }
+}
+
+window.exportAttCSV = () => {
+  const headers = ['Name','Dept','Date','Check In','Check Out','Status','Notes'];
+  const rows = allAttendance.map(r=>[r.name||'',r.dept||'',r.date||'',r.timestamp||'',r.type||'',r.status||'',r.notes||'']);
+  downloadCSV('attendance_'+todayStr()+'.csv', headers, rows);
+};
+
+// ── LEAVE ──
+async function loadLeave(){
+  try {
+    const snap = await getDocs(collection(db,'leave'));
+    allLeave = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+    renderLeave();
+    const pending = allLeave.filter(l=>l.status==='pending').length;
+    $('pendingLeaveBadge').textContent = pending||'0';
+    $('pendingLeaveCount').textContent = pending;
+    $('leaveSubtitle').textContent = `${allLeave.length} total · ${pending} pending`;
+    renderPendingLeaveOnDash();
+  } catch(e){ showToast('Error loading leave: '+e.message,'error'); }
+}
+
+function renderLeave(){
+  const filtered = allLeave.filter(l=>currentLeaveFilter==='all'||l.status===currentLeaveFilter);
+  const tbody = $('leaveBody');
+  if(!filtered.length){ tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text3)">No records</td></tr>`; return; }
+  const typeIcon = {sick:'fa-virus',vacation:'fa-umbrella-beach',emergency:'fa-bolt',maternity:'fa-baby',other:'fa-ellipsis'};
+  const typeColor = {sick:'badge-red',vacation:'badge-brand',emergency:'badge-amber',maternity:'badge-purple',other:'badge-gray'};
+  tbody.innerHTML = filtered.map(l=>{
+    const emp = allEmployees.find(e=>e.uid===l.userId)||{};
+    const c = avatarColor(l.name); const ini = initials(l.name);
+    const days = l.from&&l.to?daysDiff(l.from,l.to):1;
+    const statusBadge = l.status==='pending'?'badge-amber':l.status==='approved'?'badge-green':'badge-red';
+    const actionBtns = l.status==='pending'
+      ? `<div style="display:flex;gap:4px">
+           <button class="btn btn-success btn-xs" onclick="updateLeaveStatus('${l.id}','approved','${l.userId}','${l.name}','${l.from}','${l.to}')"><i class="fa-solid fa-check"></i> Approve</button>
+           <button class="btn btn-danger btn-xs" onclick="updateLeaveStatus('${l.id}','rejected','${l.userId}','${l.name}','${l.from}','${l.to}')"><i class="fa-solid fa-xmark"></i> Reject</button>
+         </div>`
+      : `<button class="btn btn-ghost btn-xs" onclick="confirmDelete('leave','${l.id}')"><i class="fa-solid fa-trash"></i></button>`;
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:8px"><div class="avatar avatar-sm" style="background:${c}18;color:${c}">${ini}</div> ${l.name||'—'}</div></td>
+      <td><span class="badge ${typeColor[l.type]||'badge-gray'}"><i class="fa-solid ${typeIcon[l.type]||'fa-ellipsis'}"></i> ${l.type}</span></td>
+      <td>${l.from||'—'}</td>
+      <td>${l.to||'—'}</td>
+      <td>${days}d</td>
+      <td style="font-size:11px;color:var(--text3)">${l.reason||'—'}</td>
+      <td><span class="badge ${statusBadge}">${l.status}</span></td>
+      <td>${actionBtns}</td>
+    </tr>`;
+  }).join('');
+}
+
+window.leaveTab = (mode, btn) => {
+  document.querySelectorAll('#page-leave .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentLeaveFilter = mode;
+  renderLeave();
+};
+
+window.updateLeaveStatus = async (id, status, userId, name, from, to) => {
+  try {
+    await updateDoc(doc(db,'leave',id), {status, reviewedAt:new Date().toISOString(), reviewedBy:currentAdmin?.name||'Admin'});
+    showToast(`Leave ${status}!`, status==='approved'?'success':'warning');
+    await sendTelegramNotif(`${status==='approved'?'✅':'❌'} Leave ${status} for *${name}*\n📅 ${from} → ${to}`);
+    loadLeave();
+  } catch(e){ showToast('Error: '+e.message,'error'); }
+};
+
+window.openAddLeaveModal = () => {
+  $('leaveEmp').value='';
+  $('leaveFrom').value='';
+  $('leaveTo').value='';
+  $('leaveReason').value='';
+  openModal('leaveModal');
+};
+
+window.saveLeave = async () => {
+  const uid = $('leaveEmp').value;
+  const emp = allEmployees.find(e=>e.uid===uid);
+  if(!uid||!emp){ showToast('Select an employee','error'); return; }
+  const from = $('leaveFrom').value;
+  const to = $('leaveTo').value;
+  if(!from||!to){ showToast('Select dates','error'); return; }
+  try {
+    await addDoc(collection(db,'leave'),{
+      userId:uid, name:emp.name, email:emp.email, dept:emp.dept||'',
+      type:$('leaveType').value, from, to,
+      reason:$('leaveReason').value, status:'pending',
+      createdAt:new Date().toISOString()
+    });
+    showToast('Leave request added!','success');
+    closeModal('leaveModal');
+    loadLeave();
+  } catch(e){ showToast('Error: '+e.message,'error'); }
+};
+
+async function deleteLeave(id){
+  try { await deleteDoc(doc(db,'leave',id)); showToast('Leave deleted','success'); loadLeave(); }
+  catch(e){ showToast('Error: '+e.message,'error'); }
+}
+
+window.exportLeaveCSV = () => {
+  const headers=['Name','Dept','Type','From','To','Days','Reason','Status'];
+  const rows=allLeave.map(l=>[l.name||'',l.dept||'',l.type||'',l.from||'',l.to||'',daysDiff(l.from,l.to),l.reason||'',l.status||'']);
+  downloadCSV('leave_report.csv',headers,rows);
+};
+
+// ── DASHBOARD ──
+function loadDashboard(){
+  const today = todayStr();
+  const todayAtt = allAttendance.filter ? allAttendance : [];
+  // Live listen
+  onSnapshot(query(collection(db,'attendance'), where('date','==',today)), snap=>{
+    const recs = snap.docs.map(d=>({id:d.id,...d.data()}));
+    const ins = [...new Set(recs.filter(r=>r.type==='IN').map(r=>r.userId))];
+    const outs = [...new Set(recs.filter(r=>r.type==='OUT').map(r=>r.userId))];
+    const late = recs.filter(r=>r.type==='IN'&&r.status==='late').map(r=>r.userId);
+    $('statCheckedIn').textContent = ins.length;
+    $('statCheckedOut').textContent = outs.length;
+    $('statLate').textContent = [...new Set(late)].length;
+    const total = allEmployees.length||0;
+    const absent = Math.max(0,total-ins.length);
+    $('statAbsent').textContent = absent;
+    $('statInRate').textContent = total ? Math.round((ins.length/total)*100)+'% rate' : '—';
+    // Activity log
+    const sorted = [...recs].sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).slice(0,8);
+    $('activityLog').innerHTML = sorted.length ? sorted.map(r=>{
+      const isIn=r.type==='IN'; const c=isIn?'var(--green)':'var(--amber)';
+      return `<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+        <div style="width:8px;height:8px;border-radius:50%;background:${c};flex-shrink:0;margin-top:4px"></div>
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--text3);min-width:44px">${fmtTime(r.timestamp)}</div>
+        <div><div style="font-size:12px;font-weight:600">${r.name} <span class="badge ${isIn?'badge-green':'badge-amber'}" style="font-size:10px">${r.type}</span></div><div style="font-size:11px;color:var(--text3)">${r.dept||'—'} · ${r.status==='on_time'?'On time':r.status==='late'?'Late':'—'}</div></div>
+      </div>`;
+    }).join('') : '<div style="text-align:center;padding:20px;color:var(--text3)">No activity today</div>';
+  });
+  $('statTotal').textContent = allEmployees.length;
+  $('statActiveCount').textContent = allEmployees.filter(e=>e.status==='active').length+' active';
+  const onLeave = allLeave.filter(l=>l.status==='approved'&&l.from<=today&&l.to>=today).length;
+  $('statOnLeave').textContent = onLeave;
+}
+
+function renderPendingLeaveOnDash(){
+  const pending = allLeave.filter(l=>l.status==='pending').slice(0,5);
+  $('pendingLeaveList').innerHTML = pending.length ? pending.map(l=>{
+    const c=avatarColor(l.name); const ini=initials(l.name);
+    return `<div style="background:var(--amber-dim);border:1px solid rgba(255,179,0,.3);border-radius:var(--r2);padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="avatar avatar-sm" style="background:${c}18;color:${c}">${ini}</div>
+        <div><div style="font-size:12px;font-weight:700;color:var(--amber)">${l.name}</div><div style="font-size:11px;color:var(--text2)">${l.type} · ${l.from} → ${l.to}</div></div>
+      </div>
+      <div style="display:flex;gap:4px">
+        <button class="btn btn-success btn-xs" onclick="updateLeaveStatus('${l.id}','approved','${l.userId}','${l.name}','${l.from}','${l.to}')"><i class="fa-solid fa-check"></i></button>
+        <button class="btn btn-danger btn-xs" onclick="updateLeaveStatus('${l.id}','rejected','${l.userId}','${l.name}','${l.from}','${l.to}')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>`;
+  }).join('') : '<div style="text-align:center;padding:20px;color:var(--text3)">No pending requests</div>';
+}
+
+// ── PAYROLL ──
+async function loadPayroll(){
+  const month = $('payrollMonth')?.value || new Date().toISOString().slice(0,7);
+  $('payrollMonth').value = month;
+  const [y,m] = month.split('-');
+  const start = `${y}-${m}-01`;
+  const end = `${y}-${m}-31`;
+  try {
+    const snap = await getDocs(query(collection(db,'attendance'), where('date','>=',start), where('date','<=',end)));
+    const recs = snap.docs.map(d=>d.data());
+    let totalPay=0, totalHours=0, totalOT=0;
+    const byUser={};
+    allEmployees.forEach(e=>{ byUser[e.uid]={emp:e,ins:[],outs:[]}; });
+    recs.forEach(r=>{
+      if(!byUser[r.userId]) byUser[r.userId]={emp:{name:r.name,salary:0,dept:r.dept},ins:[],outs:[]};
+      if(r.type==='IN') byUser[r.userId].ins.push(r);
+      else byUser[r.userId].outs.push(r);
+    });
+    const tbody = $('payrollBody');
+    const rows = Object.values(byUser).filter(u=>u.emp).map(u=>{
+      const workDays = new Date(y,m,0).getDate();
+      const attDays = u.ins.length;
+      let hours=0;
+      u.ins.forEach(r=>{ const out=u.outs.find(o=>o.date===r.date); if(out) hours+=(new Date(out.timestamp)-new Date(r.timestamp))/3600000; });
+      const expectedHours = 8; const otHours = Math.max(0,hours-(attDays*expectedHours));
+      const base=u.emp.salary||0; const salaryPerDay=base/(workDays||22);
+      const earned=Math.round(salaryPerDay*attDays);
+      const otRate=settings.otRate||1.5; const hourlyRate=(base/22/8);
+      const otPay=Math.round(otHours*hourlyRate*otRate);
+      const net=earned+otPay;
+      totalPay+=net; totalHours+=hours; totalOT+=otHours;
+      const c=avatarColor(u.emp.name); const ini=initials(u.emp.name);
+      return `<tr>
+        <td><div style="display:flex;align-items:center;gap:8px"><div class="avatar avatar-sm" style="background:${c}18;color:${c}">${ini}</div>${u.emp.name||'—'}</div></td>
+        <td>${u.emp.dept||'—'}</td>
+        <td>$${base}</td>
+        <td>${workDays}</td>
+        <td>${attDays}</td>
+        <td>${otHours.toFixed(1)}h</td>
+        <td style="color:var(--green)">+$${otPay}</td>
+        <td style="color:var(--red)">-$0</td>
+        <td style="font-weight:700;color:var(--green)">$${net}</td>
+        <td><button class="btn btn-ghost btn-xs" onclick="showToast('Generating payslip…','info')"><i class="fa-solid fa-file"></i></button></td>
+      </tr>`;
+    });
+    tbody.innerHTML = rows.join('')||`<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--text3)">No data for this period</td></tr>`;
+    $('payTotal').textContent='$'+totalPay;
+    $('payHours').textContent=totalHours.toFixed(0)+'h';
+    $('payOT').textContent=totalOT.toFixed(1)+'h';
+    $('payCount').textContent=Object.values(byUser).filter(u=>u.ins.length>0).length;
+  } catch(e){ showToast('Payroll error: '+e.message,'error'); }
+}
+
+window.exportPayrollCSV = async () => {
+  showToast('Exporting payroll…','info');
+};
+
+// ── LIVE MONITOR ──
+function renderLiveGrid(){
+  if(liveUnsubscribe) liveUnsubscribe();
+  liveUnsubscribe = onSnapshot(query(collection(db,'attendance'), where('date','==',todayStr())), snap=>{
+    const recs = snap.docs.map(d=>d.data());
+    const checkedInUIDs = [...new Set(recs.filter(r=>r.type==='IN').map(r=>r.userId))];
+    const checkedOutUIDs = [...new Set(recs.filter(r=>r.type==='OUT').map(r=>r.userId))];
+    const activeUIDs = checkedInUIDs.filter(u=>!checkedOutUIDs.includes(u));
+    $('liveActiveCount').textContent = `${activeUIDs.length} Active`;
+    const grid=$('liveGrid');
+    if(!allEmployees.length){ grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3)">No employees found</div>'; return; }
+    grid.innerHTML=allEmployees.map(s=>{
+      const isIn=checkedInUIDs.includes(s.uid); const isOut=checkedOutUIDs.includes(s.uid);
+      const active=isIn&&!isOut; const c=avatarColor(s.name);
+      const inRec=recs.find(r=>r.userId===s.uid&&r.type==='IN');
+      return `<div class="card" style="padding:16px;text-align:center;border-color:${active?c:''}">
+        <div class="avatar avatar-lg" style="background:${c}18;color:${c};border:2px solid ${c}44;margin:0 auto 10px">${initials(s.name)}</div>
+        <div style="font-weight:700;font-size:12px;margin-bottom:2px">${s.name}</div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:8px">${s.dept||'—'}</div>
+        ${active?`<span class="badge badge-green"><span class="live-dot" style="width:5px;height:5px"></span> Working</span>`:isIn&&isOut?`<span class="badge badge-brand">Checked Out</span>`:`<span class="badge badge-red">Not In</span>`}
+        ${inRec?`<div style="font-size:10px;color:var(--text3);margin-top:6px;font-family:'Space Mono',monospace">Since ${fmtTime(inRec.timestamp)}</div>`:''}
+      </div>`;
+    }).join('');
+  });
+}
+
+// ── LOGS ──
+async function loadLogs(){
+  try {
+    const snap = await getDocs(collection(db,'logs'));
+    const logs = snap.docs.map(d=>d.data()).sort((a,b)=>new Date(b.time)-new Date(a.time)).slice(0,20);
+    const tbody=$('securityBody');
+    if(!logs.length){ tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text3)">No logs yet</td></tr>`; return; }
+    tbody.innerHTML=logs.map(l=>`<tr>
+      <td>${l.user||'—'}</td>
+      <td>${l.action||'—'}</td>
+      <td style="font-family:'Space Mono',monospace;font-size:11px">${l.ip||'—'}</td>
+      <td style="font-family:'Space Mono',monospace;font-size:11px">${l.time?new Date(l.time).toLocaleString():''}</td>
+      <td><span class="badge ${l.status==='success'?'badge-green':'badge-red'}">${l.status||'—'}</span></td>
+    </tr>`).join('');
+  } catch(e){}
+}
+
+// ── HELPERS ──
+function populateEmpDropdowns(){
+  const opts = allEmployees.map(e=>`<option value="${e.uid}">${e.name||'—'} — ${e.empId||''}</option>`).join('');
+  ['manualEmp','leaveEmp'].forEach(id=>{ const el=$(id); if(el) el.innerHTML='<option value="">Select employee…</option>'+opts; });
+}
+
+async function sendTelegramNotif(msg){
+  const t=settings.tgToken, c=settings.tgChat;
+  if(!t||!c) return;
+  try { await fetch(`https://api.telegram.org/bot${t}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:c,text:msg,parse_mode:'Markdown'})}); }
+  catch(e){}
+}
+
+function downloadCSV(filename, headers, rows){
+  const csv=[headers,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.download=filename; a.click();
+}
+
+window.exportCSV = () => {
+  const h=['Name','Email','Emp ID','Dept','Role','Salary','Shift Start','Shift End','Status','Phone','Start Date'];
+  const r=allEmployees.map(e=>[e.name||'',e.email||'',e.empId||'',e.dept||'',e.role||'',e.salary||0,e.shiftStart||'',e.shiftEnd||'',e.status||'',e.phone||'',e.startDate||'']);
+  downloadCSV('employees.csv',h,r);
+};
+
+// ── UI ──
+let sidebarCollapsed=false;
+window.toggleSidebar=()=>{
+  sidebarCollapsed=!sidebarCollapsed;
+  document.getElementById('sidebar').classList.toggle('collapsed',sidebarCollapsed);
+  document.getElementById('main').classList.toggle('collapsed',sidebarCollapsed);
+};
+
+const PAGE_TITLES={
+  dashboard:'<i class="fa-solid fa-chart-pie" style="color:var(--brand)"></i> Dashboard <span>/ Overview</span>',
+  employees:'<i class="fa-solid fa-users" style="color:var(--brand)"></i> Employees <span>/ Management</span>',
+  attendance:'<i class="fa-solid fa-clipboard-list" style="color:var(--brand)"></i> Attendance <span>/ Records</span>',
+  leave:'<i class="fa-solid fa-calendar-check" style="color:var(--brand)"></i> Leave <span>/ Management</span>',
+  payroll:'<i class="fa-solid fa-money-bill-wave" style="color:var(--brand)"></i> Payroll <span>/ Salary</span>',
+  reports:'<i class="fa-solid fa-file-chart-column" style="color:var(--brand)"></i> Reports <span>/ Export</span>',
+  security:'<i class="fa-solid fa-shield-halved" style="color:var(--brand)"></i> Security <span>/ Logs</span>',
+  realtime:'<i class="fa-solid fa-satellite-dish" style="color:var(--brand)"></i> Live Monitor <span>/ Real-time</span>',
+  settings:'<i class="fa-solid fa-sliders" style="color:var(--brand)"></i> Settings <span>/ System</span>',
+};
+
+window.showPage=(name,navEl)=>{
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name)?.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  navEl?.classList.add('active');
+  document.getElementById('pageTitle').innerHTML=PAGE_TITLES[name]||name;
+  if(name==='employees') renderEmployees();
+  if(name==='attendance') loadAttendance();
+  if(name==='leave'){ loadLeave(); }
+  if(name==='payroll') loadPayroll();
+  if(name==='realtime') renderLiveGrid();
+  if(name==='dashboard') loadDashboard();
+};
+
+function setTheme(t){document.documentElement.setAttribute('data-theme',t);localStorage.setItem('kt',t);}
+window.setTheme=setTheme;
+window.toggleTheme=()=>setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+if(localStorage.getItem('kt')) setTheme(localStorage.getItem('kt'));
+
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m) closeModal(m.id);}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));});
+const today=new Date(); if($('attDate')) $('attDate').value=today.toISOString().slice(0,10);
+if($('payrollMonth')) $('payrollMonth').value=today.toISOString().slice(0,7);
+</script>
 </body>
 </html>
