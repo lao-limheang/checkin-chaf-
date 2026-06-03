@@ -125,6 +125,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 #qrReader video{border-radius:0;object-fit:cover!important;width:100%!important;max-height:300px}
 #qrReader img{display:none!important}
 #qrReader>div:last-child{display:none!important}
+#qrReader__status_span{display:none!important}
+#qrReader button{display:none!important}
 .scan-overlay{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;z-index:10}
 .scan-frame{width:180px;height:180px;position:relative}
 .scan-frame::before,.scan-frame::after{content:'';position:absolute;width:30px;height:30px;border-color:var(--brand);border-style:solid}
@@ -245,16 +247,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     </div>
     <div class="form-group">
       <label class="form-label">Email</label>
-      <div class="input-wrap"><i class="fa-solid fa-envelope"></i><input type="email" id="loginEmail" placeholder="your@cafe.com" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="input-wrap"><i class="fa-solid fa-envelope"></i><input type="email" id="loginEmail" placeholder="your@cafe.com" autocomplete="email" onkeydown="if(event.key==='Enter')window.doLogin()"></div>
     </div>
     <div class="form-group">
       <label class="form-label">Password</label>
-      <div class="input-wrap"><i class="fa-solid fa-lock"></i><input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="input-wrap"><i class="fa-solid fa-lock"></i><input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')window.doLogin()"></div>
     </div>
-    <button class="btn-login" onclick="doLogin()"><i class="fa-solid fa-right-to-bracket"></i> ចូលគណនី / Sign In</button>
+    <button class="btn-login" onclick="window.doLogin()"><i class="fa-solid fa-right-to-bracket"></i> ចូលគណនី / Sign In</button>
     <div class="err-box" id="loginErr"></div>
     <div style="text-align:center;margin-top:14px">
-      <button class="btn btn-ghost btn-sm" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke"></i> Toggle Theme</button>
+      <button class="btn btn-ghost btn-sm" onclick="window.toggleTheme()"><i class="fa-solid fa-circle-half-stroke"></i> Toggle Theme</button>
     </div>
   </div>
 </div>
@@ -275,8 +277,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         </div>
       </div>
       <div style="display:flex;gap:8px">
-        <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme"><i class="fa-solid fa-circle-half-stroke"></i></button>
-        <button class="icon-btn" onclick="doLogout()" title="Sign out"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+        <button class="icon-btn" onclick="window.toggleTheme()" title="Toggle theme"><i class="fa-solid fa-circle-half-stroke"></i></button>
+        <button class="icon-btn" onclick="window.doLogout()" title="Sign out"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
       </div>
     </div>
     <div style="margin-top:16px;display:flex;align-items:center;justify-content:space-between">
@@ -302,11 +304,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   <div class="panel active" id="panel-home">
     <div class="section-title"><i class="fa-solid fa-clock" style="color:var(--brand)"></i> Quick Actions</div>
     <div class="check-btn-row">
-      <button class="check-btn in" onclick="openCheckSheet('IN')">
+      <button class="check-btn in" onclick="window.openCheckSheet('IN')">
         <i class="fa-solid fa-arrow-right-to-bracket"></i>
         <span>Check In<br><small style="font-size:10px;opacity:.7">ចូលការងារ</small></span>
       </button>
-      <button class="check-btn out" onclick="openCheckSheet('OUT')">
+      <button class="check-btn out" onclick="window.openCheckSheet('OUT')">
         <i class="fa-solid fa-arrow-right-from-bracket"></i>
         <span>Check Out<br><small style="font-size:10px;opacity:.7">ចេញការ</small></span>
       </button>
@@ -351,7 +353,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <div><div style="font-size:22px;font-weight:900;color:var(--brand);font-family:'Space Mono',monospace" id="vacBal">—</div><div style="font-size:10px;color:var(--text3);font-weight:600">VACATION</div></div>
           <div><div style="font-size:22px;font-weight:900;color:var(--amber);font-family:'Space Mono',monospace" id="emgBal">—</div><div style="font-size:10px;color:var(--text3);font-weight:600">EMERGENCY</div></div>
         </div>
-        <button class="btn btn-ghost btn-full" style="margin-top:12px" onclick="switchTab('leave')"><i class="fa-solid fa-plus"></i> Request Leave</button>
+        <button class="btn btn-ghost btn-full" style="margin-top:12px" onclick="window.switchTab('leave')"><i class="fa-solid fa-plus"></i> Request Leave</button>
       </div>
     </div>
 
@@ -371,9 +373,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   <!-- ── ATTENDANCE PANEL ── -->
   <div class="panel" id="panel-attendance">
     <div class="tab-strip" id="attTabStrip">
-      <button class="tab-strip-btn active" onclick="switchAttTab('history',this)">History</button>
-      <button class="tab-strip-btn" onclick="switchAttTab('calendar',this)">Calendar</button>
-      <button class="tab-strip-btn" onclick="switchAttTab('stats',this)">Stats</button>
+      <button class="tab-strip-btn active" onclick="window.switchAttTab('history',this)">History</button>
+      <button class="tab-strip-btn" onclick="window.switchAttTab('calendar',this)">Calendar</button>
+      <button class="tab-strip-btn" onclick="window.switchAttTab('stats',this)">Stats</button>
     </div>
 
     <!-- History -->
@@ -418,7 +420,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   <div class="panel" id="panel-leave">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;margin-bottom:4px">
       <div class="section-title" style="margin:0;padding:0"><i class="fa-solid fa-calendar-check" style="color:var(--brand)"></i> My Leave</div>
-      <button class="btn btn-primary btn-sm" onclick="openLeaveModal()"><i class="fa-solid fa-plus"></i> Request</button>
+      <button class="btn btn-primary btn-sm" onclick="window.openLeaveModal()"><i class="fa-solid fa-plus"></i> Request</button>
     </div>
     <div class="card" style="margin-top:12px;margin-bottom:12px">
       <div class="card-header"><div class="card-title"><i class="fa-solid fa-chart-bar"></i> Leave Balance</div></div>
@@ -434,7 +436,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   <div class="panel" id="panel-notifications">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;margin-bottom:4px">
       <div class="section-title" style="margin:0;padding:0"><i class="fa-solid fa-bell" style="color:var(--brand)"></i> Notifications</div>
-      <button class="btn btn-ghost btn-sm" onclick="markAllRead()"><i class="fa-solid fa-check-double"></i> Mark All Read</button>
+      <button class="btn btn-ghost btn-sm" onclick="window.markAllRead()"><i class="fa-solid fa-check-double"></i> Mark All Read</button>
     </div>
     <div class="card" style="margin-top:12px">
       <div id="notifList" style="padding:4px 16px">
@@ -452,8 +454,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div style="margin-top:8px"><span class="badge badge-green" id="profileStatusBadge">Active</span></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
-      <button class="btn btn-ghost" onclick="openEditProfile()"><i class="fa-solid fa-pen"></i> Edit Profile</button>
-      <button class="btn btn-ghost" onclick="openChangePass()"><i class="fa-solid fa-key"></i> Password</button>
+      <button class="btn btn-ghost" onclick="window.openEditProfile()"><i class="fa-solid fa-pen"></i> Edit Profile</button>
+      <button class="btn btn-ghost" onclick="window.openChangePass()"><i class="fa-solid fa-key"></i> Password</button>
     </div>
     <div class="card" style="margin-bottom:12px">
       <div class="card-header"><div class="card-title"><i class="fa-solid fa-id-card"></i> My Information</div></div>
@@ -474,22 +476,22 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div class="card-body" style="padding:8px 16px">
         <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
           <span style="font-size:13px;font-weight:600"><i class="fa-solid fa-moon" style="width:18px;color:var(--brand)"></i> Dark Mode</span>
-          <div class="toggle-switch on" id="themeSwitch" onclick="toggleTheme()"></div>
+          <div class="toggle-switch on" id="themeSwitch" onclick="window.toggleTheme()"></div>
         </div>
       </div>
     </div>
-    <button class="btn btn-danger btn-full" onclick="doLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out</button>
+    <button class="btn btn-danger btn-full" onclick="window.doLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out</button>
   </div>
 
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
-    <button class="nav-tab active" id="navHome" onclick="switchTab('home')"><i class="fa-solid fa-house"></i><span>Home</span></button>
-    <button class="nav-tab" id="navAttendance" onclick="switchTab('attendance')"><i class="fa-solid fa-clipboard-list"></i><span>Attendance</span></button>
+    <button class="nav-tab active" id="navHome" onclick="window.switchTab('home')"><i class="fa-solid fa-house"></i><span>Home</span></button>
+    <button class="nav-tab" id="navAttendance" onclick="window.switchTab('attendance')"><i class="fa-solid fa-clipboard-list"></i><span>Attendance</span></button>
     <div style="display:flex;align-items:flex-end;padding-bottom:4px">
-      <button class="nav-center-btn" onclick="openCheckSheet('scan')" title="Scan QR"><i class="fa-solid fa-qrcode"></i></button>
+      <button class="nav-center-btn" onclick="window.openCheckSheet('scan')" title="Scan QR"><i class="fa-solid fa-qrcode"></i></button>
     </div>
-    <button class="nav-tab" id="navLeave" onclick="switchTab('leave')"><i class="fa-solid fa-calendar-check"></i><span>Leave</span></button>
-    <button class="nav-tab" id="navProfile" onclick="switchTab('profile')"><i class="fa-solid fa-user"></i><span>Profile</span></button>
+    <button class="nav-tab" id="navLeave" onclick="window.switchTab('leave')"><i class="fa-solid fa-calendar-check"></i><span>Leave</span></button>
+    <button class="nav-tab" id="navProfile" onclick="window.switchTab('profile')"><i class="fa-solid fa-user"></i><span>Profile</span></button>
   </nav>
 </div>
 
@@ -514,8 +516,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           </div>
         </div>
       </div>
+      
+      <!-- File fallback scan option -->
+      <div style="padding:0 8px;margin-bottom:16px">
+        <input type="file" id="qrFileInput" accept="image/*" style="display:none" onchange="window.handleQRFileSelect(event)">
+        <button class="btn btn-ghost btn-full btn-sm" onclick="document.getElementById('qrFileInput').click()">
+          <i class="fa-solid fa-image"></i> Scan from Screenshot / Image
+        </button>
+      </div>
+
       <p style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:12px">Point camera at QR code at the entrance</p>
-      <button class="btn btn-ghost btn-full" onclick="closeScanModal()"><i class="fa-solid fa-xmark"></i> Cancel</button>
+      <button class="btn btn-ghost btn-full" onclick="window.closeScanModal()"><i class="fa-solid fa-xmark"></i> Cancel</button>
     </div>
 
     <!-- Direct / confirm mode -->
@@ -526,10 +537,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <div class="gps-pill" style="margin:8px auto 0;width:fit-content"><span class="live-dot" style="width:6px;height:6px"></span> Location Verified</div>
       </div>
       <div class="check-btn-row" style="margin-bottom:12px">
-        <button class="check-btn in" onclick="executeCheck('IN')"><i class="fa-solid fa-arrow-right-to-bracket"></i><span>Check In<br><small style="font-size:10px">ចូលការងារ</small></span></button>
-        <button class="check-btn out" onclick="executeCheck('OUT')"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Check Out<br><small style="font-size:10px">ចេញការ</small></span></button>
+        <button class="check-btn in" onclick="window.executeCheck('IN')"><i class="fa-solid fa-arrow-right-to-bracket"></i><span>Check In<br><small style="font-size:10px">ចូលការងារ</small></span></button>
+        <button class="check-btn out" onclick="window.executeCheck('OUT')"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Check Out<br><small style="font-size:10px">ចេញការ</small></span></button>
       </div>
-      <button class="btn btn-ghost btn-full" onclick="closeScanModal()">Cancel</button>
+      <button class="btn btn-ghost btn-full" onclick="window.closeScanModal()">Cancel</button>
     </div>
 
     <!-- Success mode -->
@@ -539,7 +550,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div style="font-size:13px;color:var(--text3);margin-bottom:4px" id="successTime">—</div>
       <div style="font-size:12px;color:var(--text2);margin-bottom:4px" id="successStatus">—</div>
       <div style="font-size:11px;color:var(--green);margin-bottom:20px" id="successNotif">✓ Recorded</div>
-      <button class="btn btn-success btn-full" onclick="closeScanModal()"><i class="fa-solid fa-check"></i> Done / រួចរាល់</button>
+      <button class="btn btn-success btn-full" onclick="window.closeScanModal()"><i class="fa-solid fa-check"></i> Done / រួចរាល់</button>
     </div>
   </div>
 </div>
@@ -552,10 +563,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div style="margin-bottom:12px">
       <label class="form-label">Leave Type</label>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="leaveTypeBtns">
-        <button class="btn btn-ghost" onclick="selectLeaveType(this,'sick')" style="background:var(--red-dim);border-color:rgba(255,71,87,.3);color:var(--red)"><i class="fa-solid fa-virus"></i> Sick</button>
-        <button class="btn btn-ghost" onclick="selectLeaveType(this,'vacation')"><i class="fa-solid fa-umbrella-beach"></i> Vacation</button>
-        <button class="btn btn-ghost" onclick="selectLeaveType(this,'emergency')"><i class="fa-solid fa-bolt"></i> Emergency</button>
-        <button class="btn btn-ghost" onclick="selectLeaveType(this,'maternity')"><i class="fa-solid fa-baby"></i> Maternity</button>
+        <button class="btn btn-ghost" onclick="window.selectLeaveType(this,'sick')" style="background:var(--red-dim);border-color:rgba(255,71,87,.3);color:var(--red)"><i class="fa-solid fa-virus"></i> Sick</button>
+        <button class="btn btn-ghost" onclick="window.selectLeaveType(this,'vacation')"><i class="fa-solid fa-umbrella-beach"></i> Vacation</button>
+        <button class="btn btn-ghost" onclick="window.selectLeaveType(this,'emergency')"><i class="fa-solid fa-bolt"></i> Emergency</button>
+        <button class="btn btn-ghost" onclick="window.selectLeaveType(this,'maternity')"><i class="fa-solid fa-baby"></i> Maternity</button>
       </div>
     </div>
     <input type="hidden" id="selectedLeaveType" value="sick">
@@ -574,8 +585,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <label class="form-label">Reason</label>
       <textarea id="leaveReason" style="background:var(--bg3);border:1.5px solid var(--border);color:var(--text);border-radius:var(--r2);padding:10px 12px;font-family:inherit;font-size:13px;outline:none;width:100%;resize:none;height:80px" placeholder="Brief reason… មូលហេតុ"></textarea>
     </div>
-    <button class="btn btn-primary btn-full" onclick="submitLeave()"><i class="fa-solid fa-paper-plane"></i> Submit Request / ដាក់សំណើ</button>
-    <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="closeModal('leaveModal')">Cancel</button>
+    <button class="btn btn-primary btn-full" onclick="window.submitLeave()"><i class="fa-solid fa-paper-plane"></i> Submit Request / ដាក់សំណើ</button>
+    <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="window.closeModal('leaveModal')">Cancel</button>
   </div>
 </div>
 
@@ -592,8 +603,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <label class="form-label">Phone Number</label>
       <input type="tel" id="editPhone" placeholder="+855 12 345 678" style="background:var(--bg3);border:1.5px solid var(--border);color:var(--text);border-radius:var(--r2);padding:10px 12px;font-family:inherit;font-size:13px;outline:none;width:100%">
     </div>
-    <button class="btn btn-primary btn-full" onclick="saveProfile()"><i class="fa-solid fa-save"></i> Save Changes</button>
-    <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="closeModal('editProfileModal')">Cancel</button>
+    <button class="btn btn-primary btn-full" onclick="window.saveProfile()"><i class="fa-solid fa-save"></i> Save Changes</button>
+    <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="window.closeModal('editProfileModal')">Cancel</button>
   </div>
 </div>
 
@@ -614,98 +625,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <label class="form-label">Confirm New Password</label>
       <input type="password" id="confPass" style="background:var(--bg3);border:1.5px solid var(--border);color:var(--text);border-radius:var(--r2);padding:10px 12px;font-family:inherit;font-size:13px;outline:none;width:100%">
     </div>
-    <button class="btn btn-primary btn-full" onclick="changePassword()"><i class="fa-solid fa-lock"></i> Update Password</button>
-    <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="closeModal('changePassModal')">Cancel</button>
+    <button class="btn btn-primary btn-full" onclick="window.changePassword()"><i class="fa-solid fa-lock"></i> Update Password</button>
+    <button class="btn btn-ghost btn-full" style="margin-top:8px" onclick="window.closeModal('changePassModal')">Cancel</button>
   </div>
 </div>
 
 <!-- ══════════════════════════════
      SCRIPTS
 ══════════════════════════════ -->
-<script>
-/* ── Utilities ── */
-window.showToast = (msg, type='info', dur=3500) => {
-  const c = document.getElementById('toasts');
-  const ic = {success:'fa-check-circle', error:'fa-circle-xmark', warning:'fa-triangle-exclamation', info:'fa-circle-info'};
-  const cl = {success:'var(--green)', error:'var(--red)', warning:'var(--amber)', info:'var(--brand)'};
-  const el = document.createElement('div');
-  el.className = 'toast ' + type;
-  el.innerHTML = `<i class="fa-solid ${ic[type]}" style="color:${cl[type]};font-size:16px;flex-shrink:0"></i><span>${msg}</span>`;
-  c.appendChild(el);
-  setTimeout(() => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(-20px)';
-    el.style.transition = '.4s';
-    setTimeout(() => el.remove(), 400);
-  }, dur);
-};
-function showLoading(msg='Processing…') {
-  const o = document.getElementById('loadingOverlay');
-  document.getElementById('loadingText').textContent = msg;
-  o.style.display = 'flex';
-}
-function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
-
-/* ── Custom non-blocking Confirm ── */
-window.showConfirm = (message, onConfirm) => {
-  const overlay = document.getElementById('confirmModalOverlay');
-  const msgText = document.getElementById('confirmMessageText');
-  const cancelBtn = document.getElementById('confirmCancelBtn');
-  const okBtn = document.getElementById('confirmOkBtn');
-  
-  msgText.textContent = message;
-  overlay.style.display = 'flex';
-  
-  const cleanUp = () => {
-    overlay.style.display = 'none';
-    cancelBtn.onclick = null;
-    okBtn.onclick = null;
-  };
-  
-  cancelBtn.onclick = () => cleanUp();
-  okBtn.onclick = () => {
-    cleanUp();
-    onConfirm();
-  };
-};
-
-/* ── Theme ── */
-function setTheme(t) {
-  document.documentElement.setAttribute('data-theme', t);
-  localStorage.setItem('kronos_staff_theme', t);
-  const s = document.getElementById('themeSwitch');
-  if (s) s.classList.toggle('on', t === 'dark');
-}
-window.toggleTheme = () => setTheme(
-  document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
-);
-const savedTheme = localStorage.getItem('kronos_staff_theme');
-if (savedTheme) setTheme(savedTheme);
-
-/* ── Modals ── */
-window.openModal = id => document.getElementById(id)?.classList.add('open');
-window.closeModal = id => document.getElementById(id)?.classList.remove('open');
-document.querySelectorAll('.modal-overlay').forEach(m => {
-  m.addEventListener('click', e => { if (e.target === m) closeModal(m.id); });
-});
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape')
-    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
-});
-
-/* ── Leave date display ── */
-function updateLeaveDays() {
-  const f = document.getElementById('leaveFrom').value;
-  const t = document.getElementById('leaveTo').value;
-  const el = document.getElementById('leaveDaysLabel');
-  if (f && t) {
-    const days = Math.max(1, Math.round((new Date(t) - new Date(f)) / (1000 * 60 * 60 * 24)) + 1);
-    el.textContent = `${days} day${days > 1 ? 's' : ''} requested`;
-  } else { el.textContent = ''; }
-}
-document.getElementById('leaveFrom').addEventListener('change', updateLeaveDays);
-document.getElementById('leaveTo').addEventListener('change', updateLeaveDays);
-</script>
 
 <!-- ── FIREBASE MODULE ── -->
 <script type="module">
@@ -744,6 +671,96 @@ let clockInterval = null;
 let unreadCount = 0;
 
 const $ = id => document.getElementById(id);
+
+/* ── Global Scope Utilities ── */
+window.$ = $;
+
+window.showToast = (msg, type='info', dur=3500) => {
+  const c = document.getElementById('toasts');
+  const ic = {success:'fa-check-circle', error:'fa-circle-xmark', warning:'fa-triangle-exclamation', info:'fa-circle-info'};
+  const cl = {success:'var(--green)', error:'var(--red)', warning:'var(--amber)', info:'var(--brand)'};
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.innerHTML = `<i class="fa-solid ${ic[type]}" style="color:${cl[type]};font-size:16px;flex-shrink:0"></i><span>${msg}</span>`;
+  c.appendChild(el);
+  setTimeout(() => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(-20px)';
+    el.style.transition = '.4s';
+    setTimeout(() => el.remove(), 400);
+  }, dur);
+};
+
+window.showLoading = (msg='Processing…') => {
+  const o = document.getElementById('loadingOverlay');
+  document.getElementById('loadingText').textContent = msg;
+  o.style.display = 'flex';
+};
+
+window.hideLoading = () => { document.getElementById('loadingOverlay').style.display = 'none'; };
+
+window.showConfirm = (message, onConfirm) => {
+  const overlay = document.getElementById('confirmModalOverlay');
+  const msgText = document.getElementById('confirmMessageText');
+  const cancelBtn = document.getElementById('confirmCancelBtn');
+  const okBtn = document.getElementById('confirmOkBtn');
+  
+  msgText.textContent = message;
+  overlay.style.display = 'flex';
+  
+  const cleanUp = () => {
+    overlay.style.display = 'none';
+    cancelBtn.onclick = null;
+    okBtn.onclick = null;
+  };
+  
+  cancelBtn.onclick = () => cleanUp();
+  okBtn.onclick = () => {
+    cleanUp();
+    onConfirm();
+  };
+};
+
+window.openModal = id => document.getElementById(id)?.classList.add('open');
+window.closeModal = id => document.getElementById(id)?.classList.remove('open');
+
+// Dismiss modals on click outside
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) window.closeModal(m.id); });
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape')
+    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+});
+
+// Leave requested days counting logic
+function updateLeaveDays() {
+  const f = document.getElementById('leaveFrom').value;
+  const t = document.getElementById('leaveTo').value;
+  const el = document.getElementById('leaveDaysLabel');
+  if (f && t) {
+    const days = Math.max(1, Math.round((new Date(t) - new Date(f)) / (1000 * 60 * 60 * 24)) + 1);
+    el.textContent = `${days} day${days > 1 ? 's' : ''} requested`;
+  } else { el.textContent = ''; }
+}
+document.getElementById('leaveFrom').addEventListener('change', updateLeaveDays);
+document.getElementById('leaveTo').addEventListener('change', updateLeaveDays);
+
+/* ── Theme management ── */
+window.setTheme = (t) => {
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('kronos_staff_theme', t);
+  const s = document.getElementById('themeSwitch');
+  if (s) s.classList.toggle('on', t === 'dark');
+};
+
+window.toggleTheme = () => window.setTheme(
+  document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
+);
+
+const savedTheme = localStorage.getItem('kronos_staff_theme');
+if (savedTheme) window.setTheme(savedTheme);
+
 
 /* ── Rule 3 Sandbox Auth initialization ── */
 const initAuth = async () => {
@@ -819,16 +836,16 @@ onAuthStateChanged(auth, async user => {
     try {
       const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', user.uid));
       if (!snap.exists()) {
-        showToast('Account not found. Contact admin.', 'error');
+        window.showToast('Account not found. Contact admin.', 'error');
         await signOut(auth);
         return;
       }
       const data = snap.data();
       if (data.isAdmin === true) {
-        showToast('Admins: please use the Admin Console.', 'warning');
+        window.showToast('Admins: please use the Admin Console.', 'warning');
       }
       if (data.status === 'inactive') {
-        showToast('Your account is inactive. Contact admin.', 'error');
+        window.showToast('Your account is inactive. Contact admin.', 'error');
         await signOut(auth);
         return;
       }
@@ -841,11 +858,11 @@ onAuthStateChanged(auth, async user => {
       
       const params = new URLSearchParams(window.location.search);
       if (params.get('action') === 'scan') {
-        setTimeout(() => openCheckSheet('scan'), 600);
+        setTimeout(() => window.openCheckSheet('scan'), 600);
       }
     } catch (e) {
-      hideLoading();
-      showToast('Error loading profile: ' + e.message, 'error');
+      window.hideLoading();
+      window.showToast('Error loading profile: ' + e.message, 'error');
       await signOut(auth);
     }
   } else {
@@ -853,7 +870,7 @@ onAuthStateChanged(auth, async user => {
     $('loginScreen').classList.add('active');
     currentUser = null;
     if (clockInterval) clearInterval(clockInterval);
-    stopQRScanner();
+    window.stopQRScanner();
   }
 });
 
@@ -867,11 +884,11 @@ window.doLogin = async () => {
     err.style.display = 'block';
     return;
   }
-  showLoading('Signing in… / កំពុងចូល');
+  window.showLoading('Signing in… / កំពុងចូល');
   try {
     await signInWithEmailAndPassword(auth, email, pass);
   } catch (e) {
-    hideLoading();
+    window.hideLoading();
     const msgs = {
       'auth/invalid-credential': 'Wrong email or password. / ឈ្មោះ ឬ លេខសំងាត់ខុស',
       'auth/user-disabled': 'Account disabled. Contact admin.',
@@ -881,13 +898,13 @@ window.doLogin = async () => {
     err.textContent = msgs[e.code] || e.message;
     err.style.display = 'block';
   } finally {
-    hideLoading();
+    window.hideLoading();
   }
 };
 
 window.doLogout = () => {
-  stopQRScanner();
-  showConfirm('ចាកចេញពីប្រព័ន្ធ? / Are you sure you want to logout?', async () => {
+  window.stopQRScanner();
+  window.showConfirm('ចាកចេញពីប្រព័ន្ធ? / Are you sure you want to logout?', async () => {
     try { 
       await signOut(auth); 
       await initAuth();
@@ -970,7 +987,7 @@ async function loadMyAttendance() {
     renderAttStats();
     updateQuickStats();
     updateLastActivity();
-  } catch (e) { showToast('Error loading attendance', 'error'); }
+  } catch (e) { window.showToast('Error loading attendance', 'error'); }
 }
 
 function updateLastActivity() {
@@ -1135,7 +1152,7 @@ async function loadMyLeave() {
     renderLeaveList();
     renderLeaveBalance();
     updateHomeLeaveBalance();
-  } catch (e) { showToast('Error loading leave', 'error'); }
+  } catch (e) { window.showToast('Error loading leave', 'error'); }
 }
 
 function renderLeaveBalance() {
@@ -1197,17 +1214,17 @@ function renderLeaveList() {
       </div>
       <div style="font-size:11px;color:var(--text3)">📅 ${l.from || '—'} → ${l.to || '—'} · ${l.from && l.to ? daysDiff(l.from, l.to) + ' day(s)' : ''}</div>
       ${l.reason ? `<div style="font-size:12px;color:var(--text2);margin-top:4px">${l.reason}</div>` : ''}
-      ${l.status === 'pending' ? `<div style="margin-top:10px"><button class="btn btn-danger btn-sm" onclick="cancelLeave('${l.id}')"><i class="fa-solid fa-xmark"></i> Cancel Request</button></div>` : ''}
+      ${l.status === 'pending' ? `<div style="margin-top:10px"><button class="btn btn-danger btn-sm" onclick="window.cancelLeave('${l.id}')"><i class="fa-solid fa-xmark"></i> Cancel Request</button></div>` : ''}
     </div>`).join('');
 }
 
 window.cancelLeave = id => {
-  showConfirm('លុបចោលសំណើសុំច្បាប់នេះ? / Cancel this leave request?', async () => {
+  window.showConfirm('លុបចោលសំណើសុំច្បាប់នេះ? / Cancel this leave request?', async () => {
     try {
       await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leave', id), { status: 'cancelled', cancelledAt: new Date().toISOString() });
-      showToast('Leave request cancelled', 'warning');
+      window.showToast('Leave request cancelled', 'warning');
       loadMyLeave();
-    } catch (e) { showToast('Error: ' + e.message, 'error'); }
+    } catch (e) { window.showToast('Error: ' + e.message, 'error'); }
   });
 };
 
@@ -1301,9 +1318,9 @@ window.markAllRead = async () => {
     const unread = snap.docs.filter(d => d.data().userId === currentUser.uid && !d.data().read);
     const updates = unread.map(d => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'notifications', d.id), { read: true }));
     await Promise.all(updates);
-    showToast('All notifications marked as read', 'success');
+    window.showToast('All notifications marked as read', 'success');
     loadNotifications();
-  } catch (e) { showToast('Error: ' + e.message, 'error'); }
+  } catch (e) { window.showToast('Error: ' + e.message, 'error'); }
 };
 
 /* ── CHECK IN/OUT ── */
@@ -1314,50 +1331,67 @@ window.openCheckSheet = mode => {
     $('checkTitle').innerHTML = '<i class="fa-solid fa-qrcode"></i> Scan QR Code';
     $('checkScanMode').style.display = 'block';
     $('checkDirectMode').style.display = 'none';
-    modal.classList.add('open');
-    setTimeout(startQRScanner, 350);
+    window.openModal('checkModal');
+    setTimeout(window.startQRScanner, 350);
   } else {
     $('checkTitle').innerHTML = mode === 'IN'
       ? '<i class="fa-solid fa-arrow-right-to-bracket" style="color:var(--green)"></i> Check In'
       : '<i class="fa-solid fa-arrow-right-from-bracket" style="color:var(--amber)"></i> Check Out';
     $('checkScanMode').style.display = 'none';
     $('checkDirectMode').style.display = 'block';
-    modal.classList.add('open');
+    window.openModal('checkModal');
   }
 };
 
-function startQRScanner() {
+window.startQRScanner = () => {
   const el = $('qrReader');
   if (!el || typeof Html5Qrcode === 'undefined') {
-    showToast('QR scanner not available', 'error');
-    closeScanModal();
+    window.showToast('QR scanner not available', 'error');
+    window.closeScanModal();
     return;
   }
-  stopQRScanner();
+  window.stopQRScanner();
   html5QR = new Html5Qrcode('qrReader');
   html5QR.start(
     { facingMode: 'environment' },
     { fps: 10, qrbox: { width: 200, height: 200 } },
     decodedText => {
-      stopQRScanner();
+      window.stopQRScanner();
       handleQRScan(decodedText);
     },
     () => {} // ignore decode errors
   ).catch(err => {
     console.warn('QR start error:', err);
-    showToast('Camera access denied. Use Check In/Out buttons instead.', 'warning');
-    $('checkScanMode').style.display = 'none';
-    $('checkDirectMode').style.display = 'block';
-    $('checkTitle').innerHTML = '<i class="fa-solid fa-fingerprint"></i> Confirm Attendance';
+    window.showToast('Camera access denied or blocked. Try scan from image or use check-in buttons.', 'warning');
+    // Keep scan mode visible but allow fallback
   });
-}
+};
 
-function stopQRScanner() {
+window.stopQRScanner = () => {
   if (html5QR) {
     html5QR.stop().catch(() => {});
     html5QR = null;
   }
-}
+};
+
+/* ── File Scan Fallback Handler ── */
+window.handleQRFileSelect = (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  window.showLoading('Scanning image…');
+  const tempQR = new Html5Qrcode('qrReader');
+  tempQR.scanFile(file, true)
+    .then(decodedText => {
+      window.hideLoading();
+      window.stopQRScanner();
+      handleQRScan(decodedText);
+    })
+    .catch(err => {
+      window.hideLoading();
+      window.showToast('Could not find a valid QR code in this image.', 'error');
+      console.warn(err);
+    });
+};
 
 /* ── QR Scan Handler — validates KRONOS QR tokens ── */
 function handleQRScan(decoded) {
@@ -1368,20 +1402,20 @@ function handleQRScan(decoded) {
     if (payload && payload.type === 'kronos_attendance') {
       const now = Math.floor(Date.now() / 30000);
       if (payload.slot && Math.abs(now - payload.slot) > 2) {
-        showToast('QR code expired! Ask admin to refresh it.', 'error');
+        window.showToast('QR code expired! Ask admin to refresh it.', 'error');
         $('checkScanMode').style.display = 'block';
         $('checkDirectMode').style.display = 'none';
-        setTimeout(startQRScanner, 500);
+        setTimeout(window.startQRScanner, 500);
         return;
       }
       $('checkScanMode').style.display = 'none';
       $('checkDirectMode').style.display = 'block';
       $('checkTitle').innerHTML = '<i class="fa-solid fa-fingerprint" style="color:var(--green)"></i> QR Verified — Confirm';
     } else {
-      showToast('Invalid QR code. Not a KRONOS QR.', 'error');
+      window.showToast('Invalid QR code. Not a KRONOS QR.', 'error');
       $('checkScanMode').style.display = 'block';
       $('checkDirectMode').style.display = 'none';
-      setTimeout(startQRScanner, 500);
+      setTimeout(window.startQRScanner, 500);
     }
   } catch (e) {
     $('checkScanMode').style.display = 'none';
@@ -1391,14 +1425,14 @@ function handleQRScan(decoded) {
 }
 
 window.closeScanModal = () => {
-  stopQRScanner();
-  closeModal('checkModal');
+  window.stopQRScanner();
+  window.closeModal('checkModal');
 };
 
 window.executeCheck = async type => {
-  if (!currentUser) { showToast('Not logged in', 'error'); return; }
+  if (!currentUser) { window.showToast('Not logged in', 'error'); return; }
   $('checkDirectMode').style.display = 'none';
-  showLoading(type === 'IN' ? 'Recording Check-In… / កំពុងកត់ចូល' : 'Recording Check-Out… / កំពុងកត់ចេញ');
+  window.showLoading(type === 'IN' ? 'Recording Check-In… / កំពុងកត់ចូល' : 'Recording Check-Out… / កំពុងកត់ចេញ');
 
   const now = new Date();
   const today = now.toISOString().slice(0, 10);
@@ -1454,7 +1488,7 @@ window.executeCheck = async type => {
       read: false
     });
 
-    hideLoading();
+    window.hideLoading();
     $('successTitle').textContent = type === 'IN' ? 'Checked In! / បានចូល ✓' : 'Checked Out! / បានចេញ ✓';
     $('successTime').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' · ' + now.toLocaleDateString();
     $('successStatus').textContent = isLate ? `⚠️ Late by ${lateMinutes} minutes` : type === 'IN' ? '✅ On Time' : '✅ Completed';
@@ -1462,13 +1496,13 @@ window.executeCheck = async type => {
     $('successNotif').textContent = tgSent ? '✓ Telegram notified' : settings.tgToken ? '⚠ Telegram send failed' : '— Telegram not configured';
     $('checkSuccessMode').style.display = 'block';
 
-    showToast(type === 'IN' ? '✅ Checked in!' : '✅ Checked out!', 'success');
+    window.showToast(type === 'IN' ? '✅ Checked in!' : '✅ Checked out!', 'success');
     loadMyAttendance();
     loadNotifications();
   } catch (e) {
-    hideLoading();
+    window.hideLoading();
     $('checkDirectMode').style.display = 'block';
-    showToast('Error: ' + e.message, 'error');
+    window.showToast('Error: ' + e.message, 'error');
   }
 };
 
@@ -1479,7 +1513,7 @@ window.openLeaveModal = () => {
   $('leaveTo').value = today;
   $('leaveReason').value = '';
   $('leaveDaysLabel').textContent = '1 day requested';
-  openModal('leaveModal');
+  window.openModal('leaveModal');
 };
 
 window.selectLeaveType = (btn, type) => {
@@ -1499,10 +1533,10 @@ window.submitLeave = async () => {
   const to = $('leaveTo').value;
   const reason = $('leaveReason').value.trim();
   const type = $('selectedLeaveType').value || 'sick';
-  if (!from || !to) { showToast('Please select dates', 'error'); return; }
-  if (new Date(to) < new Date(from)) { showToast('End date must be after start date', 'error'); return; }
-  if (!reason) { showToast('Please provide a reason', 'error'); return; }
-  showLoading('Submitting leave request…');
+  if (!from || !to) { window.showToast('Please select dates', 'error'); return; }
+  if (new Date(to) < new Date(from)) { window.showToast('End date must be after start date', 'error'); return; }
+  if (!reason) { window.showToast('Please provide a reason', 'error'); return; }
+  window.showLoading('Submitting leave request…');
   try {
     await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'leave'), {
       userId: currentUser.uid,
@@ -1535,25 +1569,25 @@ window.submitLeave = async () => {
       createdAt: new Date().toISOString(),
       read: false
     });
-    hideLoading();
-    showToast('Leave request submitted! / សំណើបានដាក់', 'success');
-    closeModal('leaveModal');
+    window.hideLoading();
+    window.showToast('Leave request submitted! / សំណើបានដាក់', 'success');
+    window.closeModal('leaveModal');
     loadMyLeave();
     loadNotifications();
   } catch (e) {
-    hideLoading();
-    showToast('Error: ' + e.message, 'error');
+    window.hideLoading();
+    window.showToast('Error: ' + e.message, 'error');
   }
 };
 
 /* ── PROFILE ── */
-window.openEditProfile = () => openModal('editProfileModal');
+window.openEditProfile = () => window.openModal('editProfileModal');
 
 window.saveProfile = async () => {
   const name = $('editName').value.trim();
   const phone = $('editPhone').value.trim();
-  if (!name) { showToast('Name is required', 'error'); return; }
-  showLoading('Saving…');
+  if (!name) { window.showToast('Name is required', 'error'); return; }
+  window.showLoading('Saving…');
   try {
     await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), {
       name, phone, updatedAt: new Date().toISOString()
@@ -1561,12 +1595,12 @@ window.saveProfile = async () => {
     currentUser.name = name;
     currentUser.phone = phone;
     setupUI();
-    hideLoading();
-    showToast('Profile updated! / បានធ្វើបច្ចុប្បន្នភាព', 'success');
-    closeModal('editProfileModal');
+    window.hideLoading();
+    window.showToast('Profile updated! / បានធ្វើបច្ចុប្បន្នភាព', 'success');
+    window.closeModal('editProfileModal');
   } catch (e) {
-    hideLoading();
-    showToast('Error: ' + e.message, 'error');
+    window.hideLoading();
+    window.showToast('Error: ' + e.message, 'error');
   }
 };
 
@@ -1574,32 +1608,32 @@ window.openChangePass = () => {
   $('currPass').value = '';
   $('newPass').value = '';
   $('confPass').value = '';
-  openModal('changePassModal');
+  window.openModal('changePassModal');
 };
 
 window.changePassword = async () => {
   const curr = $('currPass').value;
   const np = $('newPass').value;
   const conf = $('confPass').value;
-  if (!curr || !np || !conf) { showToast('Fill all fields', 'error'); return; }
-  if (np !== conf) { showToast('Passwords do not match', 'error'); return; }
-  if (np.length < 6) { showToast('Minimum 6 characters', 'error'); return; }
-  showLoading('Updating password…');
+  if (!curr || !np || !conf) { window.showToast('Fill all fields', 'error'); return; }
+  if (np !== conf) { window.showToast('Passwords do not match', 'error'); return; }
+  if (np.length < 6) { window.showToast('Minimum 6 characters', 'error'); return; }
+  window.showLoading('Updating password…');
   try {
     const cred = EmailAuthProvider.credential(currentUser.email, curr);
     await reauthenticateWithCredential(auth.currentUser, cred);
     await updatePassword(auth.currentUser, np);
-    hideLoading();
-    showToast('Password updated! / លេខសំងាត់ថ្មី', 'success');
-    closeModal('changePassModal');
+    window.hideLoading();
+    window.showToast('Password updated! / លេខសំងាត់ថ្មី', 'success');
+    window.closeModal('changePassModal');
   } catch (e) {
-    hideLoading();
+    window.hideLoading();
     const msgs = {
       'auth/wrong-password': 'Wrong current password',
       'auth/weak-password': 'New password is too weak',
       'auth/requires-recent-login': 'Please sign out and back in, then try again',
     };
-    showToast(msgs[e.code] || 'Error: ' + e.message, 'error');
+    window.showToast(msgs[e.code] || 'Error: ' + e.message, 'error');
   }
 };
 
