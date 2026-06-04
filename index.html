@@ -4,11 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Café Management System</title>
+<!-- Tailwind CSS for modern responsive utility design -->
 <script src="https://cdn.tailwindcss.com"></script>
+<!-- FontAwesome for robust, semantic business iconography -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- ChartJS for visual analytics & data representations -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Leaflet CSS & JS for physical branch location mappings -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Google Fonts for legible Khmer language layout rendering -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Hanuman:wght@400;700;900&family=Suwannaphum:wght@300;400;700;900&display=swap" rel="stylesheet">
 <script>
@@ -92,12 +97,10 @@ input:focus,select:focus,textarea:focus{border-color:var(--brand);box-shadow:0 0
 }
 
 #toast-container{position:fixed;top:1rem;right:1rem;z-index:9999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none}
-.toast{display:flex;align-items:center;gap:.75rem;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem 1.1rem;box-shadow:var(--shadow-lg);min-width:260px;font-size:.875rem;font-weight:700;animation:slideIn .3s ease;pointer-events:auto;border-left:4px solid var(--brand)}
+.toast{display:flex;align-items:center;gap:.75rem;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem 1.1rem;box-shadow:var(--shadow-lg);min-width:260px;font-size:.875rem;font-weight:700;pointer-events:auto;border-left:4px solid var(--brand)}
 .toast.success{border-left-color:#22c55e}.toast.error{border-left-color:#ef4444}.toast.warning{border-left-color:#f59e0b}
-@keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:1rem}
-.modal-box{background:var(--card);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);width:100%;max-width:480px;overflow:hidden;animation:popIn .25s ease;border:1px solid var(--border)}
-@keyframes popIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-box{background:var(--card);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);width:100%;max-width:480px;overflow:hidden;border:1px solid var(--border)}
 .modal-header{padding:1.25rem 1.5rem;display:flex;justify-content:space-between;align-items:center}
 .modal-body{padding:1.5rem}
 
@@ -113,7 +116,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--brand);box-shadow:0 0
 .dark .badge-amber{background:#2d1f00;color:#fbbf24;border-color:#78350f}
 .dark .badge-blue{background:#0d1a2d;color:#60a5fa;border-color:#1e3a5f}
 
-.scan-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:2rem;max-width:360px;width:100%;text-align:center;animation:popIn .4s ease}
+.scan-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:2rem;max-width:360px;width:100%;text-align:center}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1rem;position:relative;overflow:hidden}
 .stat-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--c,var(--brand))}
 .stat-val{font-size:2rem;font-weight:900;line-height:1}
@@ -232,6 +235,11 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
       <button class="tab-btn" onclick="switchTab('staff')" id="tab-staff">
         <i class="fa-solid fa-users"></i>
         <span class="t-km">បុគ្គលិក</span><span class="t-en">Staff</span>
+      </button>
+      <!-- NEW STAFF LIST MENU (STAFF DIRECTORY) -->
+      <button class="tab-btn" onclick="switchTab('stafflist')" id="tab-stafflist">
+        <i class="fa-solid fa-clipboard-list"></i>
+        <span class="t-km">បញ្ជីឈ្មោះបុគ្គលិក</span><span class="t-en">Staff List</span>
       </button>
       <button class="tab-btn" onclick="switchTab('categories')" id="tab-categories">
         <i class="fa-solid fa-layer-group"></i>
@@ -453,6 +461,33 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
         <div id="staff-grid" class="grid-staff"></div>
       </div>
 
+      <!-- ════ NEW STAFF LIST TAB (STAFF ROSTER DIRECTORY) ════ -->
+      <div id="section-stafflist" class="section">
+        <div class="card p-5 mb-4">
+          <div class="flex justify-between items-center flex-wrap gap-2 pb-4 border-b border-slate-100 dark:border-slate-800">
+            <div>
+              <h2 class="text-lg font-black"><i class="fa-solid fa-clipboard-list text-brand mr-2"></i>Staff Directory / បញ្ជីឈ្មោះបុគ្គលិក</h2>
+              <p class="text-xs text-slate-400 mt-1">Full index of active rosters with multi-department roles.</p>
+            </div>
+            <button class="btn btn-tg font-bold text-xs shadow-md" onclick="broadcastStaffList()"><i class="fa-brands fa-telegram mr-2"></i>Send List to TG</button>
+          </div>
+          <div class="overflow-x-auto mt-4">
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="bg-slate-50 dark:bg-slate-900/50 text-slate-400 text-xs uppercase font-bold">
+                  <th class="p-3">Staff Name</th>
+                  <th class="p-3">Departments</th>
+                  <th class="p-3">Role</th>
+                  <th class="p-3">Shift Times</th>
+                  <th class="p-3 text-right">Base Salary</th>
+                </tr>
+              </thead>
+              <tbody id="staff-list-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <!-- ════ CATEGORIES TAB ════ -->
       <div id="section-categories" class="section">
         <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-bottom:1rem;gap:.5rem">
@@ -492,18 +527,6 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
             </table>
           </div>
         </div>
-        <div class="card" style="padding:1.25rem">
-          <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-bottom:1rem;gap:.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">
-            <h3 style="font-weight:900"><i class="fa-solid fa-calendar-day" style="color:#8b5cf6;margin-right:.4rem"></i>Day Off Roster</h3>
-            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-              <input type="month" id="dayoff-month" onchange="renderDayoffs()" style="width:160px">
-              <button class="btn btn-tg" onclick="broadcastRoster()"><i class="fa-brands fa-telegram"></i>Roster</button>
-              <button class="btn btn-ghost" onclick="openAutoDayoff()" style="background:#ede9fe;border-color:#8b5cf6;color:#5b21b6"><i class="fa-solid fa-wand-magic-sparkles"></i>Auto</button>
-              <button class="btn btn-primary" onclick="openDayoffModal()"><i class="fa-solid fa-plus"></i>Add</button>
-            </div>
-          </div>
-          <div id="dayoffs-container" style="display:flex;flex-direction:column;gap:.6rem"></div>
-        </div>
       </div>
 
       <!-- ════ CALENDAR TAB ════ -->
@@ -523,26 +546,7 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
               <button onclick="calToday()" class="btn btn-primary" style="padding:.4rem .8rem;font-size:.78rem">Today</button>
             </div>
           </div>
-          <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;font-size:.75rem;font-weight:700">
-            <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#dbeafe;border:1px solid #3b82f6;margin-right:4px"></span>Check-In</span>
-            <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#ede9fe;border:1px solid #8b5cf6;margin-right:4px"></span>Day-Off</span>
-            <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#fee2e2;border:1px solid #ef4444;margin-right:4px"></span>Late</span>
-          </div>
-          <div class="cal-grid" style="margin-bottom:4px">
-            <div class="cal-header-day">Mon</div><div class="cal-header-day">Tue</div>
-            <div class="cal-header-day">Wed</div><div class="cal-header-day">Thu</div>
-            <div class="cal-header-day">Fri</div>
-            <div class="cal-header-day" style="color:#ef4444">Sat</div>
-            <div class="cal-header-day" style="color:#ef4444">Sun</div>
-          </div>
           <div class="cal-grid" id="cal-grid"></div>
-          <div id="cal-day-detail" style="display:none;margin-top:1rem;padding:1rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg)">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
-              <h4 style="font-weight:900" id="cal-detail-date"></h4>
-              <button onclick="document.getElementById('cal-day-detail').style.display='none'" style="background:none;border:none;cursor:pointer;color:var(--text3)"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="cal-detail-content"></div>
-          </div>
         </div>
       </div>
 
@@ -560,9 +564,11 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
               <button onclick="plannerPrevWeek()" class="btn btn-ghost" style="padding:.4rem .8rem"><i class="fa-solid fa-chevron-left"></i></button>
               <button onclick="plannerThisWeek()" class="btn btn-primary" style="padding:.4rem .8rem;font-size:.78rem">This Week</button>
               <button onclick="plannerNextWeek()" class="btn btn-ghost" style="padding:.4rem .8rem"><i class="fa-solid fa-chevron-right"></i></button>
+              <!-- RE-ADDED SHIFT DISPATCH BUTTON -->
               <button class="btn btn-tg" onclick="broadcastShiftPlan()"><i class="fa-brands fa-telegram"></i>Send Plan</button>
             </div>
           </div>
+          <!-- RE-ADDED SLOT EXPLANATORY CHIPS -->
           <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;font-size:.75rem;font-weight:700">
             <span class="shift-slot work" style="padding:.2rem .6rem;min-height:auto;cursor:default">✅ Work</span>
             <span class="shift-slot off" style="padding:.2rem .6rem;min-height:auto;cursor:default">🏖️ Day-Off</span>
@@ -571,6 +577,7 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
           </div>
           <div id="planner-day-headers" style="display:grid;grid-template-columns:140px repeat(7,1fr);gap:3px;margin-bottom:3px"></div>
           <div id="planner-body" style="display:flex;flex-direction:column;gap:3px"></div>
+          <!-- RE-ADDED SAVE BUTTON -->
           <div style="margin-top:1rem;display:flex;justify-content:flex-end">
             <button class="btn btn-primary" onclick="saveShiftPlan()"><i class="fa-solid fa-save"></i>Save Plan</button>
           </div>
@@ -579,10 +586,13 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
 
       <!-- ════ ANALYTICS TAB ════ -->
       <div id="section-analytics" class="section">
-        <div style="margin-bottom:1rem">
-          <h2 style="font-weight:900;font-size:1.1rem;margin-bottom:.25rem"><i class="fa-solid fa-chart-line" style="color:var(--brand);margin-right:.4rem"></i>
+        <!-- HEADER WITH TG ALERTS SYSTEM -->
+        <div class="flex justify-between items-center flex-wrap gap-2 mb-4">
+          <h2 style="font-weight:900;font-size:1.1rem"><i class="fa-solid fa-chart-line" style="color:var(--brand);margin-right:.4rem"></i>
             <span class="t-km">ការវិភាគស៊ីជម្រៅ</span><span class="t-en">Advanced Analytics</span>
           </h2>
+          <!-- SEND ANALYTICS TO TELEGRAM -->
+          <button class="btn btn-tg font-bold text-xs" onclick="broadcastAnalytics()"><i class="fa-brands fa-telegram mr-2"></i>Send Analytics to TG</button>
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem;margin-bottom:1rem">
           <div class="card" style="padding:1rem;text-align:center"><div style="font-size:1.8rem;font-weight:900;color:var(--brand)" id="an-rate">0%</div><div style="color:var(--text3);font-size:.75rem;font-weight:700">Attendance Rate</div></div>
@@ -594,6 +604,7 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
           <div class="card p-4"><h4 style="font-weight:900;margin-bottom:.75rem;font-size:.9rem">Daily Check-Ins (This Month)</h4><div class="chart-wrap" style="height:200px"><canvas id="dailyChart"></canvas></div></div>
           <div class="card p-4"><h4 style="font-weight:900;margin-bottom:.75rem;font-size:.9rem">Check-In Status</h4><div class="chart-wrap" style="height:200px"><canvas id="statusChart"></canvas></div></div>
         </div>
+        <!-- RE-ADDED MOST LATE & MOST PRESENT LISTS -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div class="card p-4"><h4 style="font-weight:900;margin-bottom:.75rem;font-size:.9rem;color:#ef4444"><i class="fa-solid fa-triangle-exclamation" style="margin-right:.3rem"></i>Most Late</h4><div id="top-late-list" style="display:flex;flex-direction:column;gap:.5rem"></div></div>
           <div class="card p-4"><h4 style="font-weight:900;margin-bottom:.75rem;font-size:.9rem;color:#22c55e"><i class="fa-solid fa-star" style="margin-right:.3rem"></i>Most Present</h4><div id="top-present-list" style="display:flex;flex-direction:column;gap:.5rem"></div></div>
@@ -602,18 +613,39 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
 
       <!-- ════ DOCUMENTS TAB ════ -->
       <div id="section-documents" class="section">
-        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-bottom:1rem;gap:.5rem">
-          <h2 style="font-weight:900;font-size:1.1rem"><i class="fa-solid fa-folder-open" style="color:var(--brand);margin-right:.4rem"></i>Staff Documents</h2>
-          <div style="display:flex;gap:.5rem;align-items:center">
-            <select id="doc-staff-filter" onchange="renderDocuments()" style="width:160px"><option value="">All Staff</option></select>
-            <button class="btn btn-primary" onclick="openUploadModal()"><i class="fa-solid fa-upload"></i>Upload</button>
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+          <!-- Left side layout column to add/delete Custom categories dynamic list -->
+          <div class="xl:col-span-1 card p-4 h-fit space-y-4">
+            <h3 class="text-sm font-black flex items-center gap-2 border-b pb-3 border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-300">
+              <i class="fa-solid fa-folder-plus text-blue-500"></i> Manage Categories
+            </h3>
+            <div class="space-y-3">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1">NEW CATEGORY ID / NAME</label>
+                <input type="text" id="new-doc-cat" class="w-full text-xs py-2 px-3" placeholder="e.g. Health License">
+              </div>
+              <button class="btn btn-primary w-full text-xs font-bold py-2 justify-center" onclick="addCustomDocCategory()">Add Category</button>
+            </div>
+            <div class="divider"></div>
+            <div class="space-y-1" id="doc-categories-list"></div>
+          </div>
+
+          <div class="xl:col-span-3 space-y-4">
+            <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.5rem">
+              <h2 style="font-weight:900;font-size:1.1rem"><i class="fa-solid fa-folder-open" style="color:var(--brand);margin-right:.4rem"></i>Staff Documents</h2>
+              <div style="display:flex;gap:.5rem;align-items:center">
+                <select id="doc-staff-filter" onchange="renderDocuments()" style="width:160px"><option value="">All Staff</option></select>
+                <button class="btn btn-primary" onclick="openUploadModal()"><i class="fa-solid fa-upload"></i>Upload</button>
+              </div>
+            </div>
+            <div id="docs-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem"></div>
           </div>
         </div>
-        <div id="docs-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem"></div>
       </div>
 
       <!-- ════ BOT TAB ════ -->
       <div id="section-bot" class="section">
+        <!-- RE-ADDED BOT MANAGEMENT SECTION -->
         <div class="card" style="padding:1rem;margin-bottom:1rem;background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:#f59e0b">
           <p style="font-weight:700;color:#92400e;font-size:.88rem"><i class="fa-solid fa-triangle-exclamation" style="margin-right:.3rem;color:#f59e0b"></i>Bot only replies when this page is open</p>
         </div>
@@ -661,11 +693,21 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
               </div>
             </div>
 
-            <!-- Dynamic Color preset picker -->
+            <!-- Dynamic Color preset picker with a freeform color input -->
             <div class="card p-5 space-y-3">
               <h3 class="text-md font-black flex items-center gap-2"><i class="fa-solid fa-palette text-brand-600"></i> Theme Brand Palette</h3>
               <p class="text-xs text-slate-400">Modify the primary visual brand identity of all administrative control elements.</p>
-              <div class="flex flex-wrap gap-2.5" id="theme-selectors">
+              
+              <!-- Freeform hex custom Color Picker -->
+              <div class="p-4 border border-slate-100 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-900/50 flex items-center gap-4">
+                <input type="color" id="custom-brand-picker" onchange="applyCustomColorPreset(this.value)" class="w-12 h-12 rounded-lg cursor-pointer border-2 border-slate-200">
+                <div>
+                  <span class="block text-xs font-bold text-slate-700 dark:text-slate-300">Custom Brand Color Selector</span>
+                  <span class="block text-[10px] text-slate-400 mt-0.5">Pick any color palette shade dynamically!</span>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-2.5 mt-3" id="theme-selectors">
                 <button onclick="changeThemePreset('green')" data-theme="green" class="theme-btn flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 font-bold text-xs hover:bg-slate-50">
                   <span class="w-3.5 h-3.5 rounded-full bg-emerald-500"></span> Emerald Green
                 </button>
@@ -706,49 +748,60 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
 
           </div>
 
-          <!-- Physical store coordinates fences -->
+          <!-- Dual locations store coordinates fences -->
           <div class="space-y-6">
             <div class="card p-5 space-y-4">
               <div class="flex justify-between items-center flex-wrap gap-2">
-                <h3 class="text-md font-black flex items-center gap-2"><i class="fa-solid fa-location-dot text-brand-600"></i> Physical Store Boundaries</h3>
-                <button class="btn btn-ghost py-1 px-3 text-xs" onclick="useMyLocation()"><i class="fa-solid fa-crosshairs"></i> Use Current GPS</button>
+                <h3 class="text-md font-black flex items-center gap-2"><i class="fa-solid fa-map-location-dot text-brand-600"></i> Physical Store Boundaries (Two Locations)</h3>
               </div>
               <div id="map" class="shadow-sm"></div>
-              <div class="grid grid-cols-3 gap-2 text-center bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800">
-                <div>
-                  <span class="block text-[10px] font-black text-slate-400">LATITUDE</span>
-                  <span id="lat-display" class="font-bold text-xs text-slate-700 dark:text-slate-300">-</span>
+              
+              <!-- Location 1 Panel -->
+              <div class="p-3 border rounded-lg bg-slate-50 dark:bg-slate-950/20 space-y-3">
+                <div class="flex justify-between items-center">
+                  <h4 class="text-xs font-black text-slate-600 dark:text-slate-400">📍 Store Branch 1 (Primary Location)</h4>
+                  <button class="btn btn-ghost py-1 px-2 text-[10px]" onclick="useMyLocation(1)"><i class="fa-solid fa-crosshairs"></i> Use GPS</button>
                 </div>
-                <div>
-                  <span class="block text-[10px] font-black text-slate-400">LONGITUDE</span>
-                  <span id="lng-display" class="font-bold text-xs text-slate-700 dark:text-slate-300">-</span>
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="block text-[9px] font-bold text-slate-400">BRANCH 1 NAME</label>
+                    <input type="text" id="set-loc1-name" class="w-full text-xs p-1.5" value="Main Branch">
+                  </div>
+                  <div>
+                    <label class="block text-[9px] font-bold text-slate-400">LIMIT RAD (M)</label>
+                    <input type="number" id="set-loc1-rad" class="w-full text-xs p-1.5" value="100" oninput="updateMapsGeometry()">
+                  </div>
                 </div>
-                <div>
-                  <span class="block text-[10px] font-black text-slate-400">LIMIT RAD (M)</span>
-                  <span id="radius-val" class="font-bold text-xs text-brand-600">-</span>
+                <div class="text-[11px] font-mono text-slate-500">
+                  Lat: <span id="loc1-lat-val">-</span> | Lng: <span id="loc1-lng-val">-</span>
                 </div>
               </div>
-              <div>
-                <label class="block text-[10px] font-bold text-slate-500 mb-1">FENCING BOUNDARY RADIUS RANGE</label>
-                <input type="range" id="radius-slider" min="50" max="500" step="10" value="100" class="w-full" oninput="updateRadius()">
-              </div>
-            </div>
 
-            <!-- Push live notifications -->
-            <div class="card p-5 flex justify-between items-center gap-4">
-              <div>
-                <h4 class="font-black text-xs">Browser Push Notifications</h4>
-                <p class="text-[11px] text-slate-400">Alert live checking operations directly inside browser window.</p>
-              </div>
-              <div class="flex items-center gap-2 flex-shrink-0">
-                <span id="push-status" class="badge badge-gray">Not Enabled</span>
-                <button class="btn btn-primary px-3 py-1.5 text-xs font-bold" onclick="enablePushNotifications()"><i class="fa-solid fa-bell"></i> Enable</button>
+              <!-- Location 2 Panel -->
+              <div class="p-3 border rounded-lg bg-slate-50 dark:bg-slate-950/20 space-y-3">
+                <div class="flex justify-between items-center">
+                  <h4 class="text-xs font-black text-slate-600 dark:text-slate-400">📍 Store Branch 2 (Secondary Location)</h4>
+                  <button class="btn btn-ghost py-1 px-2 text-[10px]" onclick="useMyLocation(2)"><i class="fa-solid fa-crosshairs"></i> Use GPS</button>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="block text-[9px] font-bold text-slate-400">BRANCH 2 NAME</label>
+                    <input type="text" id="set-loc2-name" class="w-full text-xs p-1.5" value="Branch B">
+                  </div>
+                  <div>
+                    <label class="block text-[9px] font-bold text-slate-400">LIMIT RAD (M)</label>
+                    <input type="number" id="set-loc2-rad" class="w-full text-xs p-1.5" value="100" oninput="updateMapsGeometry()">
+                  </div>
+                </div>
+                <div class="text-[11px] font-mono text-slate-500">
+                  Lat: <span id="loc2-lat-val">-</span> | Lng: <span id="loc2-lng-val">-</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Telegram template dispatch panel -->
+        <!-- RE-ADDED TELEGRAM DISPATCH TEMPLATES WRAP -->
         <div class="card p-5 mt-6 space-y-4">
           <h3 class="text-md font-black flex items-center gap-2"><i class="fa-solid fa-comments text-brand-600"></i> Telegram Dispatch Templates</h3>
           <div class="card p-3 bg-brand-light dark:bg-slate-900/50 border-brand-200">
@@ -763,9 +816,13 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
               <code class="px-2 py-0.5 text-[10px] bg-white dark:bg-slate-800 border dark:border-slate-700 rounded font-mono">{shift_end}</code>
               <code class="px-2 py-0.5 text-[10px] bg-white dark:bg-slate-800 border dark:border-slate-700 rounded font-mono">{dayoff_date}</code>
               <code class="px-2 py-0.5 text-[10px] bg-white dark:bg-slate-800 border dark:border-slate-700 rounded font-mono">{reason}</code>
+              <code class="px-2 py-0.5 text-[10px] bg-white dark:bg-slate-800 border dark:border-slate-700 rounded font-mono">{branch}</code>
             </div>
           </div>
           <div id="alert-templates-wrap" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+          <div class="flex justify-end pt-3">
+            <button class="btn btn-primary" onclick="saveAlertTemplates()"><i class="fa-solid fa-save"></i> Save Templates Only</button>
+          </div>
         </div>
 
         <div class="flex justify-center mt-6">
@@ -865,10 +922,23 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
       </div>
       <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">Salary ($/month)</label><input type="number" id="s-salary" placeholder="500" min="0" style="width:100%"></div>
       <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">Role/Position</label><input type="text" id="s-role" placeholder="e.g. Barista, Cashier" style="width:100%"></div>
-      <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">Department</label><select id="s-dept" style="width:100%"><option value="">-- None --</option></select></div>
+      
+      <!-- Multi-select Departments Checkboxes -->
+      <div>
+        <label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">Departments (Can select multiple)</label>
+        <div id="s-depts-checkboxes" class="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto p-2 border rounded bg-slate-50 dark:bg-slate-900/50"></div>
+      </div>
+
       <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">Status</label>
         <select id="s-status" style="width:100%"><option value="active">Active</option><option value="inactive">Inactive</option><option value="on_leave">On Leave</option></select>
       </div>
+
+      <!-- RESTORE LOCKED STAFF STATE OVERRIDE BUTTON -->
+      <div id="staff-state-override" class="p-2 border border-dashed rounded bg-yellow-50 dark:bg-yellow-950/20 text-xs hidden">
+        <p class="font-bold text-yellow-800 dark:text-yellow-500 mb-1">⚠️ Stuck Check-in Lock Override</p>
+        <button type="button" class="btn btn-amber py-1 px-2.5 text-[10px] w-full justify-center font-bold" onclick="forceUnlockStaff()"><i class="fa-solid fa-key"></i> Clear Check-In Lock State</button>
+      </div>
+
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.5rem">
         <button class="btn btn-ghost" style="justify-content:center" onclick="closeModal('staff-modal')">Cancel</button>
         <button class="btn btn-primary" style="justify-content:center" id="s-submit-btn" onclick="submitStaff()"><i class="fa-solid fa-save"></i>Save</button>
@@ -928,28 +998,6 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
   </div>
 </div>
 
-<!-- Auto Dayoff Modal -->
-<div id="auto-modal" class="modal-overlay" style="display:none">
-  <div class="modal-box">
-    <div class="modal-header" style="background:#8b5cf6;color:#fff">
-      <h3 style="font-weight:900">Auto-Generate Day-Off</h3>
-      <button onclick="closeModal('auto-modal')" style="background:rgba(255,255,255,.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div class="modal-body" style="display:flex;flex-direction:column;gap:.85rem">
-      <div class="card" style="padding:.75rem;background:#fef3c7;border-color:#f59e0b"><p style="font-size:.82rem;font-weight:700;color:#92400e"><i class="fa-solid fa-triangle-exclamation" style="margin-right:.3rem;color:#f59e0b"></i>Sat/Sun auto-skipped</p></div>
-      <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">Staff</label><select id="a-staff" style="width:100%"></select></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
-        <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">Month</label><input type="month" id="a-month" style="width:100%"></div>
-        <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">Count</label><input type="number" id="a-count" min="1" max="20" placeholder="4" style="width:100%"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.5rem">
-        <button class="btn btn-ghost" style="justify-content:center" onclick="closeModal('auto-modal')">Cancel</button>
-        <button class="btn btn-primary" style="justify-content:center;background:#8b5cf6" onclick="submitAutoDayoff()">Generate</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- Edit Log Modal -->
 <div id="edit-log-modal" class="modal-overlay" style="display:none">
   <div class="modal-box">
@@ -992,14 +1040,10 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
     </div>
     <div class="modal-body" style="display:flex;flex-direction:column;gap:.85rem">
       <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">Staff</label><select id="up-staff" style="width:100%"></select></div>
+      
+      <!-- Document Category - Dynamic custom categories dropdown -->
       <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">Document Category</label>
-        <select id="up-type" style="width:100%">
-          <option value="id">ID Card / Passport</option>
-          <option value="contract">Employment Contract</option>
-          <option value="certificate">Health Certificate / Degree</option>
-          <option value="resume">Resume</option>
-          <option value="other">Other</option>
-        </select>
+        <select id="up-type" style="width:100%"></select>
       </div>
       <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">Document Name / Title</label><input type="text" id="up-name" placeholder="e.g. John_ID_Card" style="width:100%"></div>
       <div>
@@ -1026,9 +1070,7 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
       <h3 style="font-weight:900" id="preview-title-text">Document Preview</h3>
       <button onclick="closeModal('preview-modal')" style="background:rgba(255,255,255,.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer"><i class="fa-solid fa-xmark"></i></button>
     </div>
-    <div class="modal-body text-center" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;background:var(--bg)" id="preview-content">
-      <!-- Content injected via JS -->
-    </div>
+    <div class="modal-body text-center" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;background:var(--bg)" id="preview-content"></div>
   </div>
 </div>
 
@@ -1037,24 +1079,30 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getFirestore, collection, addDoc, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
+// ORIGINAL CONFIGURATION VALUES (តភ្ជាប់ទៅកាន់ Database ចាស់របស់អ្នក)
 const FC={apiKey:"AIzaSyDRwckLL4SLuzA4DblhyCRFO_veLYik4c4",authDomain:"checkin-chafe1.firebaseapp.com",projectId:"checkin-chafe1",storageBucket:"checkin-chafe1.firebasestorage.app",messagingSenderId:"767628239824",appId:"1:767628239824:web:a4fd7ac8badeaa8f218fd5"};
 const TG_TOKEN='8779407544:AAFaDWLWc1qXiweEgqaiYei6__LuRSbtlKs';
 const TG_CHAT='-1003718722377';
+
 const app=initializeApp(FC);
 const db=getFirestore(app);
 
 // STATE VARIABLES
 let staff=[],logs=[],dayoffs=[],categories=[],commands=[],documents=[],shiftPlan={};
-let settings={companyLat:null,companyLng:null,radius:100,earlyMins:15,reminderMins:30,reminderEnabled:false,sysNameKh:'ហាងកាហ្វេ Admin',sysNameEn:'Café Admin',theme:'green'};
+let docCategories=[]; // Dynamic Document Categories
+let settings={
+  loc1Name: 'Main Branch', loc1Lat: 11.5564, loc1Lng: 104.9282, loc1Radius: 100,
+  loc2Name: 'Branch B', loc2Lat: 11.5600, loc2Lng: 104.9300, loc2Radius: 100,
+  earlyMins:15, reminderMins:30, reminderEnabled:false, sysNameKh:'ហាងកាហ្វេ Admin', sysNameEn:'Café Admin', theme:'green'
+};
 let alertTemplates={};
 let payrollChart=null,dailyChart=null,statusChart=null;
-let mapInst=null,mapMarker=null,mapCircle=null;
+let mapInst=null,mapMarker1=null,mapMarker2=null,mapCircle1=null,mapCircle2=null;
 let lastUpdateId=0,notifications=[];
 let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
 let plannerWeekStart=getMonday(new Date());
 let reminderTimer=null;
 
-// COLOR PALETTES Presets map
 const THEMES = {
   green: {
     '--brand-50': '#f0fdf4', '--brand-100': '#dcfce7', '--brand-200': '#bbf7d0',
@@ -1089,11 +1137,11 @@ const THEMES = {
 };
 
 const DEFAULT_TMPLS={
-  checkin_ontime:'🟢 <b>{name}</b>\n📋 Check-In ទាន់ម៉ោង\n⏰ {time}',
-  checkin_late:'🔴 <b>{name}</b>\n📋 Check-In យឺត ({late_mins}m)\n⏰ {time}\n⚠️ Shift: {shift_start}',
-  checkin_late_severe:'🚨 <b>{name}</b> យឺត {late_mins} នាទី!\n⏰ {time}',
-  checkout:'🔵 <b>{name}</b>\n📋 Check-Out\n⏰ {time}',
-  early_checkout:'⚠️ <b>{name}</b> ចេញមុន!\n📋 ចេញ: {time} | Shift End: {shift_end}',
+  checkin_ontime:'🟢 <b>{name}</b>\n📋 Check-In ទាន់ម៉ោង\n⏰ {time}\n📍 Store: {branch}',
+  checkin_late:'🔴 <b>{name}</b>\n📋 Check-In យឺត ({late_mins}m)\n⏰ {time}\n⚠️ Shift: {shift_start}\n📍 Store: {branch}',
+  checkin_late_severe:'🚨 <b>{name}</b> យឺត {late_mins} នាទី!\n⏰ {time}\n📍 Store: {branch}',
+  checkout:'🔵 <b>{name}</b>\n📋 Check-Out\n⏰ {time}\n📍 Store: {branch}',
+  early_checkout:'⚠️ <b>{name}</b> ចេញមុន!\n📋 ចេញ: {time} | Shift End: {shift_end}\n📍 Store: {branch}',
   dayoff:'🏖️ <b>{name}</b>\n📋 Day-Off\n📅 {dayoff_date}\n💬 {reason}',
   daily_summary:'📋 <b>Daily Summary</b>\n📅 {date}\n\n👥 Total: {total}\n✅ Present: {present}\n❌ Absent: {absent}\n⚠️ Late: {late}\n🟣 Early Out: {early_out}',
   shift_reminder:'⏰ <b>Shift Reminder</b>\n\n👤 {name}\n🕐 Shift starts at {shift_start}\n📅 {date}\n\nGet ready! ☕',
@@ -1103,6 +1151,45 @@ const TMPL_LABELS={
   checkout:'🔵 Check-Out',early_checkout:'⚠️ Early Check-Out',dayoff:'🏖️ Day-Off',
   daily_summary:'📊 Daily Summary',shift_reminder:'⏰ Shift Reminder',
 };
+
+// SHADING UTILITIES (HEX -> RGB Shades Converter for custom dynamic brand colors)
+function hexToRgb(hex) {
+  let c = hex.replace('#','');
+  if(c.length===3) c = c.split('').map(x => x+x).join('');
+  let r = parseInt(c.substring(0,2), 16);
+  let g = parseInt(c.substring(2,4), 16);
+  let b = parseInt(c.substring(4,6), 16);
+  return {r,g,b};
+}
+function rgbToHex(r, g, b) {
+  return "#" + [r, g, b].map(x => {
+    const h = x.toString(16);
+    return h.length === 1 ? "0" + h : h;
+  }).join("");
+}
+function blend(rgb, factor, isLight) {
+  const target = isLight ? 255 : 0;
+  const r = Math.round(rgb.r + (target - rgb.r) * factor);
+  const g = Math.round(rgb.g + (target - rgb.g) * factor);
+  const b = Math.round(rgb.b + (target - rgb.b) * factor);
+  return rgbToHex(r, g, b);
+}
+function generateShades(hex) {
+  const rgb = hexToRgb(hex);
+  return {
+    '--brand-50': blend(rgb, 0.95, true),
+    '--brand-100': blend(rgb, 0.85, true),
+    '--brand-200': blend(rgb, 0.65, true),
+    '--brand-500': hex,
+    '--brand-600': blend(rgb, 0.15, false),
+    '--brand-700': blend(rgb, 0.3, false),
+    '--brand-800': blend(rgb, 0.45, false),
+    '--brand-900': blend(rgb, 0.6, false),
+    '--brand': hex,
+    '--brand-light': blend(rgb, 0.95, true),
+    '--brand-dark': blend(rgb, 0.6, false)
+  };
+}
 
 function applyTmpl(key,vars={}){const t=alertTemplates[key]||DEFAULT_TMPLS[key]||'';return t.replace(/\{(\w+)\}/g,(_,k)=>vars[k]!==undefined?vars[k]:`{${k}}`);}
 window.sendTG=function(text){fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TG_CHAT,text,parse_mode:'HTML'})}).catch(()=>{});};
@@ -1119,7 +1206,7 @@ function getMonday(d){const dd=new Date(d);const day=dd.getDay();const diff=dd.g
 function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
 function dateKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 
-// Custom Overlay Dialog Configurations
+// Custom Confirmation overlay
 window.customConfirm = (title, message, onConfirm) => {
   const modal = document.getElementById('confirm-modal');
   document.getElementById('confirm-title').textContent = title;
@@ -1138,25 +1225,52 @@ window.showToast=(msg,type='info',dur=3500)=>{
   c.appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(120%)';t.style.transition='all .4s';setTimeout(()=>t.remove(),400);},dur);
 };
 
-function addNotification(msg,type='info'){
-  notifications.unshift({msg,type,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),id:Date.now()});
-  if(notifications.length>20)notifications.pop();renderNotifications();
-  if(Notification.permission==='granted')new Notification('Café Management',{body:msg,icon:'/favicon.ico'});
+// PERSISTENT NOTIFICATIONS SYSTEM (Saved to Firestore)
+async function addNotification(msg,type='info'){
+  try {
+    await addDoc(collection(db, 'notifications'), {
+      msg, type, time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), timestamp: Date.now()
+    });
+    if(Notification.permission==='granted') new Notification('Café Management',{body:msg});
+  } catch(e) {}
 }
+
 function renderNotifications(){
   const badge=document.getElementById('notif-count');const count=notifications.length;
   badge.textContent=count>9?'9+':count;badge.style.display=count>0?'block':'none';
   const list=document.getElementById('notif-list');
   if(!notifications.length){list.innerHTML='<p style="text-align:center;color:var(--text3);font-size:.85rem;padding:1rem">No notifications</p>';return;}
-  list.innerHTML=notifications.map(n=>`<div style="padding:.6rem .75rem;border-radius:10px;background:var(--bg);border:1px solid var(--border);margin-bottom:.4rem"><div style="font-size:.82rem;font-weight:700;color:var(--text)">${n.msg}</div><div style="font-size:.7rem;color:var(--text3);margin-top:.2rem">${n.time}</div></div>`).join('');
+  list.innerHTML=notifications.map(n=>`
+    <div style="padding:.6rem .75rem;border-radius:10px;background:var(--bg);border:1px solid var(--border);margin-bottom:.4rem;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-size:.82rem;font-weight:700;color:var(--text)">${n.msg}</div>
+        <div style="font-size:.7rem;color:var(--text3);margin-top:.2rem">${n.time}</div>
+      </div>
+      <button onclick="deleteNotification('${n.id}')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:0.8rem;padding:0.2rem;"><i class="fa-solid fa-trash-can"></i></button>
+    </div>`).join('');
 }
+window.deleteNotification=async(id)=>{
+  try {
+    await deleteDoc(doc(db, 'notifications', id));
+  } catch(e) {}
+};
 window.toggleNotifPanel=()=>{const p=document.getElementById('notif-panel');p.style.display=p.style.display==='none'?'flex':'none';};
-window.clearNotifications=()=>{notifications=[];renderNotifications();document.getElementById('notif-panel').style.display='none';};
+window.clearNotifications=async()=>{
+  customConfirm("Clear Notifications", "Are you sure you want to delete all historical notifications?", async () => {
+    for(const n of notifications) {
+      await deleteDoc(doc(db, 'notifications', n.id));
+    }
+    document.getElementById('notif-panel').style.display='none';
+  });
+};
 
-// SCAN DIRECT ROUTE
+// SCAN ROUTE PROCESSOR WITH MULTI-LOCATION & STRICT SEQUENCING GATES
 const params=new URLSearchParams(location.search);
 const staffIdP=params.get('staffId'),actionP=params.get('action');
-document.addEventListener('DOMContentLoaded',()=>{if(staffIdP)runScan(staffIdP,actionP);else initAdmin();});
+document.addEventListener('DOMContentLoaded', ()=>{
+  if(staffIdP) runScan(staffIdP,actionP);
+  else initAdmin();
+});
 
 async function runScan(id,action){
   document.getElementById('loading-screen').style.display='none';
@@ -1166,60 +1280,144 @@ async function runScan(id,action){
   try{const s=await getDoc(doc(db,'settings','alert_templates'));if(s.exists())alertTemplates=s.data();}catch(e){}
   if(!navigator.geolocation){box.innerHTML=scanCard('GPS Error','Browser មិនស្គាល់ Geolocation','fa-circle-xmark','#ef4444');return;}
   box.innerHTML=scanCard('កំពុងរក GPS...','សូមអនុញ្ញាត Location','fa-location-crosshairs','#22c55e');
+  
   navigator.geolocation.getCurrentPosition(async pos=>{
     const uLat=pos.coords.latitude,uLng=pos.coords.longitude;
-    if(settings.companyLat&&settings.companyLng){
-      const d=dist(uLat,uLng,settings.companyLat,settings.companyLng),r=settings.radius||100;
-      if(d>r){box.innerHTML=`<div style="font-size:3.5rem;margin-bottom:1rem">📍</div><h2 style="font-size:1.5rem;font-weight:900;color:#ef4444;margin-bottom:.5rem">ក្រៅទីតាំងក្រុមហ៊ុន!</h2><p style="color:var(--text2)">ឆ្ងាយ <strong style="color:#ef4444">${Math.round(d)}m</strong> ពីហាង</p><p style="color:var(--text3);font-size:.82rem">Radius: ${r}m</p>`;return;}
+    
+    // Evaluate Geofence parameters to Location 1 and Location 2
+    let checkedBranch = "";
+    let inFence = false;
+    let dist1 = Infinity, dist2 = Infinity;
+    
+    if (settings.loc1Lat && settings.loc1Lng) {
+      dist1 = dist(uLat, uLng, settings.loc1Lat, settings.loc1Lng);
+      if (dist1 <= (settings.loc1Radius || 100)) {
+        inFence = true;
+        checkedBranch = settings.loc1Name || "Main Branch";
+      }
     }
-    await processCheckin(id,action,uLat,uLng);
+    if (settings.loc2Lat && settings.loc2Lng) {
+      dist2 = dist(uLat, uLng, settings.loc2Lat, settings.loc2Lng);
+      if (dist2 <= (settings.loc2Radius || 100)) {
+        inFence = true;
+        checkedBranch = settings.loc2Name || "Branch B";
+      }
+    }
+    
+    if (!inFence && (settings.loc1Lat || settings.loc2Lat)) {
+      box.innerHTML = `
+        <div style="font-size:3.5rem;margin-bottom:1rem">📍</div>
+        <h2 style="font-size:1.5rem;font-weight:900;color:#ef4444;margin-bottom:.5rem">ក្រៅទីតាំងក្រុមហ៊ុន!</h2>
+        <p style="color:var(--text2);margin-bottom:1rem">ឆ្ងាយហួសពីដែនកំណត់ Geofence នៃសាខាទាំងពីរ</p>
+        <div style="text-align:left;font-size:0.8rem;background:var(--bg);padding:0.75rem;border-radius:8px;border:1px solid var(--border)">
+          <div style="margin-bottom:0.4rem">• <b>${settings.loc1Name || 'Branch 1'}</b>: ឆ្ងាយ ${Math.round(dist1)}m (ដែនកំណត់: ${settings.loc1Radius || 100}m)</div>
+          <div>• <b>${settings.loc2Name || 'Branch 2'}</b>: ឆ្ងាយ ${Math.round(dist2)}m (ដែនកំណត់: ${settings.loc2Radius || 100}m)</div>
+        </div>
+      `;
+      return;
+    }
+    
+    await processCheckin(id,action,uLat,uLng,checkedBranch || "Custom Branch");
   },err=>{box.innerHTML=scanCard('GPS Error',err.message,'fa-circle-xmark','#ef4444');},{enableHighAccuracy:true,timeout:15000});
 }
 function scanCard(title,sub,icon,color){return `<div style="font-size:3rem;margin-bottom:1rem;color:${color}"><i class="fa-solid ${icon}"></i></div><h2 style="font-size:1.3rem;font-weight:900;color:${color};margin-bottom:.5rem">${title}</h2><p style="color:var(--text2);font-size:.9rem">${sub}</p>`;}
 
-async function processCheckin(id,actionCode,lat,lng){
+async function processCheckin(id,actionCode,lat,lng,branchName){
   const box=document.getElementById('scan-status');
   box.innerHTML=scanCard('កំពុងកត់ត្រា...','','fa-spinner fa-spin','#22c55e');
   try{
     const snap=await getDoc(doc(db,'staff',id));if(!snap.exists())throw new Error('Staff not found');
     const s=snap.data(),actionTxt=actionCode==='in'?'Check-In':'Check-Out',now=Date.now(),timeStr=fmtTime(now),dateStr=new Date(now).toLocaleDateString('km-KH');
+    
+    // SEQUENCE CONSTRAINTS: Prevent successive duplicate check-ins or double check-outs
+    if (actionCode === 'in' && s.lastAction === 'Check-In') {
+      box.innerHTML = `
+        <div style="font-size:3.5rem;margin-bottom:.75rem;color:#ef4444">⚠️</div>
+        <h2 style="font-size:1.6rem;font-weight:900;color:#ef4444;margin-bottom:.4rem">រួចរាល់ហើយ / Already Checked-In</h2>
+        <p style="font-size:1.1rem;font-weight:900;color:var(--text);margin-bottom:.25rem">${s.name}</p>
+        <p style="color:var(--text2);font-size:.9rem">អ្នកបាន Check-In រួចរាល់ហើយ! លុះត្រាតែមានការ Check-Out ជាមុនសិន។</p>
+      `;
+      return;
+    }
+    if (actionCode === 'out' && s.lastAction === 'Check-Out') {
+      box.innerHTML = `
+        <div style="font-size:3.5rem;margin-bottom:.75rem;color:#ef4444">⚠️</div>
+        <h2 style="font-size:1.6rem;font-weight:900;color:#ef4444;margin-bottom:.4rem">រួចរាល់ហើយ / Already Checked-Out</h2>
+        <p style="font-size:1.1rem;font-weight:900;color:var(--text);margin-bottom:.25rem">${s.name}</p>
+        <p style="color:var(--text2);font-size:.9rem">អ្នកបាន Check-Out រួចរាល់ហើយ! លុះត្រាតែមានការ Check-In ជាមុនសិន។</p>
+      `;
+      return;
+    }
+
     let status='On Time',isLate=false,isEarly=false,diffMins=0;
     if(actionCode==='in'&&s.shiftStart){const[h,m]=s.shiftStart.split(':').map(Number);const st=new Date();st.setHours(h,m,0,0);if(now>st.getTime()+600000){isLate=true;diffMins=Math.floor((now-st.getTime())/60000);status=`Late (${diffMins}m)`;}}
     if(actionCode==='out'&&s.shiftEnd){const[h,m]=s.shiftEnd.split(':').map(Number);const et=new Date();et.setHours(h,m,0,0);const em=settings.earlyMins||15;if(now<et.getTime()-em*60000){isEarly=true;const d=Math.floor((et.getTime()-now)/60000);status=`Early Out (${d}m)`;}}
-    await addDoc(collection(db,'logs'),{staffId:id,staffName:s.name,action:actionTxt,status,timestamp:now,lat,lng,isLate,isEarly});
-    const vars={name:s.name,time:timeStr,date:dateStr,status,late_mins:diffMins,shift_start:s.shiftStart||'',shift_end:s.shiftEnd||''};
+    
+    // Save database transaction record log (Strict Path)
+    await addDoc(collection(db, 'logs'),{staffId:id,staffName:s.name,action:actionTxt,status,timestamp:now,lat,lng,isLate,isEarly,branch:branchName});
+    
+    // Perform state synchronization back to current staff entity to record sequencing
+    await updateDoc(doc(db, 'staff', id), { lastAction: actionTxt });
+
+    const vars={name:s.name,time:timeStr,date:dateStr,status,late_mins:diffMins,shift_start:s.shiftStart||'',shift_end:s.shiftEnd||'',branch:branchName};
     if(actionCode==='in')sendTG(applyTmpl(diffMins>20?'checkin_late_severe':isLate?'checkin_late':'checkin_ontime',vars));
     else sendTG(applyTmpl(isEarly?'early_checkout':'checkout',vars));
     const color=actionCode==='in'?(isLate?'#ef4444':'#22c55e'):(isEarly?'#8b5cf6':'#f59e0b');
-    box.innerHTML=`<div style="font-size:3.5rem;margin-bottom:.75rem;color:${color}">${isLate||isEarly?'⚠️':actionCode==='in'?'✅':'👋'}</div><h2 style="font-size:1.6rem;font-weight:900;color:${color};margin-bottom:.4rem">${actionTxt} ✓</h2>${isLate||isEarly?`<div style="background:${color}22;color:${color};font-weight:700;padding:.3rem .9rem;border-radius:99px;display:inline-block;margin-bottom:.6rem;font-size:.85rem">${status}</div>`:''}<p style="font-size:1.1rem;font-weight:900;color:var(--text);margin-bottom:.25rem">${s.name}</p>${s.role?`<p style="font-size:.82rem;color:var(--text3)">${s.role}</p>`:''}<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.8rem;color:var(--text3)">${new Date(now).toLocaleString()}</div>`;
+    
+    box.innerHTML=`<div style="font-size:3.5rem;margin-bottom:.75rem;color:${color}">${isLate||isEarly?'⚠️':actionCode==='in'?'✅':'👋'}</div><h2 style="font-size:1.6rem;font-weight:900;color:${color};margin-bottom:.4rem">${actionTxt} ✓</h2>${isLate||isEarly?`<div style="background:${color}22;color:${color};font-weight:700;padding:.3rem .9rem;border-radius:99px;display:inline-block;margin-bottom:.6rem;font-size:.85rem">${status}</div>`:''}<p style="font-size:1.1rem;font-weight:900;color:var(--text);margin-bottom:.25rem">${s.name}</p>${s.role?`<p style="font-size:.82rem;color:var(--text3)">${s.role}</p>`:''}<p style="font-size:0.75rem;color:var(--text2);margin-top:0.35rem">📍 ${branchName}</p><div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.8rem;color:var(--text3)">${new Date(now).toLocaleString()}</div>`;
   }catch(e){box.innerHTML=scanCard('Error',e.message,'fa-circle-xmark','#ef4444');}
 }
 
-// ADMIN SYSTEM INIT
+// ADMIN CORE MANAGEMENT ENGINE
 async function initAdmin(){
   document.getElementById('loading-screen').style.display='none';
   document.getElementById('admin-view').style.display='flex';
   startClock();
   
-  // Realtime load master configurations
+  // Realtime master configuration synchronization
   onSnapshot(doc(db,'settings','main'),snap=>{
     if(snap.exists()){
       Object.assign(settings,snap.data());
       applySettings();
-      applyTheme(settings.theme||'green');
+      if(settings.theme) {
+        if(settings.theme.startsWith('#')) {
+          applyCustomThemeShades(settings.theme);
+        } else {
+          applyTheme(settings.theme);
+        }
+      }
       updateBrandingTitles();
     }
-  });
+  }, (err) => { console.error("Snapshot error Settings", err); });
 
   try{const s=await getDoc(doc(db,'settings','alert_templates'));if(s.exists())alertTemplates=s.data();renderAlertTemplates();}catch(e){renderAlertTemplates();}
-  try{const s=await getDoc(doc(db,'settings','shift_plan'));if(s.exists())shiftPlan=s.data();}catch(e){}
+  try{const s=await getDoc(doc(db,'settings','shift_plan'));if(s.exists())shiftPlan=s.data();renderPlannerHeaders();}catch(e){}
   
-  onSnapshot(collection(db,'categories'),snap=>{categories=snap.docs.map(d=>({id:d.id,...d.data()}));populateDeptDropdowns();renderCategories();refreshAll();});
-  onSnapshot(collection(db,'staff'),snap=>{staff=snap.docs.map(d=>({id:d.id,...d.data()}));staff.sort((a,b)=>a.name.localeCompare(b.name));populateDropdowns();refreshAll();});
-  onSnapshot(collection(db,'logs'),snap=>{logs=snap.docs.map(d=>({id:d.id,...d.data()}));logs.sort((a,b)=>b.timestamp-a.timestamp);refreshAll();});
-  onSnapshot(collection(db,'dayoffs'),snap=>{dayoffs=snap.docs.map(d=>({id:d.id,...d.data()}));dayoffs.sort((a,b)=>new Date(b.date)-new Date(a.date));renderDayoffs();renderCalendar();});
-  onSnapshot(collection(db,'bot_commands'),snap=>{commands=snap.docs.map(d=>({id:d.id,...d.data()}));renderBotCommands();});
-  onSnapshot(collection(db,'documents'),snap=>{documents=snap.docs.map(d=>({id:d.id,...d.data()}));renderDocuments();});
+  // Setup log today filter auto selection (USER REQUESTED: Auto select today)
+  const lDate = document.getElementById('log-date');
+  if(lDate) lDate.value = todayStr();
+
+  // Firestore Snapshot listeners (Using your original Root DB paths)
+  onSnapshot(collection(db, 'categories'),snap=>{categories=snap.docs.map(d=>({id:d.id,...d.data()}));populateDeptDropdowns();renderCategories();renderStaffCheckboxes();refreshAll();}, (err) => {});
+  onSnapshot(collection(db, 'staff'),snap=>{staff=snap.docs.map(d=>({id:d.id,...d.data()}));staff.sort((a,b)=>a.name.localeCompare(b.name));populateDropdowns();renderStaffList();refreshAll();}, (err) => {});
+  onSnapshot(collection(db, 'logs'),snap=>{logs=snap.docs.map(d=>({id:d.id,...d.data()}));logs.sort((a,b)=>b.timestamp-a.timestamp);refreshAll();}, (err) => {});
+  onSnapshot(collection(db, 'dayoffs'),snap=>{dayoffs=snap.docs.map(d=>({id:d.id,...d.data()}));dayoffs.sort((a,b)=>new Date(b.date)-new Date(a.date));renderCalendar();}, (err) => {});
+  onSnapshot(collection(db, 'bot_commands'),snap=>{commands=snap.docs.map(d=>({id:d.id,...d.data()}));renderBotCommands();}, (err) => {});
+  onSnapshot(collection(db, 'documents'),snap=>{documents=snap.docs.map(d=>({id:d.id,...d.data()}));renderDocuments();}, (err) => {});
+  
+  // Realtime persistent Notifications pipeline
+  onSnapshot(collection(db, 'notifications'),snap=>{
+    notifications=snap.docs.map(d=>({id:d.id,...d.data()}));
+    notifications.sort((a,b)=>b.timestamp-a.timestamp);
+    renderNotifications();
+  }, (err) => {});
+
+  // Dynamic document Categories sync
+  onSnapshot(collection(db, 'doc_categories'),snap=>{
+    docCategories=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderDocCategoriesConfig();
+    populateDocCategoryUploadDropdown();
+  }, (err) => {});
   
   initMap();pollTG();checkPushStatus();startReminderCheck();
   const sl=localStorage.getItem('cafe-lang')||'km';document.documentElement.setAttribute('data-lang',sl);document.getElementById('lang-label').textContent=sl==='km'?'EN':'ខ្មែរ';
@@ -1233,13 +1431,18 @@ function applyTheme(themeName) {
   Object.entries(t).forEach(([k, v]) => {
     document.documentElement.style.setProperty(k, v);
   });
-  
-  // Highlight active theme configuration preset button inside settings panel
   document.querySelectorAll('#theme-selectors .theme-btn').forEach(btn => {
     btn.classList.remove('border-brand', 'bg-brand-light', 'text-brand-900', 'ring-2', 'ring-brand');
     if (btn.dataset.theme === themeName) {
       btn.classList.add('border-brand', 'bg-brand-light', 'text-brand-900', 'ring-2', 'ring-brand');
     }
+  });
+}
+
+function applyCustomThemeShades(hexColor) {
+  const shades = generateShades(hexColor);
+  Object.entries(shades).forEach(([k, v]) => {
+    document.documentElement.style.setProperty(k, v);
   });
 }
 
@@ -1254,19 +1457,101 @@ function updateBrandingTitles() {
 }
 
 function applySettings(){
-  const rs=document.getElementById('radius-slider');if(rs)rs.value=settings.radius||100;
-  const rv=document.getElementById('radius-val');if(rv)rv.textContent=(settings.radius||100)+'m';
   const em=document.getElementById('set-early-mins');if(em)em.value=settings.earlyMins||15;
-  const ld=document.getElementById('lat-display');if(ld)ld.textContent=settings.companyLat?settings.companyLat.toFixed(6):'-';
-  const lg=document.getElementById('lng-display');if(lg)lg.textContent=settings.companyLng?settings.companyLng.toFixed(6):'-';
   const rm=document.getElementById('set-reminder-mins');if(rm)rm.value=settings.reminderMins||30;
   const re=document.getElementById('set-reminder-enabled');if(re)re.checked=settings.reminderEnabled||false;
   
   const snKh=document.getElementById('set-sys-name-kh');if(snKh)snKh.value=settings.sysNameKh||'ហាងកាហ្វេ Admin';
   const snEn=document.getElementById('set-sys-name-en');if(snEn)snEn.value=settings.sysNameEn||'Café Admin';
+
+  // Apply location settings to configuration forms
+  document.getElementById('set-loc1-name').value = settings.loc1Name || 'Main Branch';
+  document.getElementById('set-loc1-rad').value = settings.loc1Radius || 100;
+  document.getElementById('loc1-lat-val').textContent = settings.loc1Lat ? settings.loc1Lat.toFixed(6) : '-';
+  document.getElementById('loc1-lng-val').textContent = settings.loc1Lng ? settings.loc1Lng.toFixed(6) : '-';
+
+  document.getElementById('set-loc2-name').value = settings.loc2Name || 'Branch B';
+  document.getElementById('set-loc2-rad').value = settings.loc2Radius || 100;
+  document.getElementById('loc2-lat-val').textContent = settings.loc2Lat ? settings.loc2Lat.toFixed(6) : '-';
+  document.getElementById('loc2-lng-val').textContent = settings.loc2Lng ? settings.loc2Lng.toFixed(6) : '-';
+
+  const cp = document.getElementById('custom-brand-picker');
+  if(cp && settings.theme && settings.theme.startsWith('#')) cp.value = settings.theme;
 }
 
 function refreshAll(){renderDashboard();renderLogs();renderStaff();renderPayroll();renderAnalytics();renderDocuments();renderPlannerHeaders();}
+
+// DUAL LOCATION MAP CONTROLS
+function initMap(){
+  const lat=settings.loc1Lat||11.5564, lng=settings.loc1Lng||104.9282;
+  mapInst=L.map('map').setView([lat,lng],15);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(mapInst);
+  updateMapsGeometry();
+}
+
+function updateMapsGeometry(){
+  if(!mapInst) return;
+  // Cleanup
+  if(mapMarker1) mapInst.removeLayer(mapMarker1);
+  if(mapCircle1) mapInst.removeLayer(mapCircle1);
+  if(mapMarker2) mapInst.removeLayer(mapMarker2);
+  if(mapCircle2) mapInst.removeLayer(mapCircle2);
+
+  const rad1 = parseInt(document.getElementById('set-loc1-rad').value) || 100;
+  const rad2 = parseInt(document.getElementById('set-loc2-rad').value) || 100;
+
+  if(settings.loc1Lat) {
+    mapMarker1 = L.marker([settings.loc1Lat, settings.loc1Lng]).addTo(mapInst).bindPopup(`<b>${settings.loc1Name || 'Branch 1'}</b>`).openPopup();
+    mapCircle1 = L.circle([settings.loc1Lat, settings.loc1Lng], {radius: rad1, color: '#22c55e', fillColor: '#22c55e', fillOpacity: 0.15, weight: 2}).addTo(mapInst);
+  }
+  if(settings.loc2Lat) {
+    mapMarker2 = L.marker([settings.loc2Lat, settings.loc2Lng]).addTo(mapInst).bindPopup(`<b>${settings.loc2Name || 'Branch 2'}</b>`);
+    mapCircle2 = L.circle([settings.loc2Lat, settings.loc2Lng], {radius: rad2, color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.15, weight: 2}).addTo(mapInst);
+  }
+}
+
+window.useMyLocation=(branchNum)=>{
+  if(!navigator.geolocation) return showToast('GPS Error','error');
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+    if(branchNum === 1) {
+      settings.loc1Lat = lat; settings.loc1Lng = lng;
+    } else {
+      settings.loc2Lat = lat; settings.loc2Lng = lng;
+    }
+    applySettings();
+    updateMapsGeometry();
+    mapInst.setView([lat, lng], 16);
+    showToast(`Branch ${branchNum} localized! Save Settings to store changes.`, 'success');
+  },e=>showToast('GPS: '+e.message,'error'));
+};
+
+window.applyCustomColorPreset=(hexVal)=>{
+  settings.theme = hexVal;
+  applyCustomThemeShades(hexVal);
+};
+
+window.saveMasterSettings=async()=>{
+  settings.sysNameKh = document.getElementById('set-sys-name-kh').value.trim() || 'ហាងកាហ្វេ Admin';
+  settings.sysNameEn = document.getElementById('set-sys-name-en').value.trim() || 'Café Admin';
+  settings.earlyMins = parseInt(document.getElementById('set-early-mins').value) || 15;
+  settings.reminderMins = parseInt(document.getElementById('set-reminder-mins').value) || 30;
+  settings.reminderEnabled = document.getElementById('set-reminder-enabled').checked;
+
+  settings.loc1Name = document.getElementById('set-loc1-name').value.trim() || 'Main Branch';
+  settings.loc1Radius = parseInt(document.getElementById('set-loc1-rad').value) || 100;
+  settings.loc2Name = document.getElementById('set-loc2-name').value.trim() || 'Branch B';
+  settings.loc2Radius = parseInt(document.getElementById('set-loc2-rad').value) || 100;
+
+  try {
+    await setDoc(doc(db, 'settings', 'main'), settings);
+    showToast('Settings saved!', 'success');
+    updateMapsGeometry();
+  } catch (e) {
+    showToast('Save failed: ' + e.message, 'error');
+  }
+};
 
 // AUTO SHIFT REMINDER CHECKER
 function startReminderCheck(){
@@ -1294,88 +1579,30 @@ async function checkReminders(){
   localStorage.setItem('reminded_today',JSON.stringify(sent));
 }
 
-// MAP CONTAINER
-function initMap(){
-  const lat=settings.companyLat||11.5564,lng=settings.companyLng||104.9282;
-  mapInst=L.map('map').setView([lat,lng],16);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(mapInst);
-  if(settings.companyLat)setMapPin(lat,lng);
-  mapInst.on('click',e=>{
-    setMapPin(e.latlng.lat,e.latlng.lng);
-    settings.companyLat=e.latlng.lat;
-    settings.companyLng=e.latlng.lng;
-    document.getElementById('lat-display').textContent=e.latlng.lat.toFixed(6);
-    document.getElementById('lng-display').textContent=e.latlng.lng.toFixed(6);
-    showToast('Boundary updated! Remember to Click Save All Settings at the bottom.','info');
-  });
-}
-function setMapPin(lat,lng){
-  const r=parseInt(document.getElementById('radius-slider')?.value||100);
-  if(mapMarker)mapInst.removeLayer(mapMarker);if(mapCircle)mapInst.removeLayer(mapCircle);
-  mapMarker=L.marker([lat,lng]).addTo(mapInst).bindPopup('<b>ទីតាំងហាង</b>').openPopup();
-  mapCircle=L.circle([lat,lng],{radius:r,color:'#22c55e',fillColor:'#22c55e',fillOpacity:.15,weight:2}).addTo(mapInst);
-  mapInst.setView([lat,lng],17);
-}
-window.updateRadius=()=>{
-  const r=document.getElementById('radius-slider').value;
-  document.getElementById('radius-val').textContent=r+'m';
-  settings.radius=parseInt(r);
-  if(mapMarker&&settings.companyLat){
-    mapInst.removeLayer(mapCircle);
-    mapCircle=L.circle([settings.companyLat,settings.companyLng],{radius:parseInt(r),color:'var(--brand)',fillColor:'var(--brand)',fillOpacity:.15,weight:2}).addTo(mapInst);
-  }
-};
-window.useMyLocation=()=>{
-  if(!navigator.geolocation)return showToast('GPS Error','error');
-  navigator.geolocation.getCurrentPosition(pos=>{
-    settings.companyLat=pos.coords.latitude;
-    settings.companyLng=pos.coords.longitude;
-    setMapPin(pos.coords.latitude,pos.coords.longitude);
-    document.getElementById('lat-display').textContent=pos.coords.latitude.toFixed(6);
-    document.getElementById('lng-display').textContent=pos.coords.longitude.toFixed(6);
-    showToast('GPS localized! Please click Save All Settings to commit.','success');
-  },e=>showToast('GPS: '+e.message,'error'));
-};
-
-// CHANGE THEME LOCAL PRESET (TEMPORARY UNTIL ALL SETTINGS SAVED)
-window.changeThemePreset = (themeName) => {
-  settings.theme = themeName;
-  applyTheme(themeName);
-  showToast('Dynamic style preset previewed! Click Save All Settings at the bottom to commit.', 'info');
-};
-
-// MASTER SETTINGS CONSOLIDATION
-window.saveMasterSettings=async()=>{
-  settings.sysNameKh = document.getElementById('set-sys-name-kh').value.trim() || 'ហាងកាហ្វេ Admin';
-  settings.sysNameEn = document.getElementById('set-sys-name-en').value.trim() || 'Café Admin';
-  settings.earlyMins = parseInt(document.getElementById('set-early-mins').value) || 15;
-  settings.reminderMins = parseInt(document.getElementById('set-reminder-mins').value) || 30;
-  settings.reminderEnabled = document.getElementById('set-reminder-enabled').checked;
-  settings.radius = parseInt(document.getElementById('radius-slider').value);
-
-  try {
-    await setDoc(doc(db, 'settings', 'main'), settings);
-    showToast('All administrative configurations updated successfully!', 'success');
-    applySettings();
-    updateBrandingTitles();
-    startReminderCheck();
-  } catch (e) {
-    showToast('Master save failed: ' + e.message, 'error');
-  }
-};
-
-// DEPARTMENTS
+// DEPARTMENTS MULTI-SELECT HANDLERS
 function populateDeptDropdowns(){
   const opts='<option value="">-- All --</option>'+categories.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
   const sdf=document.getElementById('staff-dept-filter');if(sdf)sdf.innerHTML=opts;
-  const sd=document.getElementById('s-dept');if(sd)sd.innerHTML='<option value="">-- None --</option>'+categories.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
   const csf=document.getElementById('cal-staff-filter');if(csf)csf.innerHTML='<option value="">All Staff</option>'+staff.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
 }
+function renderStaffCheckboxes(){
+  const container = document.getElementById('s-depts-checkboxes');
+  if(!container) return;
+  if(!categories.length) { container.innerHTML='<span class="text-xs text-slate-400">No departments configured</span>'; return; }
+  container.innerHTML = categories.map(cat => `
+    <label class="flex items-center gap-2 font-bold text-xs cursor-pointer">
+      <input type="checkbox" name="staff_depts" value="${cat.id}" class="accent-brand-600">
+      <span style="color:${cat.color}">${cat.name}</span>
+    </label>
+  `).join('');
+}
+
 function renderCategories(){
   const grid=document.getElementById('categories-grid');if(!grid)return;
   if(!categories.length){grid.innerHTML='<p style="color:var(--text3);font-size:.9rem;grid-column:1/-1">No departments yet</p>';return;}
   grid.innerHTML=categories.map(cat=>{
-    const members=staff.filter(s=>s.deptId===cat.id);
+    // Filter staff belonging to this department
+    const members=staff.filter(s=>(s.deptIds || []).includes(cat.id));
     return `<div class="card" style="padding:1.25rem;border-left:4px solid ${cat.color||'#22c55e'}">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem">
         <div style="display:flex;align-items:center;gap:.6rem">
@@ -1398,16 +1625,14 @@ window.editCategory=(id)=>{const c=categories.find(x=>x.id===id);if(!c)return;do
 window.submitCategory=async()=>{
   const id=document.getElementById('cat-id').value,name=document.getElementById('cat-name').value.trim(),color=document.getElementById('cat-color').value,icon=document.getElementById('cat-icon').value.trim(),desc=document.getElementById('cat-desc').value.trim();
   if(!name)return showToast('Name required','error');
-  try{if(id)await updateDoc(doc(db,'categories',id),{name,color,icon,desc});else await addDoc(collection(db,'categories'),{name,color,icon,desc,createdAt:Date.now()});showToast('Department saved!','success');closeModal('category-modal');}catch(e){showToast('Error: '+e.message,'error');}
+  try{if(id)await updateDoc(doc(db, 'categories',id),{name,color,icon,desc});else await addDoc(collection(db, 'categories'),{name,color,icon,desc,createdAt:Date.now()});showToast('Department saved!','success');closeModal('category-modal');}catch(e){showToast('Error: '+e.message,'error');}
 };
 
 // DROPDOWNS
 function populateDropdowns(){
   const so='<option value="" disabled selected>ជ្រើស...</option>'+staff.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
-  ['do-staff','a-staff','up-staff'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=so;});
+  ['do-staff','up-staff'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=so;});
   const df=document.getElementById('doc-staff-filter');if(df)df.innerHTML='<option value="">All Staff</option>'+staff.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
-  const sd=document.getElementById('s-dept');if(sd)sd.innerHTML='<option value="">-- None --</option>'+categories.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
-  const csf=document.getElementById('cal-staff-filter');if(csf)csf.innerHTML='<option value="">All Staff</option>'+staff.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
 }
 
 // DASHBOARD
@@ -1422,12 +1647,16 @@ function renderDashboard(){
   document.getElementById('s-late').textContent=lateC;
   document.getElementById('s-early').textContent=earlyC;
   const dl=document.getElementById('today-date-label');if(dl)dl.textContent=new Date().toLocaleDateString('km-KH',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  
   const ms=new Date(),startM=new Date(ms.getFullYear(),ms.getMonth(),1).getTime();
   let best=null,minL=Infinity;
   staff.forEach(s=>{const mci=logs.filter(l=>l.staffId===s.id&&l.action==='Check-In'&&l.timestamp>=startM);const late=mci.filter(l=>l.isLate).length;if(mci.length>0&&late<minL){minL=late;best=s;}});
   const bEl=document.getElementById('best-staff-display');
-  if(best)bEl.innerHTML=`<div style="display:flex;align-items:center;gap:1rem"><div class="avatar" style="width:52px;height:52px;font-size:1.1rem;background:${avatarColor(best.name)}22;color:${avatarColor(best.name)};border:2px solid ${avatarColor(best.name)}44">${getInitials(best.name)}</div><div><div style="font-size:1.3rem;font-weight:900">${best.name}</div><div style="font-size:.82rem;color:var(--text2)">${best.role||'Staff'}${getCatName(best.deptId)?' • '+getCatName(best.deptId):''} • <span style="color:#22c55e;font-weight:700">Late: ${minL}×</span></div></div></div>`;
-  else bEl.innerHTML='<span style="color:var(--text3)">ទិន្នន័យមិនគ្រប់គ្រាន់</span>';
+  if(best) {
+    const firstDeptName = (best.deptIds && best.deptIds.length) ? getCatName(best.deptIds[0]) : '';
+    bEl.innerHTML=`<div style="display:flex;align-items:center;gap:1rem"><div class="avatar" style="width:52px;height:52px;font-size:1.1rem;background:${avatarColor(best.name)}22;color:${avatarColor(best.name)};border:2px solid ${avatarColor(best.name)}44">${getInitials(best.name)}</div><div><div style="font-size:1.3rem;font-weight:900">${best.name}</div><div style="font-size:.82rem;color:var(--text2)">${best.role||'Staff'}${firstDeptName?' • '+firstDeptName:''} • <span style="color:#22c55e;font-weight:700">Late: ${minL}×</span></div></div></div>`;
+  } else bEl.innerHTML='<span style="color:var(--text3)">ទិន្នន័យមិនគ្រប់គ្រាន់</span>';
+  
   const now=new Date(),dow=now.getDay()||7,startW=new Date(now.getFullYear(),now.getMonth(),now.getDate()-dow+1).setHours(0,0,0,0);
   window._perfData=[];
   const tbody=document.getElementById('perf-tbody');
@@ -1437,11 +1666,17 @@ function renderDashboard(){
     const mci=ci.filter(l=>l.timestamp>=startM),wci=ci.filter(l=>l.timestamp>=startW);
     const mLate=mci.filter(l=>l.isLate).length,wLate=wci.filter(l=>l.isLate).length;
     const eval_=mLate>=4?'Bad':mLate>=2?'Nice':'Good',evalC=mLate>=4?'badge-red':mLate>=2?'badge-amber':'badge-green';
-    const dept=categories.find(c=>c.id===s.deptId);
+    
+    // Multi-department display tags mapping
+    const deptBadges = (s.deptIds || []).map(id => {
+      const dept = categories.find(c=>c.id===id);
+      return dept ? `<span class="cat-tag py-0.5 px-1.5 text-[9px] mr-0.5" style="background:${dept.color}22;color:${dept.color}">${dept.name}</span>` : '';
+    }).join('');
+
     window._perfData.push({name:s.name,weekEval:wLate>=2?'Bad':wLate>=1?'Nice':'Good',monthEval:eval_});
     return `<tr style="border-bottom:1px solid var(--border)">
       <td style="padding:.7rem 1rem;font-weight:700" colspan="2"><div style="display:flex;align-items:center;gap:.5rem"><div class="avatar" style="width:28px;height:28px;font-size:.6rem;background:${avatarColor(s.name)}22;color:${avatarColor(s.name)}">${getInitials(s.name)}</div>${s.name}</div></td>
-      <td style="padding:.7rem 1rem">${dept?`<span class="cat-tag" style="background:${dept.color}22;color:${dept.color}">${dept.name}</span>`:'-'}</td>
+      <td style="padding:.7rem 1rem">${deptBadges || '-'}</td>
       <td style="padding:.7rem 1rem"><span style="color:#22c55e;font-weight:700">${wci.length}</span>/<span style="color:#ef4444;font-weight:700">${wLate}</span></td>
       <td style="padding:.7rem 1rem"><span style="color:#22c55e;font-weight:700">${mci.length}</span>/<span style="color:#ef4444;font-weight:700">${mLate}</span></td>
       <td style="padding:.7rem 1rem"><span class="badge ${evalC}">${eval_}</span></td>
@@ -1452,7 +1687,7 @@ function renderDashboard(){
   feed.innerHTML=logs.slice(0,8).map(log=>{
     const isCI=log.action==='Check-In',color=log.isLate?'#ef4444':log.isEarly?'#8b5cf6':isCI?'#22c55e':'#f59e0b';
     return `<div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.5rem 0;border-bottom:1px solid var(--border)">
-      <div style="display:flex;align-items:center;gap:.6rem"><div class="avatar" style="width:34px;height:34px;font-size:.7rem;background:${avatarColor(log.staffName)}22;color:${avatarColor(log.staffName)}">${getInitials(log.staffName)}</div><div><div style="font-weight:700;font-size:.88rem">${log.staffName}</div><div style="font-size:.72rem;color:var(--text3)">${fmtTime(log.timestamp)}</div></div></div>
+      <div style="display:flex;align-items:center;gap:.6rem"><div class="avatar" style="width:34px;height:34px;font-size:.7rem;background:${avatarColor(log.staffName)}22;color:${avatarColor(log.staffName)}">${getInitials(log.staffName)}</div><div><div style="font-weight:700;font-size:.88rem">${log.staffName}</div><div style="font-size:.72rem;color:var(--text3)">${fmtTime(log.timestamp)} ${log.branch ? `• 📍 ${log.branch}` : ''}</div></div></div>
       <div style="display:flex;align-items:center;gap:.4rem"><span style="font-size:.7rem;font-weight:800;color:${color};background:${color}18;padding:.2rem .55rem;border-radius:99px;border:1px solid ${color}44">${log.status||log.action}</span>
         <button onclick="openEditLog('${log.id}')" style="width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:var(--bg);cursor:pointer;color:var(--text3);font-size:.65rem"><i class="fa-solid fa-pen"></i></button>
         <button onclick="delDB('logs','${log.id}')" style="width:26px;height:26px;border-radius:6px;border:1px solid #fee2e2;background:#fef2f2;cursor:pointer;color:#ef4444;font-size:.65rem"><i class="fa-solid fa-trash"></i></button>
@@ -1461,25 +1696,24 @@ function renderDashboard(){
   }).join('');
 }
 
-// TELEGRAM ANNOUNCEMENT
+// TELEGRAM DISPATCH ANNOUNCEMENTS
 window.openAnnounceModal=()=>{
   document.getElementById('ann-text').value='';
   document.getElementById('announce-modal').style.display='flex';
 };
 window.sendAnnouncement=async()=>{
   const txt=document.getElementById('ann-text').value.trim();
-  if(!txt) return showToast('សូមសរសេរសារជាមុនសិន / Please write a message','warning');
+  if(!txt) return showToast('Please write a message','warning');
   sendTG(`📢 <b>ប្រកាសពីអ្នកគ្រប់គ្រង / Admin Announcement:</b>\n\n${txt}`);
-  showToast('បានផ្ញើសារចូល Telegram! / Message Sent!','success');
+  showToast('Announcement sent to Telegram!','success');
   closeModal('announce-modal');
 };
 
-// MANUAL ATTENDANCE LOG
+// MANUAL LOGGING
 window.openManualLogModal=()=>{
-  document.getElementById('ml-staff').innerHTML='<option value="">ជ្រើសរើស / Select...</option>'+staff.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  document.getElementById('ml-staff').innerHTML='<option value="">Select staff...</option>'+staff.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
   document.getElementById('ml-date').value=todayStr();
-  const now = new Date();
-  document.getElementById('ml-time').value=now.toTimeString().slice(0,5);
+  document.getElementById('ml-time').value=new Date().toTimeString().slice(0,5);
   document.getElementById('manual-log-modal').style.display='flex';
 };
 window.submitManualLog=async()=>{
@@ -1488,31 +1722,17 @@ window.submitManualLog=async()=>{
   const t=document.getElementById('ml-time').value;
   const act=document.getElementById('ml-action').value;
   const stat=document.getElementById('ml-status').value;
-  
-  if(!sId || !d || !t) return showToast('បំពេញព័ត៌មានអោយគ្រប់គ្រាន់ / Fill all fields','error');
-  
+  if(!sId || !d || !t) return showToast('Fill all fields','error');
   const s=staff.find(x=>x.id===sId);
   const dt = new Date(`${d}T${t}`);
-  
   try {
-      await addDoc(collection(db,'logs'),{
-          staffId:sId, 
-          staffName:s.name, 
-          action:act, 
-          status:stat,
-          timestamp:dt.getTime(), 
-          lat:0, lng:0,
-          isLate:stat.includes('Late'), 
-          isEarly:stat.includes('Early')
-      });
-      showToast('បានបញ្ចូលដោយដៃ / Manually logged!','success');
+      await addDoc(collection(db, 'logs'),{staffId:sId, staffName:s.name, action:act, status:stat, timestamp:dt.getTime(), lat:0, lng:0, isLate:stat.includes('Late'), isEarly:stat.includes('Early'), branch:"Manual Entry"});
+      showToast('Logged manually!','success');
       closeModal('manual-log-modal');
-  }catch(e){
-      showToast('Error: '+e.message,'error');
-  }
+  }catch(e){showToast('Error: '+e.message,'error');}
 };
 
-// ATTENDANCE LOGS RENDER
+// ATTENDANCE LOG RENDERING
 window.renderLogs=function(){
   const search=(document.getElementById('log-search')?.value||'').toLowerCase();
   const dateF=document.getElementById('log-date')?.value;
@@ -1528,17 +1748,23 @@ window.renderLogs=function(){
   if(!filtered.length){c.innerHTML='<p style="text-align:center;color:var(--text3);padding:2rem">No logs</p>';return;}
   c.innerHTML=filtered.map(log=>{
     const color=log.isLate?'#ef4444':log.isEarly?'#8b5cf6':log.action==='Check-In'?'#22c55e':'#f59e0b';
-    const dept=staff.find(s=>s.id===log.staffId),catName=dept?getCatName(dept.deptId):'';
+    const dept=staff.find(s=>s.id===log.staffId);
+    
+    const dBadges = dept ? (dept.deptIds || []).map(id => {
+      const cObj = categories.find(c=>c.id===id);
+      return cObj ? `<span class="cat-tag" style="background:${cObj.color}22;color:${cObj.color};font-size:.65rem;margin-right:2px">${cObj.name}</span>` : '';
+    }).join('') : '';
+
     return `<div class="log-item">
       <div style="display:flex;align-items:center;gap:.6rem;flex:1;min-width:0">
         <input type="checkbox" class="log-cb" value="${log.id}" onchange="updateLogDel()" style="accent-color:var(--brand)">
         <div class="avatar" style="width:36px;height:36px;font-size:.75rem;background:${avatarColor(log.staffName)}22;color:${avatarColor(log.staffName)};flex-shrink:0">${getInitials(log.staffName)}</div>
         <div style="min-width:0"><div style="font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${log.staffName}</div>
-          <div style="display:flex;align-items:center;gap:.35rem;flex-wrap:wrap;margin-top:.15rem"><span style="font-size:.7rem;font-weight:800;color:${color};background:${color}18;padding:.15rem .45rem;border-radius:99px;border:1px solid ${color}33">${log.status||log.action}</span>${catName?`<span class="cat-tag" style="background:${getCatColor(dept?.deptId)}22;color:${getCatColor(dept?.deptId)};font-size:.65rem">${catName}</span>`:''}</div>
+          <div style="display:flex;align-items:center;gap:.35rem;flex-wrap:wrap;margin-top:.15rem"><span style="font-size:.7rem;font-weight:800;color:${color};background:${color}18;padding:.15rem .45rem;border-radius:99px;border:1px solid ${color}33">${log.status||log.action}</span>${dBadges}</div>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:.5rem;flex-shrink:0">
-        <div style="text-align:right"><div style="font-weight:900;font-size:.88rem">${fmtTime(log.timestamp)}</div><div style="font-size:.72rem;color:var(--text3)">${fmtDate(log.timestamp)}</div></div>
+        <div style="text-align:right"><div style="font-weight:900;font-size:.88rem">${fmtTime(log.timestamp)}</div><div style="font-size:.72rem;color:var(--text3)">${fmtDate(log.timestamp)} ${log.branch ? `(📍 ${log.branch})` : ''}</div></div>
         <button onclick="openEditLog('${log.id}')" style="width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:var(--bg);cursor:pointer;color:var(--text2);font-size:.7rem"><i class="fa-solid fa-pen"></i></button>
         <button onclick="delDB('logs','${log.id}')" style="width:28px;height:28px;border-radius:8px;border:1px solid #fee2e2;background:#fef2f2;cursor:pointer;color:#ef4444;font-size:.7rem"><i class="fa-solid fa-trash"></i></button>
       </div>
@@ -1551,21 +1777,32 @@ window.deleteSelectedLogs=async()=>{
   const ids=Array.from(document.querySelectorAll('.log-cb:checked')).map(x=>x.value);
   if(!ids.length)return;
   customConfirm("Delete Selected Logs?", `Are you sure you want to delete these ${ids.length} logs?`, async () => {
-    for(const id of ids)await deleteDoc(doc(db,'logs',id));
+    for(const id of ids)await deleteDoc(doc(db, 'logs', id));
     showToast(`Deleted ${ids.length} logs!`,'success');
     document.getElementById('sel-all-logs').checked=false;
     renderLogs();
   });
 };
 
-// STAFF
+// STAFF VIEW & MUTABLE ASSIGNMENT HANDLERS
 window.renderStaff=function(){
   const search=(document.getElementById('staff-search')?.value||'').toLowerCase(),deptF=document.getElementById('staff-dept-filter')?.value||'';
-  let filtered=staff.filter(s=>(!deptF||s.deptId===deptF)&&(!search||s.name.toLowerCase().includes(search)||(s.role||'').toLowerCase().includes(search)));
+  let filtered=staff.filter(s=>{
+    const matchesDept = !deptF || (s.deptIds || []).includes(deptF);
+    const matchesSearch = !search || s.name.toLowerCase().includes(search) || (s.role||'').toLowerCase().includes(search);
+    return matchesDept && matchesSearch;
+  });
   const grid=document.getElementById('staff-grid');
   if(!filtered.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--text3);padding:2rem">No staff</div>';return;}
   grid.innerHTML=filtered.map(s=>{
-    const dept=categories.find(c=>c.id===s.deptId),statusColor=s.status==='active'?'#22c55e':s.status==='on_leave'?'#f59e0b':'#ef4444',statusLabel=s.status==='active'?'Active':s.status==='on_leave'?'On Leave':'Inactive';
+    const statusColor=s.status==='active'?'#22c55e':s.status==='on_leave'?'#f59e0b':'#ef4444',statusLabel=s.status==='active'?'Active':s.status==='on_leave'?'On Leave':'Inactive';
+    
+    // Multi-department display badges mapping
+    const deptBadges = (s.deptIds || []).map(id => {
+      const dept = categories.find(c=>c.id===id);
+      return dept ? `<span class="cat-tag text-[9px]" style="background:${dept.color}22;color:${dept.color};border:1px solid ${dept.color}44"><i class="${dept.icon||'fa-solid fa-star'}" style="font-size:.65rem;margin-right:2px"></i>${dept.name}</span>` : '';
+    }).filter(Boolean).join('');
+
     return `<div class="staff-card">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.85rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)">
         <div style="display:flex;align-items:center;gap:.75rem">
@@ -1581,7 +1818,7 @@ window.renderStaff=function(){
       </div>
       <div style="font-size:.8rem;color:var(--text2);margin-bottom:.4rem;display:flex;align-items:center;gap:.4rem"><i class="fa-regular fa-clock" style="color:var(--brand)"></i>${s.shiftStart||'06:00'} – ${s.shiftEnd||'15:00'}</div>
       <div style="font-size:.8rem;color:var(--text2);margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem"><i class="fa-solid fa-dollar-sign" style="color:#22c55e"></i><strong>$${s.salary||0}</strong>/month</div>
-      ${dept?`<div style="margin-bottom:.75rem"><span class="cat-tag" style="background:${dept.color}22;color:${dept.color};border:1px solid ${dept.color}44"><i class="${dept.icon||'fa-solid fa-star'}" style="font-size:.65rem"></i>${dept.name}</span></div>`:''}
+      ${deptBadges ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.75rem">${deptBadges}</div>` : ''}
       <div style="display:flex;gap:.4rem">
         <button onclick="openQR('${s.id}','${s.name}','in')" style="flex:1;padding:.55rem;border-radius:8px;border:1px solid #bbf7d0;background:#dcfce7;color:#166534;font-size:.72rem;font-weight:700;cursor:pointer"><i class="fa-solid fa-qrcode" style="margin-right:.3rem"></i>QR IN</button>
         <button onclick="openQR('${s.id}','${s.name}','out')" style="flex:1;padding:.55rem;border-radius:8px;border:1px solid #fde68a;background:#fef3c7;color:#92400e;font-size:.72rem;font-weight:700;cursor:pointer"><i class="fa-solid fa-qrcode" style="margin-right:.3rem"></i>QR OUT</button>
@@ -1589,13 +1826,94 @@ window.renderStaff=function(){
     </div>`;
   }).join('');
 };
-window.openStaffModal=()=>{document.getElementById('s-id').value='';document.getElementById('s-name').value='';document.getElementById('s-start').value='06:00';document.getElementById('s-end').value='15:00';document.getElementById('s-salary').value='';document.getElementById('s-role').value='';document.getElementById('s-status').value='active';document.getElementById('staff-modal').style.display='flex';};
-window.editStaff=(id)=>{const s=staff.find(x=>x.id===id);if(!s)return;document.getElementById('s-id').value=id;document.getElementById('s-name').value=s.name;document.getElementById('s-start').value=s.shiftStart||'06:00';document.getElementById('s-end').value=s.shiftEnd||'15:00';document.getElementById('s-salary').value=s.salary||'';document.getElementById('s-role').value=s.role||'';document.getElementById('s-dept').value=s.deptId||'';document.getElementById('s-status').value=s.status||'active';document.getElementById('staff-modal').style.display='flex';};
+
+function renderStaffList(){
+  const tbody = document.getElementById('staff-list-tbody');
+  if(!tbody) return;
+  if(!staff.length) { tbody.innerHTML='<tr><td colspan="5" class="p-3 text-center text-slate-400">No staff found</td></tr>'; return; }
+  tbody.innerHTML = staff.map(s => {
+    const dNames = (s.deptIds || []).map(id => getCatName(id)).filter(Boolean).join(', ') || 'None';
+    return `
+      <tr class="hover:bg-slate-50 dark:hover:bg-slate-900/20 text-xs">
+        <td class="p-3 font-bold text-slate-700 dark:text-slate-300">${s.name}</td>
+        <td class="p-3 text-slate-500">${dNames}</td>
+        <td class="p-3 text-slate-500">${s.role || 'Staff'}</td>
+        <td class="p-3 font-mono text-slate-500">${s.shiftStart} - ${s.shiftEnd}</td>
+        <td class="p-3 text-right font-bold text-slate-700 dark:text-slate-300">$${s.salary || 0}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+window.openStaffModal=()=>{
+  document.getElementById('s-id').value='';
+  document.getElementById('s-name').value='';
+  document.getElementById('s-start').value='06:00';
+  document.getElementById('s-end').value='15:00';
+  document.getElementById('s-salary').value='';
+  document.getElementById('s-role').value='';
+  document.getElementById('s-status').value='active';
+  document.querySelectorAll('input[name="staff_depts"]').forEach(cb=>cb.checked=false);
+  
+  // Hide override check-in lock overrides for new rosters
+  document.getElementById('staff-state-override').classList.add('hidden');
+  document.getElementById('staff-modal').style.display='flex';
+};
+
+window.editStaff=(id)=>{
+  const s=staff.find(x=>x.id===id);if(!s)return;
+  document.getElementById('s-id').value=id;
+  document.getElementById('s-name').value=s.name;
+  document.getElementById('s-start').value=s.shiftStart||'06:00';
+  document.getElementById('s-end').value=s.shiftEnd||'15:00';
+  document.getElementById('s-salary').value=s.salary||'';
+  document.getElementById('s-role').value=s.role||'';
+  document.getElementById('s-status').value=s.status||'active';
+  
+  // Set checkboxes for departments
+  document.querySelectorAll('input[name="staff_depts"]').forEach(cb=>{
+    cb.checked = (s.deptIds || []).includes(cb.value);
+  });
+  
+  // Present unlock lock button if staff is locked in Check-In state
+  const overrideBox = document.getElementById('staff-state-override');
+  if (s.lastAction === 'Check-In') {
+    overrideBox.classList.remove('hidden');
+  } else {
+    overrideBox.classList.add('hidden');
+  }
+
+  document.getElementById('staff-modal').style.display='flex';
+};
+
+// ADMIN VALUE ADDED: Unlock sequence gate if user gets locked
+window.forceUnlockStaff=async()=>{
+  const id=document.getElementById('s-id').value;
+  if(!id) return;
+  customConfirm("Override Staff State", "Do you want to unlock this staff's action sequence? This allows them to Check-In again directly.", async () => {
+    try {
+      await updateDoc(doc(db, 'staff', id), { lastAction: 'Check-Out' });
+      showToast('Staff check-in sequence unlocked successfully!','success');
+      closeModal('staff-modal');
+    } catch(e) { showToast(e.message,'error'); }
+  });
+};
+
 window.submitStaff=async()=>{
-  const id=document.getElementById('s-id').value,name=document.getElementById('s-name').value.trim(),start=document.getElementById('s-start').value,end=document.getElementById('s-end').value,salary=document.getElementById('s-salary').value,role=document.getElementById('s-role').value.trim(),deptId=document.getElementById('s-dept').value,status=document.getElementById('s-status').value;
+  const id=document.getElementById('s-id').value,name=document.getElementById('s-name').value.trim(),start=document.getElementById('s-start').value,end=document.getElementById('s-end').value,salary=document.getElementById('s-salary').value,role=document.getElementById('s-role').value.trim(),status=document.getElementById('s-status').value;
   if(!name)return showToast('Name required','error');
+  
+  // Collect all selected department checkboxes
+  const deptIds = Array.from(document.querySelectorAll('input[name="staff_depts"]:checked')).map(cb=>cb.value);
+  
   const btn=document.getElementById('s-submit-btn');btn.disabled=true;
-  try{const data={name,shiftStart:start,shiftEnd:end,salary:Number(salary),role,deptId,status};if(id)await updateDoc(doc(db,'staff',id),data);else await addDoc(collection(db,'staff'),{...data,createdAt:Date.now()});showToast(id?`${name} updated!`:`${name} added!`,'success');closeModal('staff-modal');}catch(e){showToast('Error: '+e.message,'error');}finally{btn.disabled=false;}
+  try{
+    const data={name,shiftStart:start,shiftEnd:end,salary:Number(salary),role,deptIds,status};
+    if(id)await updateDoc(doc(db, 'staff', id),data);
+    else await addDoc(collection(db, 'staff'),{...data,createdAt:Date.now(),lastAction:'Check-Out'});
+    showToast(id?`${name} updated!`:`${name} added!`,'success');
+    closeModal('staff-modal');
+  }catch(e){showToast('Error: '+e.message,'error');}finally{btn.disabled=false;}
 };
 
 // PAYROLL
@@ -1611,7 +1929,11 @@ window.renderPayroll=function(){
     const sd=mD.filter(x=>x.staffId===s.id).length;
     const p=new Set(sl.map(l=>new Date(l.timestamp).toDateString())).size;
     const base=parseFloat(s.salary)||0,total=p+sd,est=((base/30)*total).toFixed(2);
-    const dept=categories.find(c=>c.id===s.deptId);
+    
+    // Display first dept in Payroll table
+    const firstDeptId = (s.deptIds && s.deptIds.length) ? s.deptIds[0] : '';
+    const dept=categories.find(c=>c.id===firstDeptId);
+    
     labels.push(s.name);earnings.push(est);days.push(total);
     return `<tr style="border-bottom:1px solid var(--border)"><td style="padding:.7rem 1rem;font-weight:700">${s.name}</td><td style="padding:.7rem 1rem">${dept?`<span class="cat-tag" style="background:${dept.color}22;color:${dept.color}">${dept.name}</span>`:'-'}</td><td style="padding:.7rem 1rem">$${base}</td><td style="padding:.7rem 1rem"><span class="badge badge-green">${p}</span></td><td style="padding:.7rem 1rem"><span class="badge badge-blue">${sd}</span></td><td style="padding:.7rem 1rem;text-align:right;font-weight:900">$${est}</td></tr>`;
   }).join('');
@@ -1620,34 +1942,15 @@ window.renderPayroll=function(){
   payrollChart=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Earnings ($)',data:earnings,backgroundColor:'var(--brand)',borderRadius:6,yAxisID:'y'},{label:'Paid Days',data:days,backgroundColor:'#3b82f6',borderRadius:6,yAxisID:'y1'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#94a3b8'}}},scales:{y:{type:'linear',position:'left',ticks:{color:'#94a3b8'},grid:{color:'rgba(148,163,184,.1)'}},y1:{type:'linear',position:'right',grid:{drawOnChartArea:false},ticks:{color:'#94a3b8'}}}}});
 };
 
-// DAYOFFS
-window.renderDayoffs=function(){
-  const mF=document.getElementById('dayoff-month')?.value;let filtered=[...dayoffs];
-  if(mF){const[yr,mo]=mF.split('-');filtered=filtered.filter(d=>{const dd=new Date(d.date);return dd.getMonth()===(parseInt(mo)-1)&&dd.getFullYear()===parseInt(yr);});}
-  const c=document.getElementById('dayoffs-container');
-  if(!filtered.length){c.innerHTML='<p style="color:var(--text3);text-align:center;padding:1.5rem">No day-offs</p>';return;}
-  c.innerHTML=filtered.map(d=>{const s=staff.find(x=>x.id===d.staffId);return `<div style="display:flex;justify-content:space-between;align-items:center;padding:.75rem 1rem;border-radius:var(--radius);border:1px solid var(--border);background:var(--card)"><div style="display:flex;align-items:center;gap:.6rem"><i class="fa-solid fa-umbrella-beach" style="color:#8b5cf6"></i><div><div style="font-weight:700">${s?.name||'Unknown'}</div><div style="font-size:.75rem;color:var(--text3)">${new Date(d.date).toDateString()} ${d.reason?'• '+d.reason:''}</div></div></div><button onclick="delDB('dayoffs','${d.id}')" style="width:28px;height:28px;border-radius:8px;border:1px solid #fee2e2;background:#fef2f2;cursor:pointer;color:#ef4444;font-size:.72rem"><i class="fa-solid fa-trash"></i></button></div>`;}).join('');
-};
+// DAYOFFS & CALENDAR
 window.openDayoffModal=()=>document.getElementById('dayoff-modal').style.display='flex';
-window.openAutoDayoff=()=>{const d=new Date();document.getElementById('a-month').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;document.getElementById('auto-modal').style.display='flex';};
 window.submitDayoff=async()=>{
   const sId=document.getElementById('do-staff').value,date=document.getElementById('do-date').value,reason=document.getElementById('do-reason').value.trim();
   if(!sId||!date)return showToast('Fill all fields','error');
   const dObj=new Date(date);if(dObj.getDay()===0||dObj.getDay()===6)return showToast('Sat/Sun not allowed','warning');
-  try{await addDoc(collection(db,'dayoffs'),{staffId:sId,date,reason,createdAt:Date.now()});showToast('Day-Off set!','success');closeModal('dayoff-modal');}catch(e){showToast('Error: '+e.message,'error');}
-};
-window.submitAutoDayoff=async()=>{
-  const sId=document.getElementById('a-staff').value,count=parseInt(document.getElementById('a-count').value),mi=document.getElementById('a-month').value;
-  if(!sId||!count||!mi)return showToast('Fill all fields','error');
-  const[yr,mo]=mi.split('-'),dim=new Date(yr,mo,0).getDate();let avail=[];
-  for(let i=1;i<=dim;i++){const ds=`${yr}-${mo}-${String(i).padStart(2,'0')}`;const dow=new Date(yr,mo-1,i).getDay();if(dow===0||dow===6)continue;if(!dayoffs.some(d=>d.date===ds))avail.push(ds);}
-  if(avail.length<count)return showToast(`Only ${avail.length} days available`,'warning');
-  avail.sort(()=>0.5-Math.random());
-  for(const ds of avail.slice(0,count))await addDoc(collection(db,'dayoffs'),{staffId:sId,date:ds,reason:'Auto',createdAt:Date.now()});
-  showToast(`Generated ${count} days!`,'success');closeModal('auto-modal');
+  try{await addDoc(collection(db, 'dayoffs'),{staffId:sId,date,reason,createdAt:Date.now()});showToast('Day-Off set!','success');closeModal('dayoff-modal');}catch(e){showToast('Error: '+e.message,'error');}
 };
 
-// CALENDAR
 window.calPrevMonth=()=>{calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();};
 window.calNextMonth=()=>{calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();};
 window.calToday=()=>{calYear=new Date().getFullYear();calMonth=new Date().getMonth();renderCalendar();};
@@ -1678,35 +1981,12 @@ window.renderCalendar=function(){
       ...cellLogs.slice(0,2).map(l=>{const s=staff.find(x=>x.id===l.staffId);return `<span class="cal-chip ${l.isLate?'late':'shift'}">${s?getInitials(s.name):l.staffName.split(' ')[0]}</span>`;}),
       ...cellDayoffs.slice(0,2).map(d=>{const s=staff.find(x=>x.id===d.staffId);return `<span class="cal-chip off">🏖 ${s?getInitials(s.name):'?'}</span>`;}),
     ];
-    return `<div class="${cls}" onclick="showCalDay('${dk}')" style="${isSat||isSun?'background:var(--bg);':''}" title="${dk}">
+    return `<div class="${cls}" style="${isSat||isSun?'background:var(--bg);':''}" title="${dk}">
       <div class="cal-day-num" style="${isSat||isSun?'color:#ef4444;':''}">${cell.date.getDate()}</div>
       ${chips.join('')}
       ${cellLogs.length+cellDayoffs.length>4?`<span class="cal-chip" style="background:var(--bg);color:var(--text3)">+${cellLogs.length+cellDayoffs.length-4}</span>`:''}
     </div>`;
   }).join('');
-};
-
-window.showCalDay=(dk)=>{
-  const detail=document.getElementById('cal-day-detail');
-  const dateLabel=document.getElementById('cal-detail-date');
-  const content=document.getElementById('cal-detail-content');
-  const d=new Date(dk);
-  dateLabel.textContent=d.toLocaleDateString('km-KH',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const dayLogs=logs.filter(l=>{return dateKey(new Date(l.timestamp))===dk;});
-  const dayDayoffs=dayoffs.filter(x=>x.date===dk);
-  let html='';
-  if(dayLogs.length){
-    html+=`<div style="font-weight:700;font-size:.82rem;color:var(--text3);margin-bottom:.4rem;text-transform:uppercase">Attendance</div>`;
-    html+=dayLogs.map(l=>{const s=staff.find(x=>x.id===l.staffId);const color=l.isLate?'#ef4444':l.action==='Check-In'?'#22c55e':'#f59e0b';return `<div style="display:flex;align-items:center;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:.5rem"><div class="avatar" style="width:28px;height:28px;font-size:.6rem;background:${avatarColor(l.staffName)}22;color:${avatarColor(l.staffName)}">${getInitials(l.staffName)}</div><span style="font-size:.85rem;font-weight:700">${l.staffName}</span></div><span style="font-size:.75rem;font-weight:700;color:${color};background:${color}18;padding:.15rem .45rem;border-radius:99px">${l.action} • ${fmtTime(l.timestamp)}</span></div>`;}).join('');
-  }
-  if(dayDayoffs.length){
-    html+=`<div style="font-weight:700;font-size:.82rem;color:var(--text3);margin-top:.75rem;margin-bottom:.4rem;text-transform:uppercase">Day-Offs</div>`;
-    html+=dayDayoffs.map(d=>{const s=staff.find(x=>x.id===d.staffId);return `<div style="display:flex;align-items:center;gap:.5rem;padding:.4rem 0;border-bottom:1px solid var(--border)"><span style="font-size:1rem">🏖️</span><span style="font-weight:700;font-size:.88rem">${s?.name||'Unknown'}</span>${d.reason?`<span style="font-size:.75rem;color:var(--text3)">• ${d.reason}</span>`:''}</div>`;}).join('');
-  }
-  if(!html)html='<p style="color:var(--text3);font-size:.88rem;text-align:center;padding:1rem">No records for this day</p>';
-  content.innerHTML=html;
-  detail.style.display='block';
-  detail.scrollIntoView({behavior:'smooth',block:'nearest'});
 };
 
 // SHIFT PLANNER
@@ -1717,10 +1997,6 @@ function renderPlannerHeaders(){
   const lbl=document.getElementById('planner-week-label');
   const wEnd=addDays(plannerWeekStart,6);
   if(lbl)lbl.textContent=`${plannerWeekStart.toLocaleDateString()} – ${wEnd.toLocaleDateString()}`;
-  hdr.innerHTML='<div style="padding:.3rem .5rem;font-size:.7rem;font-weight:900;color:var(--text3)">Staff</div>'+days.map((d,i)=>{
-    const dd=addDays(plannerWeekStart,i),isToday=dateKey(dd)===dateKey(new Date()),isSat=i===5,isSun=i===6;
-    return `<div style="text-align:center;font-size:.7rem;font-weight:900;padding:.3rem;border-radius:6px;background:${isToday?'var(--brand-light)':isSat||isSun?'var(--bg)':'transparent'};color:${isToday?'var(--brand)':isSat||isSun?'#ef4444':'var(--text3)'}"><div>${d}</div><div style="font-size:.65rem;font-weight:600;opacity:.75">${dd.getDate()}</div></div>`;
-  }).join('');
   renderPlannerBody();
 }
 function renderPlannerBody(){
@@ -1757,7 +2033,7 @@ window.broadcastShiftPlan=async()=>{
     for(let i=0;i<7;i++){const dk=dateKey(addDays(plannerWeekStart,i));const st=shiftPlan[`${s.id}_${dk}`]||'work';slots.push(st==='work'?'✅':st==='off'?'🏖️':st==='leave'?'🤒':'—');}
     row+=days.map((d,i)=>`${d}:${slots[i]}`).join(' | ');text+=row+'\n';
   });
-  try{await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TG_CHAT,text,parse_mode:'HTML'})});showToast('Plan sent!','success');}catch(e){showToast('Error','error');}
+  try{sendTG(text);showToast('Plan sent!','success');}catch(e){showToast('Error','error');}
 };
 
 // ADVANCED ANALYTICS
@@ -1765,7 +2041,7 @@ window.renderAnalytics=function(){
   const d=new Date(),cm=d.getMonth(),cy=d.getFullYear();
   const mLogs=logs.filter(l=>{const ld=new Date(l.timestamp);return ld.getMonth()===cm&&ld.getFullYear()===cy;});
   const mCI=mLogs.filter(l=>l.action==='Check-In'),mCO=mLogs.filter(l=>l.action==='Check-Out');
-  const mDO=dayoffs.filter(x=>{const dd=new Date(x.date);return dd.getMonth()===cm&&dd.getFullYear()===cy;});
+  const mDO=dayoffs.filter(x=>{const dd=new Date(x.date);return dd.getMonth()===cm&&ld.getFullYear()===cy;});
   const total=staff.length,workDays=Math.max(1,new Date().getDate());
   const attRate=total?Math.round((mCI.length/(total*workDays))*100):0;
   const lateRate=mCI.length?Math.round((mCI.filter(l=>l.isLate).length/mCI.length)*100):0;
@@ -1780,13 +2056,72 @@ window.renderAnalytics=function(){
   const ctx3=document.getElementById('statusChart').getContext('2d');
   if(statusChart)statusChart.destroy();
   statusChart=new Chart(ctx3,{type:'doughnut',data:{labels:['On Time','Late'],datasets:[{data:[onTime,late],backgroundColor:['var(--brand)','#ef4444'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#94a3b8'}}}}});
-  const topLate=document.getElementById('top-late-list'),lateByStaff=staff.map(s=>({name:s.name,count:mCI.filter(l=>l.staffId===s.id&&l.isLate).length})).filter(x=>x.count>0).sort((a,b)=>b.count-a.count).slice(0,5);
+
+  // RENDER ADVANCED TOP-LATE AND TOP-PRESENT LISTS
+  const ms=new Date(),startM=new Date(ms.getFullYear(),ms.getMonth(),1).getTime();
+  const mCI_currentMonth=logs.filter(l=>{const ld=new Date(l.timestamp);return ld.getMonth()===ms.getMonth()&&ld.getFullYear()===ms.getFullYear()&&l.action==='Check-In';});
+  const topLate=document.getElementById('top-late-list'),lateByStaff=staff.map(s=>({name:s.name,count:mCI_currentMonth.filter(l=>l.staffId===s.id&&l.isLate).length})).filter(x=>x.count>0).sort((a,b)=>b.count-a.count).slice(0,5);
   topLate.innerHTML=lateByStaff.length?lateByStaff.map((x,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:.5rem"><span style="font-size:.72rem;font-weight:900;color:var(--text3);width:16px">${i+1}</span><span style="font-size:.85rem;font-weight:700">${x.name}</span></div><span class="badge badge-red">${x.count}×</span></div>`).join(''):'<p style="color:var(--text3);font-size:.82rem">No late records</p>';
-  const topPres=document.getElementById('top-present-list'),presByStaff=staff.map(s=>({name:s.name,days:new Set(mCI.filter(l=>l.staffId===s.id).map(l=>new Date(l.timestamp).toDateString())).size})).sort((a,b)=>b.days-a.days).slice(0,5);
+  const topPres=document.getElementById('top-present-list'),presByStaff=staff.map(s=>({name:s.name,days:new Set(mCI_currentMonth.filter(l=>l.staffId===s.id).map(l=>new Date(l.timestamp).toDateString())).size})).sort((a,b)=>b.days-a.days).slice(0,5);
   topPres.innerHTML=presByStaff.length?presByStaff.map((x,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:.5rem"><span style="font-size:.72rem;font-weight:900;color:var(--text3);width:16px">${i+1}</span><span style="font-size:.85rem;font-weight:700">${x.name}</span></div><span class="badge badge-green">${x.days}d</span></div>`).join(''):'<p style="color:var(--text3);font-size:.82rem">No data</p>';
 };
 
-// DOCUMENTS (WITH PREVIEW CAPABILITY)
+// DYNAMIC DOCUMENT CATEGORIES ENGINE
+function renderDocCategoriesConfig() {
+  const container = document.getElementById('doc-categories-list');
+  if(!container) return;
+  const defaults = ['id', 'contract', 'certificate', 'resume', 'other'];
+  const formattedDefaults = {
+    id: 'ID Card / Passport', contract: 'Employment Contract', certificate: 'Health Certificate',
+    resume: 'Resume / Curriculum Vitae', other: 'Other Annexes'
+  };
+  
+  let html = `<div class="text-[10px] font-bold text-slate-400 mt-2 mb-1">DEFAULT SYSTEM CATEGORIES</div>`;
+  html += Object.entries(formattedDefaults).map(([k,v])=>`
+    <div class="flex items-center justify-between p-1.5 rounded bg-slate-100 dark:bg-slate-900 text-xs font-medium text-slate-600 dark:text-slate-400">
+      <span>• ${v}</span> <span class="text-[8px] font-bold uppercase opacity-60">System</span>
+    </div>
+  `).join('');
+
+  if(docCategories.length) {
+    html += `<div class="text-[10px] font-bold text-slate-400 mt-4 mb-1">CUSTOM USER CATEGORIES</div>`;
+    html += docCategories.map(cat => `
+      <div class="flex items-center justify-between p-1.5 rounded border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs text-slate-600 dark:text-slate-400 font-bold">
+        <span>• ${cat.name}</span>
+        <button onclick="delDB('doc_categories','${cat.id}')" class="text-red-500 hover:text-red-700 p-0.5"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
+      </div>
+    `).join('');
+  }
+  container.innerHTML = html;
+}
+
+window.addCustomDocCategory=async()=>{
+  const nameInput = document.getElementById('new-doc-cat');
+  const name = nameInput.value.trim();
+  if(!name) return showToast('Please enter category name','warning');
+  try {
+    await addDoc(collection(db, 'doc_categories'), { name, createdAt: Date.now() });
+    nameInput.value = '';
+    showToast('Document category created!','success');
+  } catch(e) { showToast(e.message,'error'); }
+};
+
+function populateDocCategoryUploadDropdown() {
+  const select = document.getElementById('up-type');
+  if(!select) return;
+  const defaults = [
+    {id: 'id', name: 'ID Card / Passport'},
+    {id: 'contract', name: 'Employment Contract'},
+    {id: 'certificate', name: 'Health Certificate / Degree'},
+    {id: 'resume', name: 'Resume'},
+    {id: 'other', name: 'Other Documentation'}
+  ];
+  const custom = docCategories.map(c=>({id: c.id, name: c.name}));
+  const merged = [...defaults, ...custom];
+  select.innerHTML = merged.map(o=>`<option value="${o.id}">${o.name}</option>`).join('');
+}
+
+// STAFF DOCUMENTS UPLOADER & BASE64 COMPRESSION
 let currentFileDataURL = null;
 let currentFileType = null;
 
@@ -1801,12 +2136,14 @@ window.renderDocuments=function(){
   
   grid.innerHTML=filtered.map(doc_=>{
     const s=staff.find(x=>x.id===doc_.staffId);
-    const ic=typeIcon[doc_.type]||'fa-file';
-    const tc=typeColor[doc_.type]||'#94a3b8';
-    
-    // Make card clickable if it contains data
+    const ic=typeIcon[doc_.type] || 'fa-file';
+    const tc=typeColor[doc_.type] || '#8b5cf6';
     const isClickable = doc_.fileData ? `onclick="previewDoc('${doc_.id}')" class="card doc-card"` : `class="card"`;
     
+    // Find custom category label if it's dynamic
+    const customCat = docCategories.find(c=>c.id===doc_.type);
+    const catLabel = customCat ? customCat.name : (doc_.type ? doc_.type.toUpperCase() : 'OTHER');
+
     return `<div ${isClickable} style="padding:1.1rem; position:relative;">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.6rem">
         <div style="width:40px;height:40px;border-radius:10px;background:${tc}18;display:flex;align-items:center;justify-content:center;color:${tc}"><i class="fa-solid ${ic}"></i></div>
@@ -1816,7 +2153,7 @@ window.renderDocuments=function(){
       <div style="font-size:.75rem;color:var(--text3);margin-bottom:.35rem">${s?.name||'Unknown'}</div>
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div style="font-size:.7rem;color:var(--text3)">${new Date(doc_.uploadedAt).toLocaleDateString()}</div>
-        <span style="font-size:.65rem;background:var(--bg);padding:2px 6px;border-radius:4px;border:1px solid var(--border)">${doc_.type.toUpperCase()}</span>
+        <span style="font-size:.65rem;background:var(--bg);padding:2px 6px;border-radius:4px;border:1px solid var(--border)">${catLabel}</span>
       </div>
     </div>`;
   }).join('');
@@ -1827,6 +2164,7 @@ window.openUploadModal=()=>{
     document.getElementById('file-name-display').textContent='';
     currentFileDataURL=null;
     currentFileType=null;
+    populateDocCategoryUploadDropdown();
     document.getElementById('upload-modal').style.display='flex';
 };
 
@@ -1839,22 +2177,20 @@ window.handleFileSelect=function(input){
   const reader = new FileReader();
   reader.onload = function(e) {
     if(file.type.startsWith('image/')) {
-        // Compress image to fit within Firebase doc size limits
         const img = new Image();
         img.onload = function() {
             const canvas = document.createElement('canvas');
             let w = img.width, h = img.height;
-            const maxW = 1200, maxH = 1200;
+            const maxW = 800, maxH = 800;
             if(w>maxW) { h = Math.round((maxW/w)*h); w = maxW; }
             if(h>maxH) { w = Math.round((maxH/h)*w); h = maxH; }
             canvas.width = w; canvas.height = h;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, w, h);
-            currentFileDataURL = canvas.toDataURL('image/jpeg', 0.7);
+            currentFileDataURL = canvas.toDataURL('image/jpeg', 0.65);
         };
         img.src = e.target.result;
     } else {
-        // For PDF or other files, store raw base64 (Note: large PDFs might fail Firestore 1MB limit)
         currentFileDataURL = e.target.result; 
     }
   };
@@ -1865,49 +2201,33 @@ window.submitUpload=async()=>{
   const sId=document.getElementById('up-staff').value;
   const type=document.getElementById('up-type').value;
   let name=document.getElementById('up-name').value.trim();
-  
-  if(!sId) return showToast('សូមជ្រើសរើសបុគ្គលិក / Select staff','error');
-  if(!name) {
-      name = document.getElementById('file-name-display').textContent || 'Untitled Document';
-  }
-  
+  if(!sId) return showToast('Please select staff','error');
+  if(!name) { name = document.getElementById('file-name-display').textContent || 'Untitled'; }
   try {
-      await addDoc(collection(db,'documents'),{
-          staffId:sId, 
-          type, 
-          name, 
-          mimeType: currentFileType || '',
-          fileData: currentFileDataURL || '', // Store the Base64 string directly
-          uploadedAt:Date.now()
-      });
-      showToast('រក្សាទុកឯកសារជោគជ័យ! / Document saved!','success');
+      await addDoc(collection(db, 'documents'),{staffId:sId, type, name, mimeType: currentFileType || '', fileData: currentFileDataURL || '', uploadedAt:Date.now()});
+      showToast('Document uploaded successfully!','success');
       closeModal('upload-modal');
-  }catch(e){
-      showToast('Error: '+e.message,'error');
-  }
+  }catch(e){showToast('Error: '+e.message,'error');}
 };
 
 window.previewDoc = (id) => {
     const d = documents.find(x=>x.id===id);
-    if(!d || !d.fileData) return showToast('មិនមានឯកសារសម្រាប់មើល / No preview available', 'warning');
-    
+    if(!d || !d.fileData) return showToast('No preview available', 'warning');
     const cont = document.getElementById('preview-content');
     document.getElementById('preview-title-text').textContent = d.name;
-    
     if(d.mimeType && d.mimeType.startsWith('image/')) {
-        cont.innerHTML = `<img src="${d.fileData}" style="max-width:100%;max-height:75vh;object-fit:contain;border-radius:8px;box-shadow:var(--shadow)">`;
+        cont.innerHTML = `<img src="${d.fileData}" style="max-width:100%;max-height:75vh;object-fit:contain;border-radius:8px;">`;
     } else if (d.mimeType === 'application/pdf' || d.fileData.startsWith('data:application/pdf')) {
-        cont.innerHTML = `<iframe src="${d.fileData}" style="width:100%;height:75vh;border:none;border-radius:8px;box-shadow:var(--shadow)"></iframe>`;
+        cont.innerHTML = `<iframe src="${d.fileData}" style="width:100%;height:75vh;border:none;border-radius:8px;"></iframe>`;
     } else {
-        cont.innerHTML = `<i class="fa-solid fa-file text-4xl text-slate-300 mb-3"></i><p style="color:var(--text3)">មិនអាចបង្ហាញឯកសារនេះបានទេ / Preview not supported for this type.</p><a href="${d.fileData}" download="${d.name}" class="btn btn-primary mt-4" style="margin-top:1rem">ទាញយក / Download</a>`;
+        cont.innerHTML = `<i class="fa-solid fa-file text-4xl mb-3"></i><p>Preview not supported. <a href="${d.fileData}" download="${d.name}" class="btn btn-primary mt-4">Download</a></p>`;
     }
-    
     document.getElementById('preview-modal').style.display='flex';
 }
 
-// TELEGRAM ALERTS
+// TELEGRAM ALERTS TEMPLATES
 function renderAlertTemplates(){
-  const c=document.getElementById('alert-templates-wrap');if(!c)return;
+  const c=document.getElementById('alert-templates-wrap');if(!c) return;
   c.innerHTML=Object.entries(TMPL_LABELS).map(([key,label])=>`
     <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden">
       <div style="background:var(--bg);padding:.65rem 1rem;font-weight:700;font-size:.82rem;display:flex;justify-content:space-between;align-items:center">
@@ -1931,33 +2251,29 @@ window.enablePushNotifications=async()=>{if(!('Notification' in window))return s
 window.saveBotCommand=async()=>{const cmd=document.getElementById('bot-cmd').value.trim(),reply=document.getElementById('bot-reply').value.trim();if(!cmd||!reply)return showToast('Fill all fields','error');const fc=cmd.startsWith('/')?cmd:'/'+cmd;try{await addDoc(collection(db,'bot_commands'),{command:fc,replyText:reply,createdAt:Date.now()});document.getElementById('bot-cmd').value='';document.getElementById('bot-reply').value='';showToast('Command saved!','success');}catch(e){showToast('Error','error');}};
 function renderBotCommands(){const c=document.getElementById('bot-cmds-container');if(!commands.length){c.innerHTML='<p style="color:var(--text3);text-align:center;padding:1.5rem">No commands yet</p>';return;}c.innerHTML=commands.map(cmd=>`<div style="padding:.85rem 1rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem"><div style="flex:1;min-width:0"><div style="font-weight:900;font-size:.8rem;background:var(--brand-light);color:var(--brand);border:1px solid;display:inline-block;padding:.15rem .5rem;border-radius:6px;margin-bottom:.4rem">${cmd.command}</div><div style="font-size:.82rem;color:var(--text2);white-space:pre-wrap">${cmd.replyText}</div></div><button onclick="delDB('bot_commands','${cmd.id}')" style="width:28px;height:28px;border-radius:8px;border:1px solid #fee2e2;background:#fef2f2;cursor:pointer;color:#ef4444;font-size:.72rem;flex-shrink:0"><i class="fa-solid fa-trash"></i></button></div>`).join('');}
 
-// LOG WORKSPACE EDITOR
+// LOG EDITING
 window.openEditLog=(id)=>{const log=logs.find(l=>l.id===id);if(!log)return;document.getElementById('el-id').value=id;document.getElementById('el-action').value=log.action;document.getElementById('el-status').value=log.status||'On Time';document.getElementById('edit-log-modal').style.display='flex';};
-window.submitEditLog=async()=>{const id=document.getElementById('el-id').value,action=document.getElementById('el-action').value,status=document.getElementById('el-status').value;const isLate=status.toLowerCase().includes('late'),isEarly=status.toLowerCase().includes('early');try{await updateDoc(doc(db,'logs',id),{action,status,isLate,isEarly});showToast('Log updated!','success');closeModal('edit-log-modal');}catch(e){showToast('Error: '+e.message,'error');}};
+window.submitEditLog=async()=>{const id=document.getElementById('el-id').value,action=document.getElementById('el-action').value,status=document.getElementById('el-status').value;const isLate=status.toLowerCase().includes('late'),isEarly=status.toLowerCase().includes('early');try{await updateDoc(doc(db, 'logs', id),{action,status,isLate,isEarly});showToast('Log updated!','success');closeModal('edit-log-modal');}catch(e){showToast('Error: '+e.message,'error');}};
 
-// QR CODES
+// QR CODE MANAGEMENT
 window.openQR=(id,name,action)=>{const base=location.href.split('?')[0],url=`${base}?staffId=${id}&action=${action}`;document.getElementById('qr-title').textContent=name;document.getElementById('qr-sub').innerHTML=`Scan to <strong style="color:${action==='in'?'#22c55e':'#f59e0b'};text-transform:uppercase">${action==='in'?'Check-In':'Check-Out'}</strong>`;document.getElementById('qr-img').src=`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;document.getElementById('qr-url').textContent=url;document.getElementById('qr-modal').style.display='flex';};
 
-// FIRESTORE SAFE DELETION ROUTINES
+// WORKSPACE DATA GATES
 window.delDB=async(col,id)=>{
   customConfirm("Delete Item", "Are you sure you want to permanently delete this item?", async () => {
-    try{
-      await deleteDoc(doc(db,col,id));
-      showToast('Deleted!','success');
-    }catch(e){
-      showToast('Error: ' + e.message, 'error');
-    }
+    try{ await deleteDoc(doc(db, col, id)); showToast('Deleted!','success'); }catch(e){ showToast('Error: ' + e.message, 'error'); }
   });
 };
 
-// TELEGRAM DISPATCH PIPELINES
+// TELEGRAM ANALYTICS DISPATCH CHANNELS
 window.broadcastBestStaff=async()=>{
   const ms=new Date(),startM=new Date(ms.getFullYear(),ms.getMonth(),1).getTime();let best=null,minL=Infinity;
   staff.forEach(s=>{const mci=logs.filter(l=>l.staffId===s.id&&l.action==='Check-In'&&l.timestamp>=startM);const late=mci.filter(l=>l.isLate).length;if(mci.length>0&&late<minL){minL=late;best=s;}});
   if(!best)return showToast('No data','warning');
   const m=ms.toLocaleString('km-KH',{month:'long',year:'numeric'}),text=`🏆 <b>Best Staff – ${m}</b>\n\n🥇 <b>${best.name}</b>\n${best.role?`📋 ${best.role}\n`:''}✅ Late: ${minL}×\n\nសូមអបអរ! 🎉`;
-  try{await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TG_CHAT,text,parse_mode:'HTML'})});showToast('Sent!','success');}catch(e){showToast('Error','error');}
+  try{sendTG(text);showToast('Best staff broadcasted!','success');}catch(e){showToast('Telegram Error','error');}
 };
+
 window.broadcastDailySummary=async()=>{
   const ts=todayStart(),tl=logs.filter(l=>l.timestamp>=ts);
   const pIds=new Set(tl.filter(l=>l.action==='Check-In').map(l=>l.staffId));
@@ -1966,42 +2282,64 @@ window.broadcastDailySummary=async()=>{
   let text=applyTmpl('daily_summary',vars);
   if(late.length)text+='\n\n<b>🔴 Late:</b>\n'+late.map(l=>`   • ${l.staffName} (${l.status})`).join('\n');
   if(absent.length)text+='\n\n<b>❌ Absent:</b>\n'+absent.map(s=>`   • ${s.name}`).join('\n');
-  try{await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TG_CHAT,text,parse_mode:'HTML'})});showToast('Summary sent!','success');}catch(e){showToast('Error','error');}
+  try{sendTG(text);showToast('Summary broadcasted!','success');}catch(e){showToast('Telegram Error','error');}
 };
+
 window.broadcastPerformance=async(period)=>{
   if(!window._perfData?.length)return showToast('No data','warning');
   const ps=period==='week'?'This Week':new Date().toLocaleString('km-KH',{month:'long',year:'numeric'});
   let text=`📊 <b>Performance – ${ps}</b>\n\n`;
   window._perfData.forEach(p=>{const ev=period==='week'?p.weekEval:p.monthEval,dot=ev==='Good'?'🟢':ev==='Nice'?'🟡':'🔴';text+=`${dot} <b>${p.name}:</b> ${ev}\n`;});
-  try{await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TG_CHAT,text,parse_mode:'HTML'})});showToast('Sent!','success');}catch(e){showToast('Error','error');}
+  try{sendTG(text);showToast('Performance broadcasted!','success');}catch(e){showToast('Telegram Error','error');}
 };
-window.broadcastRoster=async()=>{
-  const fEl=document.getElementById('dayoff-month');let d=new Date();
-  if(fEl?.value){const[yr,mo]=fEl.value.split('-');d=new Date(yr,parseInt(mo)-1,1);}
-  const month=d.toLocaleString('km-KH',{month:'long',year:'numeric'}),cm=d.getMonth(),cy=d.getFullYear();
-  const offs=dayoffs.filter(x=>{const dd=new Date(x.date);return dd.getMonth()===cm&&dd.getFullYear()===cy;});
-  if(!offs.length)return showToast('No day-offs','warning');
-  let text=`📅 <b>Day-Off – ${month}</b>\n\n`;const map={};
-  offs.forEach(o=>{const s=staff.find(x=>x.id===o.staffId);if(s){if(!map[s.name])map[s.name]=[];map[s.name].push(new Date(o.date).getDate());}});
-  for(const[name,days]of Object.entries(map)){days.sort((a,b)=>a-b);text+=`🧑 <b>${name}:</b> ${days.join(', ')}\n`;}
-  try{await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TG_CHAT,text,parse_mode:'HTML'})});showToast('Roster sent!','success');}catch(e){showToast('Error','error');}
+
+window.broadcastAnalytics = async () => {
+  const d=new Date(),cm=d.getMonth(),cy=d.getFullYear();
+  const mLogs=logs.filter(l=>{const ld=new Date(l.timestamp);return ld.getMonth()===cm&&ld.getFullYear()===cy;});
+  const mCI=mLogs.filter(l=>l.action==='Check-In');
+  const total=staff.length,workDays=Math.max(1,new Date().getDate());
+  const attRate=total?Math.round((mCI.length/(total*workDays))*100):0;
+  const lateRate=mCI.length?Math.round((mCI.filter(l=>l.isLate).length/mCI.length)*100):0;
+  let text = `📈 <b>របាយការណ៍វិភាគវត្តមាន / Attendance Analytics</b>\n📅 <i>${new Date().toLocaleDateString('km-KH')}</i>\n\n`;
+  text += `• <b>Attendance Rate:</b> <code>${attRate}%</code>\n`;
+  text += `• <b>Late Check-In Rate:</b> <code>${lateRate}%</code>\n`;
+  text += `• <b>Active Work Strength:</b> <code>${total} members</code>\n`;
+  try {
+    sendTG(text);
+    showToast('Analytics summary sent to Telegram!', 'success');
+  } catch(e) { showToast('Telegram Dispatch Error', 'error'); }
+};
+
+window.broadcastStaffList = async () => {
+  let text = `👥 <b>បញ្ជីឈ្មោះបុគ្គលិក / Staff Directory</b>\n📅 <i>${new Date().toLocaleDateString('km-KH')}</i>\n\n`;
+  staff.forEach((s, idx) => {
+    const dNames = (s.deptIds || []).map(id => getCatName(id)).filter(Boolean).join(', ') || 'None';
+    text += `${idx + 1}. <b>${s.name}</b>\n`;
+    text += `   • <i>Role:</i> ${s.role || 'Staff'}\n`;
+    text += `   • <i>Shift:</i> <code>${s.shiftStart} - ${s.shiftEnd}</code>\n`;
+    text += `   • <i>Depts:</i> ${dNames}\n\n`;
+  });
+  try {
+    sendTG(text);
+    showToast('Staff Directory broadcasted successfully!', 'success');
+  } catch(e) { showToast('Telegram Dispatch Error', 'error'); }
 };
 
 // CSV EXPORTS
-window.exportLogsCSV=()=>{const rows=[['Name','Action','Status','Date','Time']];logs.forEach(l=>{const dt=new Date(l.timestamp);rows.push([l.staffName,l.action,l.status||'',dt.toLocaleDateString(),dt.toLocaleTimeString()]);});downloadCSV(rows,`attendance_${todayStr()}.csv`);showToast('CSV exported!','success');};
-window.exportPayrollCSV=()=>{const d=new Date(),cm=d.getMonth(),cy=d.getFullYear();const mL=logs.filter(l=>{const ld=new Date(l.timestamp);return ld.getMonth()===cm&&ld.getFullYear()===cy;});const mD=dayoffs.filter(x=>{const dd=new Date(x.date);return dd.getMonth()===cm&&dd.getFullYear()===cy;});const rows=[['Name','Dept','Salary','Days Present','Day-Off','Earned']];staff.forEach(s=>{const sl=mL.filter(l=>l.staffId===s.id&&l.action==='Check-In');const sd=mD.filter(x=>x.staffId===s.id).length;const p=new Set(sl.map(l=>new Date(l.timestamp).toDateString())).size;const b=parseFloat(s.salary)||0;const est=((b/30)*(p+sd)).toFixed(2);const dept=categories.find(c=>c.id===s.deptId);rows.push([s.name,dept?.name||'',b,p,sd,est]);});downloadCSV(rows,`payroll_${d.getFullYear()}_${d.getMonth()+1}.csv`);showToast('Payroll exported!','success');};
+window.exportLogsCSV=()=>{const rows=[['Name','Action','Status','Branch','Date','Time']];logs.forEach(l=>{const dt=new Date(l.timestamp);rows.push([l.staffName,l.action,l.status||'',l.branch||'Main',dt.toLocaleDateString(),dt.toLocaleTimeString()]);});downloadCSV(rows,`attendance_${todayStr()}.csv`);showToast('CSV exported!','success');};
+window.exportPayrollCSV=()=>{const d=new Date(),cm=d.getMonth(),cy=d.getFullYear();const mL=logs.filter(l=>{const ld=new Date(l.timestamp);return ld.getMonth()===cm&&ld.getFullYear()===cy;});const mD=dayoffs.filter(x=>{const dd=new Date(x.date);return dd.getMonth()===cm&&ld.getFullYear()===cy;});const rows=[['Name','Dept','Salary','Days Present','Day-Off','Earned']];staff.forEach(s=>{const sl=mL.filter(l=>l.staffId===s.id&&l.action==='Check-In');const sd=mD.filter(x=>x.staffId===s.id).length;const p=new Set(sl.map(l=>new Date(l.timestamp).toDateString())).size;const b=parseFloat(s.salary)||0;const est=((b/30)*(p+sd)).toFixed(2);const firstId = s.deptIds && s.deptIds.length ? s.deptIds[0] : '';const dept=categories.find(c=>c.id===firstId);rows.push([s.name,dept?.name||'',b,p,sd,est]);});downloadCSV(rows,`payroll_${d.getFullYear()}_${d.getMonth()+1}.csv`);showToast('Payroll exported!','success');};
 function downloadCSV(rows,fn){const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=fn;a.click();URL.revokeObjectURL(url);}
 
 // TG UPDATES LONG POLL
 async function pollTG(){
-  try{if(commands.length){const res=await fetch(`https://api.telegram.org/bot${TG_TOKEN}/getUpdates?offset=${lastUpdateId+1}&timeout=5`);const data=await res.json();if(data.ok&&data.result.length){for(const u of data.result){lastUpdateId=u.update_id;if(u.message?.text){const t=u.message.text.trim();const cmd=commands.find(c=>t.startsWith(c.command));if(cmd)await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:u.message.chat.id,text:cmd.replyText})});}}}}}catch(e){}
+  try{if(commands.length){const res=await fetch(`https://api.telegram.org/bot${TG_TOKEN}/getUpdates?offset=${lastUpdateId+1}&timeout=5`);const data=await res.json();if(data.ok&&data.result.length){for(const u of data.result){lastUpdateId=u.update_id;if(u.message?.text){const t=u.message.text.trim();const cmd=commands.find(c=>t.startsWith(c.command));if(cmd)sendTG(cmd.replyText);}}}}}catch(e){}
   setTimeout(pollTG,3000);
 }
 </script>
 
 <!-- UI CONTROLS SCRIPT -->
 <script>
-const TAB_IDS=['dashboard','logs','staff','categories','payroll','calendar','planner','analytics','documents','bot','settings'];
+const TAB_IDS=['dashboard','logs','staff','stafflist','categories','payroll','calendar','planner','analytics','documents','bot','settings'];
 window.switchTab=function(id){
   TAB_IDS.forEach(t=>{const sec=document.getElementById('section-'+t);const btn=document.getElementById('tab-'+t);if(sec)sec.classList.remove('active');if(btn)btn.classList.remove('active');});
   const sec=document.getElementById('section-'+id),btn=document.getElementById('tab-'+id);
@@ -2011,8 +2349,8 @@ window.switchTab=function(id){
   if(id==='analytics'&&window.renderAnalytics)setTimeout(window.renderAnalytics,80);
   if(id==='calendar'&&window.renderCalendar)setTimeout(window.renderCalendar,80);
   if(id==='planner'&&window.renderPlannerHeaders)setTimeout(window.renderPlannerHeaders,80);
+  if(id==='stafflist'&&window.renderStaffList)setTimeout(window.renderStaffList,80);
   
-  // Fit map properly when setting tab opens
   if(id==='settings' && mapInst) {
     setTimeout(() => { mapInst.invalidateSize(); }, 120);
   }
