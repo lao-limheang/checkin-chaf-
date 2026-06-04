@@ -163,6 +163,7 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
 .cal-cell.today{border-color:var(--brand);background:var(--brand-light)}
 .cal-cell.has-dayoff{border-color:#8b5cf6}
 .cal-cell.has-shift{border-color:#3b82f6}
+.cal-cell.selected{border-color:var(--brand) !important;box-shadow:0 0 0 3px rgba(22,163,74,.25);background:var(--brand-light)}
 .cal-day-num{font-size:.7rem;font-weight:900;color:var(--text3);margin-bottom:2px}
 .cal-cell.today .cal-day-num{color:var(--brand);font-size:.8rem}
 .cal-chip{font-size:.58rem;font-weight:700;padding:1px 4px;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px;display:block}
@@ -547,6 +548,26 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
             </div>
           </div>
           <div class="cal-grid" id="cal-grid"></div>
+
+          <!-- CALENDAR DAY DETAILS PANEL -->
+          <div id="cal-details-panel" class="card p-5 mt-4 relative" style="display:none">
+            <button onclick="closeCalDetails()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl font-bold transition-all hover:scale-110">&times;</button>
+            <h3 id="cal-details-date" class="text-base font-black text-slate-800 dark:text-slate-100 mb-4"></h3>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Attendance Column -->
+              <div>
+                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-3">Attendance</h4>
+                <div id="cal-details-attendance" class="space-y-2"></div>
+              </div>
+              <!-- Dayoffs Column -->
+              <div>
+                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-3">Day-offs</h4>
+                <div id="cal-details-dayoffs" class="space-y-2"></div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -1100,6 +1121,7 @@ let payrollChart=null,dailyChart=null,statusChart=null;
 let mapInst=null,mapMarker1=null,mapMarker2=null,mapCircle1=null,mapCircle2=null;
 let lastUpdateId=0,notifications=[];
 let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
+let selectedCalDate = null; // Tracks the currently highlighted details cell
 let plannerWeekStart=getMonday(new Date());
 let reminderTimer=null;
 
@@ -1194,7 +1216,21 @@ function generateShades(hex) {
 function applyTmpl(key,vars={}){const t=alertTemplates[key]||DEFAULT_TMPLS[key]||'';return t.replace(/\{(\w+)\}/g,(_,k)=>vars[k]!==undefined?vars[k]:`{${k}}`);}
 window.sendTG=function(text){fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TG_CHAT,text,parse_mode:'HTML'})}).catch(()=>{});};
 function dist(la1,ln1,la2,ln2){const R=6371000,dL=(la2-la1)*Math.PI/180,dG=(ln2-ln1)*Math.PI/180;const a=Math.sin(dL/2)**2+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dG/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
-function fmtTime(ts){return new Date(ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
+
+// UTILITY TO FORMAT 24-HOUR TIME STRINGS (HH:MM) INTO 12-HOUR (HH:MM AM/PM)
+function fmt24To12(timeStr) {
+  if (!timeStr) return '';
+  const parts = timeStr.split(':');
+  if (parts.length < 2) return timeStr;
+  let h = parseInt(parts[0], 10);
+  const m = parts[1];
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12;
+  h = h ? h : 12;
+  return `${String(h).padStart(2, '0')}:${m} ${ampm}`;
+}
+
+function fmtTime(ts){return new Date(ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:true});}
 function fmtDate(ts){return new Date(ts).toLocaleDateString();}
 function todayStr(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function todayStart(){const d=new Date();d.setHours(0,0,0,0);return d.getTime();}
@@ -1229,7 +1265,7 @@ window.showToast=(msg,type='info',dur=3500)=>{
 async function addNotification(msg,type='info'){
   try {
     await addDoc(collection(db, 'notifications'), {
-      msg, type, time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), timestamp: Date.now()
+      msg, type, time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:true}), timestamp: Date.now()
     });
     if(Notification.permission==='granted') new Notification('Café Management',{body:msg});
   } catch(e) {}
@@ -1359,7 +1395,7 @@ async function processCheckin(id,actionCode,lat,lng,branchName){
     // Perform state synchronization back to current staff entity to record sequencing
     await updateDoc(doc(db, 'staff', id), { lastAction: actionTxt });
 
-    const vars={name:s.name,time:timeStr,date:dateStr,status,late_mins:diffMins,shift_start:s.shiftStart||'',shift_end:s.shiftEnd||'',branch:branchName};
+    const vars={name:s.name,time:timeStr,date:dateStr,status,late_mins:diffMins,shift_start:fmt24To12(s.shiftStart||''),shift_end:fmt24To12(s.shiftEnd||''),branch:branchName};
     if(actionCode==='in')sendTG(applyTmpl(diffMins>20?'checkin_late_severe':isLate?'checkin_late':'checkin_ontime',vars));
     else sendTG(applyTmpl(isEarly?'early_checkout':'checkout',vars));
     const color=actionCode==='in'?(isLate?'#ef4444':'#22c55e'):(isEarly?'#8b5cf6':'#f59e0b');
@@ -1424,7 +1460,7 @@ async function initAdmin(){
   if(localStorage.getItem('cafe-dark')==='1'){document.documentElement.classList.add('dark');document.getElementById('dark-btn').innerHTML='<i class="fa-solid fa-sun" style="font-size:.9rem"></i>';}
 }
 
-function startClock(){const el=document.getElementById('live-clock');const u=()=>el.textContent=new Date().toLocaleString([],{weekday:'short',year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});u();setInterval(u,1000);}
+function startClock(){const el=document.getElementById('live-clock');const u=()=>el.textContent=new Date().toLocaleString([],{weekday:'short',year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});u();setInterval(u,1000);}
 
 function applyTheme(themeName) {
   const t = THEMES[themeName] || THEMES.green;
@@ -1571,9 +1607,9 @@ async function checkReminders(){
     const diff=Math.floor((shiftTime-now)/60000);
     if(diff>0&&diff<=mins&&!sent[todayKey].includes(s.id)){
       sent[todayKey].push(s.id);
-      const vars={name:s.name,shift_start:s.shiftStart,date:new Date().toLocaleDateString('km-KH')};
+      const vars={name:s.name,shift_start:fmt24To12(s.shiftStart),date:new Date().toLocaleDateString('km-KH')};
       sendTG(applyTmpl('shift_reminder',vars));
-      addNotification(`⏰ Reminder sent: ${s.name} shift at ${s.shiftStart}`,'info');
+      addNotification(`⏰ Reminder sent: ${s.name} shift at ${fmt24To12(s.shiftStart)}`,'info');
     }
   }
   localStorage.setItem('reminded_today',JSON.stringify(sent));
@@ -1816,7 +1852,7 @@ window.renderStaff=function(){
           <button onclick="delDB('staff','${s.id}')" style="width:30px;height:30px;border-radius:8px;border:1px solid #fee2e2;background:#fef2f2;cursor:pointer;color:#ef4444;font-size:.72rem"><i class="fa-solid fa-trash"></i></button>
         </div>
       </div>
-      <div style="font-size:.8rem;color:var(--text2);margin-bottom:.4rem;display:flex;align-items:center;gap:.4rem"><i class="fa-regular fa-clock" style="color:var(--brand)"></i>${s.shiftStart||'06:00'} – ${s.shiftEnd||'15:00'}</div>
+      <div style="font-size:.8rem;color:var(--text2);margin-bottom:.4rem;display:flex;align-items:center;gap:.4rem"><i class="fa-regular fa-clock" style="color:var(--brand)"></i>${fmt24To12(s.shiftStart||'06:00')} – ${fmt24To12(s.shiftEnd||'15:00')}</div>
       <div style="font-size:.8rem;color:var(--text2);margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem"><i class="fa-solid fa-dollar-sign" style="color:#22c55e"></i><strong>$${s.salary||0}</strong>/month</div>
       ${deptBadges ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.75rem">${deptBadges}</div>` : ''}
       <div style="display:flex;gap:.4rem">
@@ -1838,7 +1874,7 @@ function renderStaffList(){
         <td class="p-3 font-bold text-slate-700 dark:text-slate-300">${s.name}</td>
         <td class="p-3 text-slate-500">${dNames}</td>
         <td class="p-3 text-slate-500">${s.role || 'Staff'}</td>
-        <td class="p-3 font-mono text-slate-500">${s.shiftStart} - ${s.shiftEnd}</td>
+        <td class="p-3 font-mono text-slate-500">${fmt24To12(s.shiftStart)} - ${fmt24To12(s.shiftEnd)}</td>
         <td class="p-3 text-right font-bold text-slate-700 dark:text-slate-300">$${s.salary || 0}</td>
       </tr>
     `;
@@ -1973,20 +2009,186 @@ window.renderCalendar=function(){
   grid.innerHTML=cells.map(cell=>{
     const dk=dateKey(cell.date);
     const isToday=dk===todayKey;
+    const isSelected=dk===selectedCalDate;
     const cellDayoffs=dayoffs.filter(d=>d.date===dk&&(!staffF||d.staffId===staffF));
     const cellLogs=logs.filter(l=>{const ld=new Date(l.timestamp);return dateKey(ld)===dk&&l.action==='Check-In'&&(!staffF||l.staffId===staffF);});
     const isSat=cell.date.getDay()===6,isSun=cell.date.getDay()===0;
-    let cls='cal-cell';if(!cell.current)cls+=' other-month';if(isToday)cls+=' today';if(cellDayoffs.length)cls+=' has-dayoff';else if(cellLogs.length)cls+=' has-shift';
+    let cls='cal-cell';
+    if(!cell.current)cls+=' other-month';
+    if(isToday)cls+=' today';
+    if(isSelected)cls+=' selected';
+    if(cellDayoffs.length)cls+=' has-dayoff';
+    else if(cellLogs.length)cls+=' has-shift';
+    
     const chips=[
       ...cellLogs.slice(0,2).map(l=>{const s=staff.find(x=>x.id===l.staffId);return `<span class="cal-chip ${l.isLate?'late':'shift'}">${s?getInitials(s.name):l.staffName.split(' ')[0]}</span>`;}),
       ...cellDayoffs.slice(0,2).map(d=>{const s=staff.find(x=>x.id===d.staffId);return `<span class="cal-chip off">🏖 ${s?getInitials(s.name):'?'}</span>`;}),
     ];
-    return `<div class="${cls}" style="${isSat||isSun?'background:var(--bg);':''}" title="${dk}">
+    return `<div class="${cls}" style="${isSat||isSun?'background:var(--bg);':''}" title="${dk}" onclick="showCalendarDayDetails('${dk}')">
       <div class="cal-day-num" style="${isSat||isSun?'color:#ef4444;':''}">${cell.date.getDate()}</div>
       ${chips.join('')}
       ${cellLogs.length+cellDayoffs.length>4?`<span class="cal-chip" style="background:var(--bg);color:var(--text3)">+${cellLogs.length+cellDayoffs.length-4}</span>`:''}
     </div>`;
   }).join('');
+
+  if(selectedCalDate) {
+    showCalendarDayDetails(selectedCalDate);
+  }
+};
+
+window.showCalendarDayDetails = function(dk) {
+  selectedCalDate = dk;
+  
+  document.querySelectorAll('.cal-cell').forEach(cell => {
+    if(cell.getAttribute('title') === dk) {
+      cell.classList.add('selected');
+    } else {
+      cell.classList.remove('selected');
+    }
+  });
+
+  const dt = new Date(dk + 'T12:00:00');
+  const lang = document.documentElement.getAttribute('data-lang') || 'km';
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate = dt.toLocaleDateString(lang === 'km' ? 'km-KH' : 'en-US', options);
+  
+  const dateHeader = document.getElementById('cal-details-date');
+  if(dateHeader) dateHeader.textContent = formattedDate;
+
+  // Filter all logs (Check-In & Check-Out) for this specific day
+  const dayLogs = logs.filter(l => {
+    const ld = new Date(l.timestamp);
+    return dateKey(ld) === dk;
+  });
+  dayLogs.sort((a,b) => b.timestamp - a.timestamp); // Newer first
+
+  const attContainer = document.getElementById('cal-details-attendance');
+  if(attContainer) {
+    if(!dayLogs.length) {
+      attContainer.innerHTML = `<p class="text-xs text-slate-400 py-2 dark:text-slate-500">គ្មានកំណត់ត្រាវត្តមានទេ / No attendance records</p>`;
+    } else {
+      // Calculate total work hours & minutes per staff on this specific date
+      const uniqueStaffIds = [...new Set(dayLogs.map(l => l.staffId))];
+      let summaryHTML = '';
+      
+      if (uniqueStaffIds.length > 0) {
+        summaryHTML = `
+          <div class="mt-4 p-3 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-100 dark:border-slate-800">
+            <h5 class="text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-calculator text-brand"></i> សរុបម៉ោងធ្វើការ / Working Hours Summary
+            </h5>
+            <div class="space-y-1.5">
+        `;
+        
+        uniqueStaffIds.forEach(sId => {
+          // Filter logs for this specific staff on this day, sorted oldest to newest
+          const sLogs = dayLogs.filter(l => l.staffId === sId).sort((a,b) => a.timestamp - b.timestamp);
+          const stName = sLogs[0]?.staffName || 'Unknown';
+          
+          let totalMs = 0;
+          let tempCheckIn = null;
+          
+          sLogs.forEach(l => {
+            if (l.action === 'Check-In') {
+              tempCheckIn = l.timestamp;
+            } else if (l.action === 'Check-Out') {
+              if (tempCheckIn) {
+                totalMs += (l.timestamp - tempCheckIn);
+                tempCheckIn = null; // Clear paired check-in
+              }
+            }
+          });
+          
+          const totalMins = Math.floor(totalMs / 60000);
+          const hrs = Math.floor(totalMins / 60);
+          const mins = totalMins % 60;
+          
+          let durationStr = '';
+          if (totalMs > 0) {
+            durationStr = `<span class="text-emerald-600 dark:text-emerald-400 font-black">${hrs} ម៉ោង ${mins} នាទី</span> <span class="text-[9px] text-slate-400">(${hrs}h ${mins}m)</span>`;
+          } else {
+            durationStr = `<span class="text-slate-400 dark:text-slate-500 italic text-[10px]">មិនទាន់គ្រប់វេន (Check-In Only)</span>`;
+          }
+          
+          summaryHTML += `
+            <div class="flex justify-between items-center text-xs py-1 border-b border-dashed border-slate-100 dark:border-slate-800/50 last:border-0">
+              <span class="font-bold text-slate-600 dark:text-slate-400">${stName}</span>
+              <span>${durationStr}</span>
+            </div>
+          `;
+        });
+        
+        summaryHTML += `
+            </div>
+          </div>
+        `;
+      }
+
+      attContainer.innerHTML = dayLogs.map(l => {
+        const isCI = l.action === 'Check-In';
+        const color = l.isLate ? 'red' : l.isEarly ? 'purple' : isCI ? 'green' : 'amber';
+        
+        const badgeClasses = {
+          green: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900',
+          red: 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/20 dark:text-rose-400 dark:border-rose-900',
+          purple: 'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950/20 dark:text-violet-400 dark:border-rose-900',
+          amber: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/20 dark:text-amber-400 dark:border-rose-900',
+        };
+        
+        return `
+          <div class="flex items-center justify-between p-2 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 animate-fade-in">
+            <div class="flex items-center gap-3">
+              <div class="avatar" style="width:32px;height:32px;font-size:.7rem;background:${avatarColor(l.staffName)}22;color:${avatarColor(l.staffName)}">${getInitials(l.staffName)}</div>
+              <span class="text-xs font-bold text-slate-700 dark:text-slate-300">${l.staffName}</span>
+            </div>
+            <span class="text-[10px] font-bold border px-2.5 py-1 rounded-full ${badgeClasses[color]}">
+              ${l.action} • ${fmtTime(l.timestamp)} ${l.status && l.status !== l.action ? `(${l.status})` : ''}
+            </span>
+          </div>
+        `;
+      }).join('') + summaryHTML;
+    }
+  }
+
+  // Filter all day-offs for this day
+  const dayOffsForDay = dayoffs.filter(d => d.date === dk);
+  const doContainer = document.getElementById('cal-details-dayoffs');
+  if(doContainer) {
+    if(!dayOffsForDay.length) {
+      doContainer.innerHTML = `<p class="text-xs text-slate-400 py-2 dark:text-slate-500">គ្មានថ្ងៃឈប់សម្រាកទេ / No day-off records</p>`;
+    } else {
+      doContainer.innerHTML = dayOffsForDay.map(d => {
+        const s = staff.find(x => x.id === d.staffId);
+        const name = s ? s.name : 'Unknown Staff';
+        return `
+          <div class="flex items-center justify-between p-2 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 animate-fade-in">
+            <div class="flex items-center gap-3">
+              <div class="avatar" style="width:32px;height:32px;font-size:.7rem;background:${avatarColor(name)}22;color:${avatarColor(name)}">${getInitials(name)}</div>
+              <div>
+                <div class="text-xs font-bold text-slate-700 dark:text-slate-300">${name}</div>
+                ${d.reason ? `<div class="text-[10px] text-slate-400">${d.reason}</div>` : ''}
+              </div>
+            </div>
+            <span class="text-[10px] font-bold border px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950/20 dark:text-violet-400 dark:border-violet-900">
+              🏖️ Day-Off
+            </span>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  const panel = document.getElementById('cal-details-panel');
+  if(panel) panel.style.display = 'block';
+};
+
+window.closeCalDetails = function() {
+  selectedCalDate = null;
+  const panel = document.getElementById('cal-details-panel');
+  if(panel) panel.style.display = 'none';
+  document.querySelectorAll('.cal-cell').forEach(cell => {
+    cell.classList.remove('selected');
+  });
 };
 
 // SHIFT PLANNER
@@ -2316,7 +2518,7 @@ window.broadcastStaffList = async () => {
     const dNames = (s.deptIds || []).map(id => getCatName(id)).filter(Boolean).join(', ') || 'None';
     text += `${idx + 1}. <b>${s.name}</b>\n`;
     text += `   • <i>Role:</i> ${s.role || 'Staff'}\n`;
-    text += `   • <i>Shift:</i> <code>${s.shiftStart} - ${s.shiftEnd}</code>\n`;
+    text += `   • <i>Shift:</i> <code>${fmt24To12(s.shiftStart)} - ${fmt24To12(s.shiftEnd)}</code>\n`;
     text += `   • <i>Depts:</i> ${dNames}\n\n`;
   });
   try {
