@@ -181,7 +181,8 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
 .dark .shift-slot.off{background:#1a0d2d;border-color:#8b5cf6;color:#a78bfa}
 .dark .shift-slot.leave{background:#2d1f00;border-color:#f59e0b;color:#fbbf24}
 
-.quick-add-form{background:var(--card);border:1.5px solid var(--brand);border-radius:var(--radius);padding:1rem;margin-bottom:1rem;animation:popIn .25s ease}
+.doc-card { cursor: pointer; transition: all 0.2s; }
+.doc-card:hover { transform: translateY(-3px); border-color: var(--brand); box-shadow: var(--shadow-lg); }
 </style>
 </head>
 <body>
@@ -318,8 +319,9 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
             <p style="color:var(--text3);font-size:.8rem" id="today-date-label"></p>
           </div>
           <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-            <button class="btn btn-ghost" onclick="toggleQuickAdd()"><i class="fa-solid fa-user-plus"></i>
-              <span class="t-km">Quick Add</span><span class="t-en">Quick Add</span>
+            <button class="btn btn-primary" onclick="openAnnounceModal()">
+              <i class="fa-solid fa-bullhorn"></i>
+              <span class="t-km">ប្រកាសព័ត៌មាន</span><span class="t-en">Announcement</span>
             </button>
             <button class="btn btn-ghost" onclick="openDayoffModal()"><i class="fa-solid fa-umbrella-beach"></i>
               <span class="t-km">កំណត់ថ្ងៃឈប់</span><span class="t-en">Day Off</span>
@@ -328,25 +330,6 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
               <span class="t-km">ផ្ញើសង្ខេប</span><span class="t-en">Send Summary</span>
             </button>
           </div>
-        </div>
-
-        <!-- QUICK ADD STAFF INLINE FORM -->
-        <div id="quick-add-wrap" style="display:none" class="quick-add-form">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
-            <h4 style="font-weight:900;color:var(--brand)"><i class="fa-solid fa-user-plus" style="margin-right:.4rem"></i>Quick Add Staff</h4>
-            <button onclick="toggleQuickAdd()" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:1.1rem"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.6rem;margin-bottom:.75rem">
-            <input type="text" id="qa-name" placeholder="ឈ្មោះ / Name *" style="width:100%">
-            <input type="time" id="qa-start" value="06:00" style="width:100%" title="Shift Start">
-            <input type="time" id="qa-end" value="15:00" style="width:100%" title="Shift End">
-            <input type="number" id="qa-salary" placeholder="Salary $" min="0" style="width:100%">
-            <input type="text" id="qa-role" placeholder="Role e.g. Barista" style="width:100%">
-            <select id="qa-dept" style="width:100%"><option value="">-- Dept --</option></select>
-          </div>
-          <button class="btn btn-primary" onclick="submitQuickAdd()" style="width:100%;justify-content:center">
-            <i class="fa-solid fa-save"></i><span>Save Staff</span>
-          </button>
         </div>
 
         <!-- STATS -->
@@ -437,6 +420,10 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
                 <option value="time-asc">Oldest First</option>
                 <option value="name-asc">Name A-Z</option>
               </select>
+              <button class="btn btn-primary" onclick="openManualLogModal()">
+                <i class="fa-solid fa-hand-pointer"></i>
+                <span class="t-km">បញ្ចូលដោយដៃ</span><span class="t-en">Manual Log</span>
+              </button>
               <button class="btn btn-ghost" onclick="exportLogsCSV()" style="font-size:.78rem;padding:.4rem .8rem"><i class="fa-solid fa-file-csv"></i>CSV</button>
               <button class="btn btn-danger" onclick="deleteSelectedLogs()" id="btn-del-logs" style="font-size:.78rem;padding:.4rem .8rem" disabled><i class="fa-solid fa-trash"></i></button>
             </div>
@@ -807,6 +794,61 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
   </div>
 </div>
 
+<!-- Manual Log Modal -->
+<div id="manual-log-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-header" style="background:var(--brand);color:#fff">
+      <h3 style="font-weight:900"><i class="fa-solid fa-hand-pointer" style="margin-right:.4rem"></i>បញ្ចូលវត្តមាន / Manual Log</h3>
+      <button onclick="closeModal('manual-log-modal')" style="background:rgba(255,255,255,.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:.85rem">
+      <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">បុគ្គលិក / Staff *</label><select id="ml-staff" style="width:100%"></select></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+        <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">កាលបរិច្ឆេទ / Date *</label><input type="date" id="ml-date" style="width:100%"></div>
+        <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">ម៉ោង / Time *</label><input type="time" id="ml-time" style="width:100%"></div>
+      </div>
+      <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">សកម្មភាព / Action</label>
+        <select id="ml-action" style="width:100%">
+          <option value="Check-In">Check-In</option>
+          <option value="Check-Out">Check-Out</option>
+        </select>
+      </div>
+      <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">ស្ថានភាព / Status</label>
+        <select id="ml-status" style="width:100%">
+          <option value="On Time">On Time</option>
+          <option value="Late">Late</option>
+          <option value="Early Out">Early Out</option>
+          <option value="Absent">Absent</option>
+        </select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.5rem">
+        <button class="btn btn-ghost" style="justify-content:center" onclick="closeModal('manual-log-modal')">Cancel</button>
+        <button class="btn btn-primary" style="justify-content:center" onclick="submitManualLog()"><i class="fa-solid fa-save"></i>Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Announcement Modal -->
+<div id="announce-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-header" style="background:#3b82f6;color:#fff">
+      <h3 style="font-weight:900"><i class="fa-solid fa-bullhorn" style="margin-right:.4rem"></i>ប្រកាសព័ត៌មាន / Announcement</h3>
+      <button onclick="closeModal('announce-modal')" style="background:rgba(255,255,255,.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:.85rem">
+      <p style="font-size:.85rem;color:var(--text2)">សារនេះនឹងត្រូវបានផ្ញើចូលទៅកាន់ Telegram Group។ / This message will be sent to the Telegram Group.</p>
+      <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">ខ្លឹមសារ / Message *</label>
+        <textarea id="ann-text" rows="5" style="width:100%;resize:vertical" placeholder="វាយបញ្ចូលសាររបស់អ្នកទីនេះ..."></textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.5rem">
+        <button class="btn btn-ghost" style="justify-content:center" onclick="closeModal('announce-modal')">Cancel</button>
+        <button class="btn btn-primary" style="justify-content:center;background:#3b82f6" onclick="sendAnnouncement()"><i class="fa-solid fa-paper-plane"></i>Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Staff Modal -->
 <div id="staff-modal" class="modal-overlay" style="display:none">
   <div class="modal-box">
@@ -950,23 +992,42 @@ header{background:linear-gradient(135deg,var(--brand-dark) 0%,var(--brand) 100%)
     </div>
     <div class="modal-body" style="display:flex;flex-direction:column;gap:.85rem">
       <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">Staff</label><select id="up-staff" style="width:100%"></select></div>
-      <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">Document Type</label>
-        <select id="up-type" style="width:100%"><option value="contract">Employment Contract</option><option value="id">ID Card / Passport</option><option value="certificate">Certificate</option><option value="other">Other</option></select>
+      <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">Document Category</label>
+        <select id="up-type" style="width:100%">
+          <option value="id">ID Card / Passport</option>
+          <option value="contract">Employment Contract</option>
+          <option value="certificate">Health Certificate / Degree</option>
+          <option value="resume">Resume</option>
+          <option value="other">Other</option>
+        </select>
       </div>
-      <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">Document Name</label><input type="text" id="up-name" placeholder="e.g. John_Contract_2024.pdf" style="width:100%"></div>
+      <div><label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">Document Name / Title</label><input type="text" id="up-name" placeholder="e.g. John_ID_Card" style="width:100%"></div>
       <div>
-        <label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">File (Simulated)</label>
-        <div class="file-drop" onclick="document.getElementById('file-input').click()">
+        <label style="font-weight:700;font-size:.85rem;display:block;margin-bottom:.35rem">File (Image/PDF)</label>
+        <div class="file-drop" onclick="document.getElementById('up-file').click()">
           <i class="fa-solid fa-cloud-upload-alt" style="font-size:2rem;color:var(--text3);margin-bottom:.5rem"></i>
           <p style="font-size:.85rem;color:var(--text2);font-weight:600">Click to select file</p>
           <p id="file-name-display" style="font-size:.75rem;color:var(--text3);margin-top:.25rem"></p>
         </div>
-        <input type="file" id="file-input" style="display:none" onchange="handleFileSelect(this)">
+        <input type="file" id="up-file" accept="image/*,application/pdf" style="display:none" onchange="handleFileSelect(this)">
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.5rem">
         <button class="btn btn-ghost" style="justify-content:center" onclick="closeModal('upload-modal')">Cancel</button>
         <button class="btn btn-primary" style="justify-content:center;background:#3b82f6" onclick="submitUpload()"><i class="fa-solid fa-upload"></i>Upload</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Document Preview Modal -->
+<div id="preview-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="max-width:800px">
+    <div class="modal-header" style="background:var(--text);color:var(--card)">
+      <h3 style="font-weight:900" id="preview-title-text">Document Preview</h3>
+      <button onclick="closeModal('preview-modal')" style="background:rgba(255,255,255,.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body text-center" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;background:var(--bg)" id="preview-content">
+      <!-- Content injected via JS -->
     </div>
   </div>
 </div>
@@ -1044,7 +1105,7 @@ const TMPL_LABELS={
 };
 
 function applyTmpl(key,vars={}){const t=alertTemplates[key]||DEFAULT_TMPLS[key]||'';return t.replace(/\{(\w+)\}/g,(_,k)=>vars[k]!==undefined?vars[k]:`{${k}}`);}
-function sendTG(text){fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TG_CHAT,text,parse_mode:'HTML'})}).catch(()=>{});}
+window.sendTG=function(text){fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TG_CHAT,text,parse_mode:'HTML'})}).catch(()=>{});};
 function dist(la1,ln1,la2,ln2){const R=6371000,dL=(la2-la1)*Math.PI/180,dG=(ln2-ln1)*Math.PI/180;const a=Math.sin(dL/2)**2+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dG/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
 function fmtTime(ts){return new Date(ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
 function fmtDate(ts){return new Date(ts).toLocaleDateString();}
@@ -1308,7 +1369,6 @@ function populateDeptDropdowns(){
   const opts='<option value="">-- All --</option>'+categories.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
   const sdf=document.getElementById('staff-dept-filter');if(sdf)sdf.innerHTML=opts;
   const sd=document.getElementById('s-dept');if(sd)sd.innerHTML='<option value="">-- None --</option>'+categories.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
-  const qd=document.getElementById('qa-dept');if(qd)qd.innerHTML='<option value="">-- None --</option>'+categories.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
   const csf=document.getElementById('cal-staff-filter');if(csf)csf.innerHTML='<option value="">All Staff</option>'+staff.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
 }
 function renderCategories(){
@@ -1401,17 +1461,58 @@ function renderDashboard(){
   }).join('');
 }
 
-// QUICK ADD STAFF
-window.toggleQuickAdd=()=>{const w=document.getElementById('quick-add-wrap');w.style.display=w.style.display==='none'?'block':'none';};
-window.submitQuickAdd=async()=>{
-  const name=document.getElementById('qa-name').value.trim();
-  if(!name)return showToast('Name required','error');
-  const data={name,shiftStart:document.getElementById('qa-start').value||'06:00',shiftEnd:document.getElementById('qa-end').value||'15:00',salary:Number(document.getElementById('qa-salary').value)||0,role:document.getElementById('qa-role').value.trim(),deptId:document.getElementById('qa-dept').value,status:'active',createdAt:Date.now()};
-  try{await addDoc(collection(db,'staff'),data);showToast(`${name} added!`,'success');document.getElementById('qa-name').value='';document.getElementById('qa-salary').value='';document.getElementById('qa-role').value='';document.getElementById('quick-add-wrap').style.display='none';}
-  catch(e){showToast('Error: '+e.message,'error');}
+// TELEGRAM ANNOUNCEMENT
+window.openAnnounceModal=()=>{
+  document.getElementById('ann-text').value='';
+  document.getElementById('announce-modal').style.display='flex';
+};
+window.sendAnnouncement=async()=>{
+  const txt=document.getElementById('ann-text').value.trim();
+  if(!txt) return showToast('សូមសរសេរសារជាមុនសិន / Please write a message','warning');
+  sendTG(`📢 <b>ប្រកាសពីអ្នកគ្រប់គ្រង / Admin Announcement:</b>\n\n${txt}`);
+  showToast('បានផ្ញើសារចូល Telegram! / Message Sent!','success');
+  closeModal('announce-modal');
 };
 
-// ATTENDANCE LOGS
+// MANUAL ATTENDANCE LOG
+window.openManualLogModal=()=>{
+  document.getElementById('ml-staff').innerHTML='<option value="">ជ្រើសរើស / Select...</option>'+staff.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  document.getElementById('ml-date').value=todayStr();
+  const now = new Date();
+  document.getElementById('ml-time').value=now.toTimeString().slice(0,5);
+  document.getElementById('manual-log-modal').style.display='flex';
+};
+window.submitManualLog=async()=>{
+  const sId=document.getElementById('ml-staff').value;
+  const d=document.getElementById('ml-date').value;
+  const t=document.getElementById('ml-time').value;
+  const act=document.getElementById('ml-action').value;
+  const stat=document.getElementById('ml-status').value;
+  
+  if(!sId || !d || !t) return showToast('បំពេញព័ត៌មានអោយគ្រប់គ្រាន់ / Fill all fields','error');
+  
+  const s=staff.find(x=>x.id===sId);
+  const dt = new Date(`${d}T${t}`);
+  
+  try {
+      await addDoc(collection(db,'logs'),{
+          staffId:sId, 
+          staffName:s.name, 
+          action:act, 
+          status:stat,
+          timestamp:dt.getTime(), 
+          lat:0, lng:0,
+          isLate:stat.includes('Late'), 
+          isEarly:stat.includes('Early')
+      });
+      showToast('បានបញ្ចូលដោយដៃ / Manually logged!','success');
+      closeModal('manual-log-modal');
+  }catch(e){
+      showToast('Error: '+e.message,'error');
+  }
+};
+
+// ATTENDANCE LOGS RENDER
 window.renderLogs=function(){
   const search=(document.getElementById('log-search')?.value||'').toLowerCase();
   const dateF=document.getElementById('log-date')?.value;
@@ -1685,23 +1786,124 @@ window.renderAnalytics=function(){
   topPres.innerHTML=presByStaff.length?presByStaff.map((x,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:.5rem"><span style="font-size:.72rem;font-weight:900;color:var(--text3);width:16px">${i+1}</span><span style="font-size:.85rem;font-weight:700">${x.name}</span></div><span class="badge badge-green">${x.days}d</span></div>`).join(''):'<p style="color:var(--text3);font-size:.82rem">No data</p>';
 };
 
-// DOCUMENTS
+// DOCUMENTS (WITH PREVIEW CAPABILITY)
+let currentFileDataURL = null;
+let currentFileType = null;
+
 window.renderDocuments=function(){
-  const staffF=document.getElementById('doc-staff-filter')?.value||'';let filtered=staffF?documents.filter(d=>d.staffId===staffF):documents;
+  const staffF=document.getElementById('doc-staff-filter')?.value||'';
+  let filtered=staffF?documents.filter(d=>d.staffId===staffF):documents;
   const grid=document.getElementById('docs-grid');
-  if(!filtered.length){grid.innerHTML='<p style="grid-column:1/-1;text-align:center;color:var(--text3);padding:2rem">No documents uploaded</p>';return;}
-  const typeIcon={contract:'fa-file-contract',id:'fa-id-card',certificate:'fa-certificate',other:'fa-file'},typeColor={contract:'#3b82f6',id:'#f59e0b',certificate:'#22c55e',other:'#94a3b8'};
-  grid.innerHTML=filtered.map(doc_=>{const s=staff.find(x=>x.id===doc_.staffId),ic=typeIcon[doc_.type]||'fa-file',tc=typeColor[doc_.type]||'#94a3b8';
-    return `<div class="card" style="padding:1.1rem"><div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.6rem"><div style="width:40px;height:40px;border-radius:10px;background:${tc}18;display:flex;align-items:center;justify-content:center;color:${tc}"><i class="fa-solid ${ic}"></i></div><button onclick="delDB('documents','${doc_.id}')" style="width:26px;height:26px;border-radius:6px;border:1px solid #fee2e2;background:#fef2f2;cursor:pointer;color:#ef4444;font-size:.65rem"><i class="fa-solid fa-trash"></i></button></div><div style="font-weight:700;font-size:.88rem;margin-bottom:.2rem;word-break:break-word">${doc_.name}</div><div style="font-size:.75rem;color:var(--text3);margin-bottom:.35rem">${s?.name||'Unknown'}</div><div style="font-size:.7rem;color:var(--text3)">${new Date(doc_.uploadedAt).toLocaleDateString()}</div></div>`;
+  if(!filtered.length){grid.innerHTML='<p style="grid-column:1/-1;text-align:center;color:var(--text3);padding:2rem">មិនទាន់មានឯកសារ / No documents</p>';return;}
+  
+  const typeIcon={contract:'fa-file-contract',id:'fa-id-card',certificate:'fa-certificate',resume:'fa-file-lines',other:'fa-file'};
+  const typeColor={contract:'#3b82f6',id:'#f59e0b',certificate:'#22c55e',resume:'#8b5cf6',other:'#94a3b8'};
+  
+  grid.innerHTML=filtered.map(doc_=>{
+    const s=staff.find(x=>x.id===doc_.staffId);
+    const ic=typeIcon[doc_.type]||'fa-file';
+    const tc=typeColor[doc_.type]||'#94a3b8';
+    
+    // Make card clickable if it contains data
+    const isClickable = doc_.fileData ? `onclick="previewDoc('${doc_.id}')" class="card doc-card"` : `class="card"`;
+    
+    return `<div ${isClickable} style="padding:1.1rem; position:relative;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.6rem">
+        <div style="width:40px;height:40px;border-radius:10px;background:${tc}18;display:flex;align-items:center;justify-content:center;color:${tc}"><i class="fa-solid ${ic}"></i></div>
+        <button onclick="event.stopPropagation(); delDB('documents','${doc_.id}')" style="width:26px;height:26px;border-radius:6px;border:1px solid #fee2e2;background:#fef2f2;cursor:pointer;color:#ef4444;font-size:.65rem;z-index:2"><i class="fa-solid fa-trash"></i></button>
+      </div>
+      <div style="font-weight:700;font-size:.88rem;margin-bottom:.2rem;word-break:break-word">${doc_.name}</div>
+      <div style="font-size:.75rem;color:var(--text3);margin-bottom:.35rem">${s?.name||'Unknown'}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:.7rem;color:var(--text3)">${new Date(doc_.uploadedAt).toLocaleDateString()}</div>
+        <span style="font-size:.65rem;background:var(--bg);padding:2px 6px;border-radius:4px;border:1px solid var(--border)">${doc_.type.toUpperCase()}</span>
+      </div>
+    </div>`;
   }).join('');
 };
-window.openUploadModal=()=>document.getElementById('upload-modal').style.display='flex';
-window.handleFileSelect=(input)=>{document.getElementById('file-name-display').textContent=input.files[0]?.name||'';};
-window.submitUpload=async()=>{
-  const sId=document.getElementById('up-staff').value,type=document.getElementById('up-type').value,name=document.getElementById('up-name').value.trim();
-  if(!sId||!name)return showToast('Fill all fields','error');
-  try{await addDoc(collection(db,'documents'),{staffId:sId,type,name,uploadedAt:Date.now()});showToast('Document saved!','success');closeModal('upload-modal');}catch(e){showToast('Error: '+e.message,'error');}
+
+window.openUploadModal=()=>{
+    document.getElementById('up-file').value='';
+    document.getElementById('file-name-display').textContent='';
+    currentFileDataURL=null;
+    currentFileType=null;
+    document.getElementById('upload-modal').style.display='flex';
 };
+
+window.handleFileSelect=function(input){
+  const file = input.files[0];
+  if(!file) return;
+  document.getElementById('file-name-display').textContent=file.name;
+  currentFileType = file.type;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    if(file.type.startsWith('image/')) {
+        // Compress image to fit within Firebase doc size limits
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            let w = img.width, h = img.height;
+            const maxW = 1200, maxH = 1200;
+            if(w>maxW) { h = Math.round((maxW/w)*h); w = maxW; }
+            if(h>maxH) { w = Math.round((maxH/h)*w); h = maxH; }
+            canvas.width = w; canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            currentFileDataURL = canvas.toDataURL('image/jpeg', 0.7);
+        };
+        img.src = e.target.result;
+    } else {
+        // For PDF or other files, store raw base64 (Note: large PDFs might fail Firestore 1MB limit)
+        currentFileDataURL = e.target.result; 
+    }
+  };
+  reader.readAsDataURL(file);
+};
+
+window.submitUpload=async()=>{
+  const sId=document.getElementById('up-staff').value;
+  const type=document.getElementById('up-type').value;
+  let name=document.getElementById('up-name').value.trim();
+  
+  if(!sId) return showToast('សូមជ្រើសរើសបុគ្គលិក / Select staff','error');
+  if(!name) {
+      name = document.getElementById('file-name-display').textContent || 'Untitled Document';
+  }
+  
+  try {
+      await addDoc(collection(db,'documents'),{
+          staffId:sId, 
+          type, 
+          name, 
+          mimeType: currentFileType || '',
+          fileData: currentFileDataURL || '', // Store the Base64 string directly
+          uploadedAt:Date.now()
+      });
+      showToast('រក្សាទុកឯកសារជោគជ័យ! / Document saved!','success');
+      closeModal('upload-modal');
+  }catch(e){
+      showToast('Error: '+e.message,'error');
+  }
+};
+
+window.previewDoc = (id) => {
+    const d = documents.find(x=>x.id===id);
+    if(!d || !d.fileData) return showToast('មិនមានឯកសារសម្រាប់មើល / No preview available', 'warning');
+    
+    const cont = document.getElementById('preview-content');
+    document.getElementById('preview-title-text').textContent = d.name;
+    
+    if(d.mimeType && d.mimeType.startsWith('image/')) {
+        cont.innerHTML = `<img src="${d.fileData}" style="max-width:100%;max-height:75vh;object-fit:contain;border-radius:8px;box-shadow:var(--shadow)">`;
+    } else if (d.mimeType === 'application/pdf' || d.fileData.startsWith('data:application/pdf')) {
+        cont.innerHTML = `<iframe src="${d.fileData}" style="width:100%;height:75vh;border:none;border-radius:8px;box-shadow:var(--shadow)"></iframe>`;
+    } else {
+        cont.innerHTML = `<i class="fa-solid fa-file text-4xl text-slate-300 mb-3"></i><p style="color:var(--text3)">មិនអាចបង្ហាញឯកសារនេះបានទេ / Preview not supported for this type.</p><a href="${d.fileData}" download="${d.name}" class="btn btn-primary mt-4" style="margin-top:1rem">ទាញយក / Download</a>`;
+    }
+    
+    document.getElementById('preview-modal').style.display='flex';
+}
 
 // TELEGRAM ALERTS
 function renderAlertTemplates(){
